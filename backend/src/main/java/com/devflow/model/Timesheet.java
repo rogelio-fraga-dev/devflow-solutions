@@ -25,6 +25,6 @@ public class Timesheet {
     private Desenvolvedor desenvolvedor;
 
     @ManyToOne
-    @JoinColumn(name = "projeto_id", nullable = false)
-    private Projeto projeto;
+    @JoinColumn(name = "sprint_id", nullable = false)
+    private Sprint sprint;
 }
