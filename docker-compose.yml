@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  devflow-postgres:
+    image: postgres:16-alpine
+    container_name: devflow_db
+    environment:
+      POSTGRES_USER: devflow_user
+      POSTGRES_PASSWORD: devflow_senha123
+      POSTGRES_DB: devflow_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - devflow_pgdata:/var/lib/postgresql/data
+
+volumes:
+  devflow_pgdata:
