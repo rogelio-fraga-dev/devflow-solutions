@@ -29,7 +29,8 @@ public class Projeto {
 
     private LocalDate dataPrevisaoEntrega;
 
-    private String status; // ATIVO, ALERTA, FECHADO
+    @Enumerated(EnumType.STRING)
+    private StatusProjeto status;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)

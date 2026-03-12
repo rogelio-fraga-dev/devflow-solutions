@@ -1,31 +1,39 @@
 package com.devflow.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.time.LocalDate;
 
-@Data
 @Entity
 @Table(name = "tb_sprint")
 public class Sprint {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    
+    @Enumerated(EnumType.STRING)
     @Column(name = "nome_Fase",nullable = false)
-    private String nomeFase;
+    @Getter @Setter
+    private FaseSprint nomeFase;
 
     @ManyToOne
     @JoinColumn(name = "projeto_id", nullable = false)
+    @Getter @Setter
     private Projeto projeto;
-
-    @Column(nullable = false)
-    private String status;
     
-    @Column(nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "status", nullable = false)
+    @Getter @Setter
+    private SprintStatus status;
+    
+    @Column(name = "data_inicio", nullable = false)
+    @Getter @Setter
     private LocalDate dataInicio;
 
-    @Column(nullable = false)
+    @Column(name = "data_fim", nullable = false)
+    @Getter @Setter
     private LocalDate dataFim;
 
 }

@@ -18,4 +18,7 @@ public class Cliente {
     private String cnpj;
 
     private String pessoaContato;
+
+    @Embedded
+    private Endereco endereco;
 }
