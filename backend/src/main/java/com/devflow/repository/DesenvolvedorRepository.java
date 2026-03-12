@@ -17,4 +17,7 @@ public interface DesenvolvedorRepository extends JpaRepository<Desenvolvedor, Lo
     Optional<Desenvolvedor> findByUsuario (
         Usuario usuario 
     );
+    Optional<Desenvolvedor> findByProjeto (
+        Long projetoId
+    );
 }

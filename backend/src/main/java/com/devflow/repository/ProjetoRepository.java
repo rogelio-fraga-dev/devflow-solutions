@@ -4,7 +4,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.devflow.model.Cliente;
 import com.devflow.model.Projeto;
-import java.util.List;  
+import java.util.List;
+import java.util.Optional;  
 
 public interface ProjetoRepository extends JpaRepository<Projeto, Long> {
     List<Projeto> findByStatus (
@@ -15,5 +16,8 @@ public interface ProjetoRepository extends JpaRepository<Projeto, Long> {
     );
     List<Projeto> findByNomeContainingIgnoreCase (
         String nome
+    );
+    Optional<Projeto> findById(
+        Long id
     );
 }

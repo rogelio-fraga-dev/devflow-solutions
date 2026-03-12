@@ -21,7 +21,14 @@ public class Desenvolvedor {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorHoraCusto;
 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorHoraExtra;
+
     @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "projeto_id")
+    private Projeto projeto;
 }

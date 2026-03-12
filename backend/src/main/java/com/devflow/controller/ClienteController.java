@@ -31,6 +31,6 @@ public class ClienteController {
 
     @GetMapping("/{id}")
     public ClienteResponseDto buscarPorId(@PathVariable Long id) {
-        return clienteService.findById(id);
+        return clienteService.buscarCliente(id);
     }
 }

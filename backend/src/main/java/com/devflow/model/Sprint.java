@@ -14,7 +14,6 @@ public class Sprint {
     private Long id;
     
     @Enumerated(EnumType.STRING)
-    @Column(name = "nome_Fase",nullable = false)
     @Getter @Setter
     private FaseSprint nomeFase;
 
@@ -23,8 +22,7 @@ public class Sprint {
     @Getter @Setter
     private Projeto projeto;
     
-    @ManyToOne
-    @JoinColumn(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     @Getter @Setter
     private SprintStatus status;
     

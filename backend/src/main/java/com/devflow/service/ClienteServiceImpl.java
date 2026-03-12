@@ -30,13 +30,11 @@ public class ClienteServiceImpl implements ClienteService {
             .toList();
     }
     @Override
-    public ClienteResponseDto findById(Long id) {
+    public ClienteResponseDto buscarCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
-        .orElseThrow(() -> new RuntimeException("Client não encontrado"));
-        
+        .orElseThrow(() -> new RuntimeException("Cliente não encontrado"));
         return mapEntityToResponse(cliente);
     }
-
 
     private Cliente mapRequestToEntity(ClienteRequestDto request) {
         Cliente cliente = new Cliente();
@@ -52,6 +50,17 @@ public class ClienteServiceImpl implements ClienteService {
         response.setCnpj(cliente.getCnpj());
         response.setPessoaContato(cliente.getPessoaContato());
         return response;        
+    }
+    @Override
+    public ClienteResponseDto atualizarCliente(Long id, ClienteRequestDto request) {
+        Cliente cliente = mapRequestToEntity(request);
+        cliente.setId(id);
+        Cliente clienteAtualizado = clienteRepository.save(cliente);
+        return mapEntityToResponse(clienteAtualizado);
+    }
+    @Override
+    public void deletarCliente(Long id) {
+        clienteRepository.deleteById(id);
     }
 
     
