@@ -1,12 +1,15 @@
 package com.devflow.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import java.time.LocalDate;
 
-@Data
+
 @Entity
 @Table(name = "tb_timesheet")
+@Getter
+@Setter
 public class Timesheet {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

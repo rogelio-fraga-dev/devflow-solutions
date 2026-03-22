@@ -3,9 +3,12 @@ package com.devflow.controller;
 import com.devflow.dto.DesenvolvedorRequestDto;
 import com.devflow.dto.DesenvolvedorResponseDto;
 import com.devflow.service.DesenvolvedorService;
-import java.util.List;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/desenvolvedores")
@@ -16,21 +19,29 @@ public class DesenvolvedorController {
         this.desenvolvedorService = desenvolvedorService;
     }
 
-    @PostMapping
-    public ResponseEntity<DesenvolvedorResponseDto> criar(@RequestBody DesenvolvedorRequestDto request) {
-        DesenvolvedorResponseDto response = desenvolvedorService.criarDesenvolvedor(request);
-        return ResponseEntity.status(201).body(response);
+    @PostMapping // @Valid faz o Spring ler os @NotNull do DTO antes de entrar no método!
+    public ResponseEntity<DesenvolvedorResponseDto> criar(@Valid @RequestBody DesenvolvedorRequestDto request) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(desenvolvedorService.criarDesenvolvedor(request));
     }    
 
     @GetMapping
     public ResponseEntity<List<DesenvolvedorResponseDto>> listar() {
-        List<DesenvolvedorResponseDto> response = desenvolvedorService.listarDesenvolvedores();
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.ok(desenvolvedorService.listarDesenvolvedores());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DesenvolvedorResponseDto> buscarPorId(@PathVariable Long id) {
-        DesenvolvedorResponseDto response = desenvolvedorService.buscarDesenvolvedor(id);
-        return ResponseEntity.status(200).body(response);
+        return ResponseEntity.ok(desenvolvedorService.buscarDesenvolvedor(id));
+    }
+    
+    @PutMapping("/{id}")
+    public ResponseEntity<DesenvolvedorResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody DesenvolvedorRequestDto request) {
+        return ResponseEntity.ok(desenvolvedorService.atualizarDesenvolvedor(id, request));
+    }
+    
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        desenvolvedorService.deletarDesenvolvedor(id);
+        return ResponseEntity.noContent().build(); // Retorna 204 No Content
     }
 }

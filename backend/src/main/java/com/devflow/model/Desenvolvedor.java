@@ -15,8 +15,9 @@ public class Desenvolvedor {
     @Column(nullable = false)
     private String nome;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String senioridade; // JUNIOR, PLENO, SENIOR
+    private Senioridade senioridade;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorHoraCusto;
