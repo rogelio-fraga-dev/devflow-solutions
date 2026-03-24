@@ -6,7 +6,6 @@ import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "tb_projeto")
 @Getter
@@ -35,7 +34,7 @@ public class Projeto {
     @Enumerated(EnumType.STRING)
     private StatusProjeto status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 }

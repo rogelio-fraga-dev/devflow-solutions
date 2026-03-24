@@ -8,8 +8,8 @@ import lombok.Data;
 public class TimesheetResponseDto {
     private Long id;
     private LocalDate dataRegistro;
-    private Integer horasTrabalhadas;
-    private Integer horasExtras;
+    private Double horasTrabalhadas;
+    private Double horasExtras;
     private String descricaoTarefa;
 
     //Data Flattening (Achatamento)
