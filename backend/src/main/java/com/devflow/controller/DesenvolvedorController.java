@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/desenvolvedores")
+@RequestMapping("/api/v1/desenvolvedores")
 public class DesenvolvedorController {
     public final DesenvolvedorService desenvolvedorService;
 

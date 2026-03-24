@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/custos-cloud")
+@RequestMapping("/api/v1/custos-cloud")
 public class CustoCloudController {
 
     private final CustoCloudService custoCloudService;

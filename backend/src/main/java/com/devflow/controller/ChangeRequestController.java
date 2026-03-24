@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/change-requests")
+@RequestMapping("/api/v1/change-requests")
 public class ChangeRequestController {
 
     private final ChangeRequestService changeRequestService;
