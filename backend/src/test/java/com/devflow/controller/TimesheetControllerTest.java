@@ -56,7 +56,7 @@ class TimesheetControllerTest {
         Mockito.when(timesheetService.criarTimesheet(any())).thenReturn(response);
 
         // Act & Assert
-        mockMvc.perform(post("/timesheets")
+        mockMvc.perform(post("/api/v1/timesheets")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isCreated())

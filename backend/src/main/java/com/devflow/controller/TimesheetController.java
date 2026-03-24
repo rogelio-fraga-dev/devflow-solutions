@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/timesheets")
+@RequestMapping("/api/v1/timesheets")
 public class TimesheetController {
 
     private final TimesheetService timesheetService;
