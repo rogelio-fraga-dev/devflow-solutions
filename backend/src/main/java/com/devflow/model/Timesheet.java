@@ -6,7 +6,13 @@ import lombok.Setter;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "tb_timesheet")
+@Table(
+    name = "tb_timesheet",
+    indexes = {
+        @Index(name = "idx_timesheet_sprint_id", columnList = "sprint_id"),
+        @Index(name = "idx_timesheet_desenvolvedor_id", columnList = "desenvolvedor_id")
+    }
+)
 @Getter
 @Setter
 public class Timesheet {

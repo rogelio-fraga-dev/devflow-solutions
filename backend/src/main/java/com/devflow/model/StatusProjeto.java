@@ -5,6 +5,7 @@ public enum StatusProjeto {
     PLANEJADO,
     EM_ANDAMENTO,
     ALERTA,
+    ESTOURADO,  // Budget Guard: >= 100% do orçamento consumido
     PAUSADO,
     CONCLUIDO,
     CANCELADO
