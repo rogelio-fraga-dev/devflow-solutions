@@ -59,7 +59,7 @@ class ProjetoControllerTest {
         Mockito.when(projetoService.criarProjeto(any())).thenReturn(response);
 
         // Act & Assert (Mockando a ida e vinda da API HTTP nativa)
-        mockMvc.perform(post("/projetos")
+        mockMvc.perform(post("/api/v1/projetos")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(requestJson))
                 .andExpect(status().isCreated())
