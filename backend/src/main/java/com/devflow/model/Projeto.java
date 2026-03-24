@@ -39,21 +39,36 @@ public class Projeto {
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
 
-    // Budget Guard (Sentinela Passivo do Custo Vivo)
+    /**
+     * Budget Guard Patroll (Sentinela Passivo do Ciclo de Vida)
+     * Intercepta qualquer UPDATE/INSERT na entidade Projeto e aplica as regras financeiras:
+     *  - >= 80% do budget: muta para ALERTA
+     *  - >= 100% do budget: muta para ESTOURADO (bloqueador definitivo)
+     */
     @PreUpdate
     @PrePersist
     public void monitorarBudgetGuard() {
-        if (this.budgetTotal != null && this.budgetTotal.compareTo(BigDecimal.ZERO) > 0 
-            && this.custoAtualAcumulado != null) {
-            
-            BigDecimal tetoAlerta = this.budgetTotal.multiply(new BigDecimal("0.80"));
-            
-            // Se Custo Atual >= 80% do Budget, entra em estado de Risco/Alerta
-            if (this.custoAtualAcumulado.compareTo(tetoAlerta) >= 0) {
-                if (this.status != StatusProjeto.CONCLUIDO && this.status != StatusProjeto.CANCELADO) {
-                    this.status = StatusProjeto.ALERTA;
-                }
-            }
+        if (this.budgetTotal == null || this.budgetTotal.compareTo(BigDecimal.ZERO) <= 0
+                || this.custoAtualAcumulado == null) {
+            return;
+        }
+
+        // Projetos fechados não sofrem mais mutação de status pelo guard
+        if (this.status == StatusProjeto.CONCLUIDO || this.status == StatusProjeto.CANCELADO) {
+            return;
+        }
+
+        BigDecimal percentualGasto = this.custoAtualAcumulado
+                .divide(this.budgetTotal, 4, RoundingMode.HALF_UP)
+                .multiply(new BigDecimal("100"));
+
+        // Nível Crítico: 100% - Budget ESTOURADO (bloqueia novos custos no front)
+        if (percentualGasto.compareTo(new BigDecimal("100.00")) >= 0) {
+            this.status = StatusProjeto.ESTOURADO;
+        }
+        // Nível de Risco: 80% - Budget em ALERTA
+        else if (percentualGasto.compareTo(new BigDecimal("80.00")) >= 0) {
+            this.status = StatusProjeto.ALERTA;
         }
     }
 }

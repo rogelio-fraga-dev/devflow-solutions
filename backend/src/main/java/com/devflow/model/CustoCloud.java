@@ -3,6 +3,7 @@ package com.devflow.model;
 import java.math.BigDecimal;
 import java.time.YearMonth;
 import jakarta.persistence.Column;
+import jakarta.persistence.Index;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Entity;
@@ -15,7 +16,12 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tb_custo_cloud")
+@Table(
+    name = "tb_custo_cloud",
+    indexes = {
+        @Index(name = "idx_cloud_projeto_id", columnList = "projeto_id")
+    }
+)
 @Getter
 @Setter
 public class CustoCloud {
