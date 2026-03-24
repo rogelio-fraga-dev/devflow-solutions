@@ -26,10 +26,11 @@ public class Desenvolvedor {
     private BigDecimal valorHoraExtra;
 
     @OneToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", unique = true)
     private Usuario usuario;
 
     @ManyToOne
     @JoinColumn(name = "projeto_id")
     private Projeto projeto;
+
 }

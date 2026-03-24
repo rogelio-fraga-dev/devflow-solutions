@@ -7,5 +7,7 @@ import com.devflow.model.Timesheet;
 import java.util.List;
 
 public interface TimesheetRepository extends JpaRepository<Timesheet, Long> {
-    List<Timesheet> findByDesenvolvedorAndSprintContainingIgnoreCase (Desenvolvedor desenvolvedor, Sprint sprint);
+    List<Timesheet> findByDesenvolvedorAndSprint (Desenvolvedor desenvolvedor, Sprint sprint);
+    List<Timesheet> findBySprintId (Long sprintId);
+    List<Timesheet> findByDesenvolvedorId (Long desenvolvedorId);
 }

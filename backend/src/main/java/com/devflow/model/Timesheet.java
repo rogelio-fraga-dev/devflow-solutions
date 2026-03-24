@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.Setter;
 import java.time.LocalDate;
 
-
 @Entity
 @Table(name = "tb_timesheet")
 @Getter
@@ -20,6 +19,8 @@ public class Timesheet {
 
     @Column(nullable = false)
     private Integer horasTrabalhadas;
+
+    private Integer horasExtras;
 
     private String descricaoTarefa;
 

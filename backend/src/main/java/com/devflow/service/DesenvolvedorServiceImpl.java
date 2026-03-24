@@ -109,8 +109,19 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
         response.setSenioridade(desenvolvedor.getSenioridade());
         response.setValorHoraCusto(desenvolvedor.getValorHoraCusto());
         response.setValorHoraExtra(desenvolvedor.getValorHoraExtra());
-        response.setUsuarioId(desenvolvedor.getUsuario() != null ? desenvolvedor.getUsuario().getId() : null);
-        response.setProjetoId(desenvolvedor.getProjeto() != null ? desenvolvedor.getProjeto().getId() : null);
+        
+        // Data Flattening Seguro: Usuário (Garantindo que não vai dar NullPointerException)
+        if (desenvolvedor.getUsuario() != null) {
+            response.setUsuarioId(desenvolvedor.getUsuario().getId());
+            response.setUsuarioEmail(desenvolvedor.getUsuario().getEmail());
+        }
+        
+        // Data Flattening Seguro: Projeto
+        if (desenvolvedor.getProjeto() != null) {
+            response.setProjetoId(desenvolvedor.getProjeto().getId());
+            response.setProjetoNome(desenvolvedor.getProjeto().getNome());
+        }
+        
         return response;
     }
 }

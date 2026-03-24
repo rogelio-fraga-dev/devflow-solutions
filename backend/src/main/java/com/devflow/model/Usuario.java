@@ -20,5 +20,5 @@ public class Usuario {
     private String senha;
 
     @Column(nullable = false)
-    private String role; // "ADMIN" ou "DEV"
+    private String role;
 }
