@@ -144,12 +144,12 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     // --- MÉTODOS AUXILIARES ---
 
-    private BigDecimal calcularCusto(BigDecimal vNormal, Integer hNormal, BigDecimal vExtra, Integer hExtra) {
-        BigDecimal totalNormal = vNormal.multiply(new BigDecimal(hNormal != null ? hNormal : 0));
+    private BigDecimal calcularCusto(BigDecimal vNormal, Double hNormal, BigDecimal vExtra, Double hExtra) {
+        BigDecimal totalNormal = vNormal.multiply(BigDecimal.valueOf(hNormal != null ? hNormal : 0.0));
         
         // Proteção contra nulos no valor ou na quantidade de horas extras
         BigDecimal valorDaExtra = vExtra != null ? vExtra : BigDecimal.ZERO;
-        BigDecimal qtdExtra = new BigDecimal(hExtra != null ? hExtra : 0);
+        BigDecimal qtdExtra = BigDecimal.valueOf(hExtra != null ? hExtra : 0.0);
         
         BigDecimal totalExtra = valorDaExtra.multiply(qtdExtra);
         

@@ -23,7 +23,7 @@ public class TimesheetRequestDto {
     
     @NotNull(message = "O número de horas trabalhadas é obrigatório")
     @Positive(message = "O número de horas trabalhadas deve ser um valor positivo")
-    private Integer horasTrabalhadas;
+    private Double horasTrabalhadas;
     
-    private Integer horasExtras;
+    private Double horasExtras;
 }

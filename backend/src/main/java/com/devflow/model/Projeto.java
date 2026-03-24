@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDate;
-
 
 @Entity
 @Table(name = "tb_projeto")
@@ -35,7 +35,25 @@ public class Projeto {
     @Enumerated(EnumType.STRING)
     private StatusProjeto status;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
     private Cliente cliente;
+
+    // Budget Guard (Sentinela Passivo do Custo Vivo)
+    @PreUpdate
+    @PrePersist
+    public void monitorarBudgetGuard() {
+        if (this.budgetTotal != null && this.budgetTotal.compareTo(BigDecimal.ZERO) > 0 
+            && this.custoAtualAcumulado != null) {
+            
+            BigDecimal tetoAlerta = this.budgetTotal.multiply(new BigDecimal("0.80"));
+            
+            // Se Custo Atual >= 80% do Budget, entra em estado de Risco/Alerta
+            if (this.custoAtualAcumulado.compareTo(tetoAlerta) >= 0) {
+                if (this.status != StatusProjeto.CONCLUIDO && this.status != StatusProjeto.CANCELADO) {
+                    this.status = StatusProjeto.ALERTA;
+                }
+            }
+        }
+    }
 }

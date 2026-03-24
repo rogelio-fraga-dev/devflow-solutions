@@ -18,17 +18,17 @@ public class Timesheet {
     private LocalDate dataRegistro;
 
     @Column(nullable = false)
-    private Integer horasTrabalhadas;
+    private Double horasTrabalhadas;
 
-    private Integer horasExtras;
+    private Double horasExtras;
 
     private String descricaoTarefa;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "desenvolvedor_id", nullable = false)
     private Desenvolvedor desenvolvedor;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "sprint_id", nullable = false)
     private Sprint sprint;
 }
