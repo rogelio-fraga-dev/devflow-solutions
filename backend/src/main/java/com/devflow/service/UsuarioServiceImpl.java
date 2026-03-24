@@ -12,13 +12,17 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 @Service
 public class UsuarioServiceImpl implements UsuarioService {
 
     private final UsuarioRepository usuarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
-    public UsuarioServiceImpl(UsuarioRepository usuarioRepository) {
+    public UsuarioServiceImpl(UsuarioRepository usuarioRepository, PasswordEncoder passwordEncoder) {
         this.usuarioRepository = usuarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -31,7 +35,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         Usuario usuario = new Usuario();
         usuario.setEmail(request.getEmail());
-        usuario.setSenha(request.getSenha());
+        usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(request.getRole());
 
         usuario = usuarioRepository.save(usuario);
@@ -64,7 +68,7 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         usuario.setEmail(request.getEmail());
-        usuario.setSenha(request.getSenha());
+        usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(request.getRole());
 
         usuario = usuarioRepository.save(usuario);
