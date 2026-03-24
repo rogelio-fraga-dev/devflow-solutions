@@ -15,13 +15,22 @@ public class Desenvolvedor {
     @Column(nullable = false)
     private String nome;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String senioridade; // JUNIOR, PLENO, SENIOR
+    private Senioridade senioridade;
 
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal valorHoraCusto;
 
+    @Column(nullable = false, precision = 10, scale = 2)
+    private BigDecimal valorHoraExtra;
+
     @OneToOne
-    @JoinColumn(name = "usuario_id")
+    @JoinColumn(name = "usuario_id", unique = true)
     private Usuario usuario;
+
+    @ManyToOne
+    @JoinColumn(name = "projeto_id")
+    private Projeto projeto;
+
 }

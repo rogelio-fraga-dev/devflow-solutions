@@ -1,11 +1,14 @@
 package com.devflow.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+
 @Entity
 @Table(name = "tb_cliente")
+@Getter
+@Setter
 public class Cliente {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -18,4 +21,7 @@ public class Cliente {
     private String cnpj;
 
     private String pessoaContato;
+
+    @Embedded
+    private Endereco endereco;
 }

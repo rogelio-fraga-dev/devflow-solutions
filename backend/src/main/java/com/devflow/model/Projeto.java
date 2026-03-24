@@ -1,13 +1,16 @@
 package com.devflow.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 
-@Data
+
 @Entity
 @Table(name = "tb_projeto")
+@Getter
+@Setter
 public class Projeto {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -29,7 +32,8 @@ public class Projeto {
 
     private LocalDate dataPrevisaoEntrega;
 
-    private String status; // ATIVO, ALERTA, FECHADO
+    @Enumerated(EnumType.STRING)
+    private StatusProjeto status;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id", nullable = false)

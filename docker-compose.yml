@@ -1,17 +1,19 @@
 version: '3.8'
 
 services:
-  devflow-postgres:
-    image: postgres:16-alpine
+  devflow-mysql:
+    image: mysql:8.0
     container_name: devflow_db
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: devflow_user
-      POSTGRES_PASSWORD: devflow_senha123
-      POSTGRES_DB: devflow_db
+      MYSQL_ROOT_PASSWORD: devflow_root_secret
+      MYSQL_DATABASE: devflow_db
+      MYSQL_USER: devflow_user
+      MYSQL_PASSWORD: devflow_senha123
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - devflow_pgdata:/var/lib/postgresql/data
+      - devflow_mysqldata:/var/lib/mysql
 
 volumes:
-  devflow_pgdata:
+  devflow_mysqldata:
