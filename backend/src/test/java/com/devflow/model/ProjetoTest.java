@@ -8,16 +8,16 @@ class ProjetoTest {
 
     @Test
     void n_deveMudarStatus_quandoCustoEstiverAbaixo80Porcento() {
-        // Arrange (Setup do front-end criando projeto com R$ 10.000)
+        // Arrange (R$ 7.500 = 75% de R$ 10.000 — claramente abaixo do limiar de 80%)
         Projeto projeto = new Projeto();
         projeto.setBudgetTotal(new BigDecimal("10000.00"));
-        projeto.setCustoAtualAcumulado(new BigDecimal("7999.99"));
+        projeto.setCustoAtualAcumulado(new BigDecimal("7500.00")); // 75% exato, sem ambiguidade de arredondamento
         projeto.setStatus(StatusProjeto.EM_ANDAMENTO);
 
         // Act (Ciclo de vida do JPA simulado)
         projeto.monitorarBudgetGuard();
 
-        // Assert (Motor não deve acionar alerta)
+        // Assert (Motor não deve acionar alerta com 75% do budget)
         assertEquals(StatusProjeto.EM_ANDAMENTO, projeto.getStatus());
     }
 
