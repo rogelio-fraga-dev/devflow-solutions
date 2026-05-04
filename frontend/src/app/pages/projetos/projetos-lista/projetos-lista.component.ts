@@ -8,6 +8,7 @@ import { ToastService } from '../../../core/services/toast.service';
 import { Projeto, ProjetoRequest, StatusProjeto } from '../../../core/models/projeto.model';
 import { Cliente } from '../../../core/models/cliente.model';
 import { ConfirmModalComponent } from '../../../shared/components/confirm-modal/confirm-modal.component';
+import { extractErrorMessage } from '../../../core/utils/error.util';
 
 @Component({
   selector: 'app-projetos-lista',
@@ -238,7 +239,7 @@ export class ProjetosListaComponent implements OnInit {
         this.saving.set(false);
         this.toast.success(id ? 'Projeto atualizado!' : 'Projeto criado!');
       },
-      error: () => { this.saving.set(false); this.toast.error('Erro ao salvar projeto.'); }
+      error: (err) => { this.saving.set(false); this.toast.error(extractErrorMessage(err)); }
     });
   }
 
@@ -250,7 +251,7 @@ export class ProjetosListaComponent implements OnInit {
         this.projetos.update(list => list.filter(p => p.id !== id));
         this.toast.success('Projeto removido.');
       },
-      error: () => this.toast.error('Erro ao remover projeto.')
+      error: (err) => this.toast.error(extractErrorMessage(err))
     });
     this.confirmDel = null;
   }

@@ -7,6 +7,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { Desenvolvedor, DesenvolvedorRequest, Senioridade } from '../../core/models/desenvolvedor.model';
 import { Projeto } from '../../core/models/projeto.model';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { extractErrorMessage } from '../../core/utils/error.util';
 
 @Component({
   selector: 'app-desenvolvedores',
@@ -167,14 +168,14 @@ export class DesenvolvedoresComponent implements OnInit {
         this.drawerOpen.set(false); this.saving.set(false);
         this.toast.success(id ? 'Atualizado!' : 'Cadastrado!');
       },
-      error: () => { this.saving.set(false); this.toast.error('Erro ao salvar.'); }
+      error: (err) => { this.saving.set(false); this.toast.error(extractErrorMessage(err)); }
     });
   }
 
   deleteDev() {
     if (!this.confirmDel) return;
     const id = this.confirmDel.id;
-    this.svc.delete(id).subscribe({ next: () => { this.devs.update(l => l.filter(d => d.id !== id)); this.toast.success('Removido.'); }, error: () => this.toast.error('Erro.') });
+    this.svc.delete(id).subscribe({ next: () => { this.devs.update(l => l.filter(d => d.id !== id)); this.toast.success('Removido.'); }, error: (err) => this.toast.error(extractErrorMessage(err)) });
     this.confirmDel = null;
   }
 

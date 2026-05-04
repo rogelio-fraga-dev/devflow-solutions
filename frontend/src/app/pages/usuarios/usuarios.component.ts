@@ -5,6 +5,7 @@ import { UsuarioService } from '../../core/services/usuario.service';
 import { ToastService } from '../../core/services/toast.service';
 import { Usuario, UsuarioRequest, Role } from '../../core/models/usuario.model';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { extractErrorMessage } from '../../core/utils/error.util';
 
 @Component({
   selector: 'app-usuarios',
@@ -173,7 +174,7 @@ export class UsuariosComponent implements OnInit {
         this.drawerOpen.set(false); this.saving.set(false);
         this.toast.success(id ? 'Usuário atualizado!' : 'Usuário criado!');
       },
-      error: () => { this.saving.set(false); this.toast.error('Erro ao salvar usuário.'); }
+      error: (err) => { this.saving.set(false); this.toast.error(extractErrorMessage(err)); }
     });
   }
 
@@ -182,7 +183,7 @@ export class UsuariosComponent implements OnInit {
     const id = this.confirmDel.id;
     this.svc.delete(id).subscribe({
       next: () => { this.usuarios.update(l => l.filter(u => u.id !== id)); this.toast.success('Usuário removido.'); },
-      error: () => this.toast.error('Erro ao remover.')
+      error: (err) => this.toast.error(extractErrorMessage(err))
     });
     this.confirmDel = null;
   }

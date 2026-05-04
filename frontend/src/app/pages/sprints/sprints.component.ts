@@ -7,6 +7,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { Sprint, SprintRequest, FaseSprint, StatusSprint } from '../../core/models/sprint.model';
 import { Projeto } from '../../core/models/projeto.model';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { extractErrorMessage } from '../../core/utils/error.util';
 
 @Component({
   selector: 'app-sprints',
@@ -199,7 +200,7 @@ export class SprintsComponent implements OnInit {
         this.drawerOpen.set(false); this.saving.set(false);
         this.toast.success(id ? 'Sprint atualizada!' : 'Sprint criada!');
       },
-      error: () => { this.saving.set(false); this.toast.error('Erro ao salvar sprint.'); }
+      error: (err) => { this.saving.set(false); this.toast.error(extractErrorMessage(err)); }
     });
   }
 
@@ -208,7 +209,7 @@ export class SprintsComponent implements OnInit {
     const id = this.confirmDel.id;
     this.svc.delete(id).subscribe({
       next: () => { this.sprints.update(l => l.filter(s => s.id !== id)); this.toast.success('Sprint removida.'); },
-      error: () => this.toast.error('Erro ao remover.')
+      error: (err) => this.toast.error(extractErrorMessage(err))
     });
     this.confirmDel = null;
   }

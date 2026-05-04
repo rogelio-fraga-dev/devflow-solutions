@@ -7,6 +7,7 @@ import { ToastService } from '../../core/services/toast.service';
 import { CustoCloud, CustoCloudRequest, ProvedorCloud } from '../../core/models/custo-cloud.model';
 import { Projeto } from '../../core/models/projeto.model';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { extractErrorMessage } from '../../core/utils/error.util';
 
 @Component({
   selector: 'app-custos-cloud',
@@ -183,14 +184,14 @@ export class CustosCloudComponent implements OnInit {
         this.drawerOpen.set(false); this.saving.set(false);
         this.toast.success(id ? 'Atualizado!' : 'Registrado!');
       },
-      error: () => { this.saving.set(false); this.toast.error('Erro ao salvar.'); }
+      error: (err) => { this.saving.set(false); this.toast.error(extractErrorMessage(err)); }
     });
   }
 
   deleteCloud() {
     if (!this.confirmDel) return;
     const id = this.confirmDel.id;
-    this.svc.delete(id).subscribe({ next: () => { this.clouds.update(l => l.filter(c => c.id !== id)); this.toast.success('Removido.'); }, error: () => this.toast.error('Erro.') });
+    this.svc.delete(id).subscribe({ next: () => { this.clouds.update(l => l.filter(c => c.id !== id)); this.toast.success('Removido.'); }, error: (err) => this.toast.error(extractErrorMessage(err)) });
     this.confirmDel = null;
   }
 }

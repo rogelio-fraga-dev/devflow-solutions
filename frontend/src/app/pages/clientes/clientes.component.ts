@@ -5,6 +5,7 @@ import { ClienteService } from '../../core/services/cliente.service';
 import { ToastService } from '../../core/services/toast.service';
 import { Cliente, ClienteRequest } from '../../core/models/cliente.model';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { extractErrorMessage } from '../../core/utils/error.util';
 
 @Component({
   selector: 'app-clientes',
@@ -139,14 +140,14 @@ export class ClientesComponent implements OnInit {
         this.drawerOpen.set(false); this.saving.set(false);
         this.toast.success(id ? 'Cliente atualizado!' : 'Cliente cadastrado!');
       },
-      error: () => { this.saving.set(false); this.toast.error('Erro ao salvar.'); }
+      error: (err) => { this.saving.set(false); this.toast.error(extractErrorMessage(err)); }
     });
   }
 
   deleteCli() {
     if (!this.confirmDel) return;
     const id = this.confirmDel.id;
-    this.svc.delete(id).subscribe({ next: () => { this.clientes.update(l => l.filter(c => c.id !== id)); this.toast.success('Removido.'); }, error: () => this.toast.error('Erro.') });
+    this.svc.delete(id).subscribe({ next: () => { this.clientes.update(l => l.filter(c => c.id !== id)); this.toast.success('Removido.'); }, error: (err) => this.toast.error(extractErrorMessage(err)) });
     this.confirmDel = null;
   }
 

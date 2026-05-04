@@ -11,6 +11,7 @@ import { Desenvolvedor } from '../../core/models/desenvolvedor.model';
 import { Projeto } from '../../core/models/projeto.model';
 import { Sprint } from '../../core/models/sprint.model';
 import { ConfirmModalComponent } from '../../shared/components/confirm-modal/confirm-modal.component';
+import { extractErrorMessage } from '../../core/utils/error.util';
 
 @Component({
   selector: 'app-timesheet',
@@ -233,6 +234,9 @@ export class TimesheetComponent implements OnInit {
     if (!this.form.desenvolvedorId || !this.form.sprintId) {
       this.toast.error('Selecione desenvolvedor e sprint.'); return;
     }
+    if (!this.form.horasTrabalhadas || this.form.horasTrabalhadas <= 0) {
+      this.toast.error('Horas trabalhadas deve ser maior que 0.'); return;
+    }
     this.saving.set(true);
     const id = this.editingId();
     const obs = id ? this.svc.update(id, this.form) : this.svc.create(this.form);
@@ -243,7 +247,7 @@ export class TimesheetComponent implements OnInit {
         this.drawerOpen.set(false); this.saving.set(false);
         this.toast.success(id ? 'Registro atualizado!' : 'Horas registradas!');
       },
-      error: () => { this.saving.set(false); this.toast.error('Erro ao salvar.'); }
+      error: (err) => { this.saving.set(false); this.toast.error(extractErrorMessage(err)); }
     });
   }
 
@@ -252,7 +256,7 @@ export class TimesheetComponent implements OnInit {
     const id = this.confirmDel.id;
     this.svc.delete(id).subscribe({
       next: () => { this.timesheets.update(l => l.filter(t => t.id !== id)); this.toast.success('Removido.'); },
-      error: () => this.toast.error('Erro ao remover.')
+      error: (err) => this.toast.error(extractErrorMessage(err))
     });
     this.confirmDel = null;
   }

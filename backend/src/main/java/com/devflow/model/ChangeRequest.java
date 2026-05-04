@@ -29,7 +29,7 @@ public class ChangeRequest {
     @Column(name = "valor_adicional", nullable = false)
     private BigDecimal valorAdicional;
 
-    @Column(name = "data_aprovacao", nullable = false)
+    @Column(name = "data_aprovacao", nullable = true)
     private LocalDate dataAprovacao;
 
     @ManyToOne(fetch = FetchType.LAZY)
