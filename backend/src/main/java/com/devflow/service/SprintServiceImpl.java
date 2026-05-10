@@ -41,12 +41,10 @@ public class SprintServiceImpl implements SprintService {
         sprint.setDataInicio(request.getDataInicio());
         sprint.setDataFim(request.getDataFim());
         sprint.setProjeto(projeto);
-        sprint.setStatus(SprintStatus.PLANEJADA);
+        sprint.setStatus(request.getStatus() != null ? request.getStatus() : SprintStatus.PLANEJADA);
 
-        sprint = sprintRepository.save(sprint);
-
-        return mapToResponse(sprint);
-    } 
+        return mapToResponse(sprintRepository.save(sprint));
+    }
 
     @Override
     public List<SprintResponseDto> listarSprintsPorProjeto(Long projetoId) {
@@ -57,9 +55,8 @@ public class SprintServiceImpl implements SprintService {
 
     @Override
     public SprintResponseDto buscarSprint(Long id) {
-        Sprint sprint = sprintRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id));
-        return mapToResponse(sprint);
+        return mapToResponse(sprintRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id)));
     }
 
     @Override
@@ -68,11 +65,10 @@ public class SprintServiceImpl implements SprintService {
         Sprint sprint = sprintRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id));
 
-        // Regra do Merge: Se mudou o projeto, valida de novo!
         if (!sprint.getProjeto().getId().equals(request.getProjetoId())) {
             Projeto novoProjeto = projetoRepository.findById(request.getProjetoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Novo Projeto não encontrado com ID: " + request.getProjetoId()));
-            
+
             if (novoProjeto.getStatus() == StatusProjeto.CONCLUIDO || novoProjeto.getStatus() == StatusProjeto.CANCELADO) {
                 throw new BusinessRuleException("Não é possível mover a Sprint para um projeto encerrado ou cancelado.");
             }
@@ -83,17 +79,20 @@ public class SprintServiceImpl implements SprintService {
         sprint.setDataInicio(request.getDataInicio());
         sprint.setDataFim(request.getDataFim());
 
-        sprint = sprintRepository.save(sprint);
-        return mapToResponse(sprint);
+        if (request.getStatus() != null) {
+            sprint.setStatus(request.getStatus());
+        }
+
+        return mapToResponse(sprintRepository.save(sprint));
     }
 
     @Override
     @Transactional
     public void deletarSprint(Long id) {
-        Sprint sprint = sprintRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id));
-        sprintRepository.delete(sprint);
+        sprintRepository.delete(sprintRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id)));
     }
+
     private SprintResponseDto mapToResponse(Sprint sprint) {
         SprintResponseDto response = new SprintResponseDto();
         response.setId(sprint.getId());
@@ -101,11 +100,8 @@ public class SprintServiceImpl implements SprintService {
         response.setDataInicio(sprint.getDataInicio());
         response.setDataFim(sprint.getDataFim());
         response.setStatus(sprint.getStatus());
-        
-        // Data Flattening
         response.setProjetoId(sprint.getProjeto().getId());
-        response.setProjetoNome(sprint.getProjeto().getNome()); 
-        
+        response.setProjetoNome(sprint.getProjeto().getNome());
         return response;
-    } 
+    }
 }

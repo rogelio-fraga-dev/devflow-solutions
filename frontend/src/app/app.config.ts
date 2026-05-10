@@ -4,15 +4,15 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { routes } from './app.routes';
+import { jwtInterceptor } from './core/interceptors/jwt.interceptor';
 
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
     provideRouter(routes),
-    provideAnimationsAsync(), // Essencial para o PrimeNG funcionar sem quebrar a tela
+    provideAnimationsAsync(),
     provideHttpClient(
-      // O Elias vai colocar o Interceptor do JWT aqui depois!
-      withInterceptors([]) 
+      withInterceptors([jwtInterceptor])
     )
   ]
 };

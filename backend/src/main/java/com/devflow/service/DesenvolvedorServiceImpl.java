@@ -34,17 +34,16 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
     @Transactional
     public DesenvolvedorResponseDto criarDesenvolvedor(DesenvolvedorRequestDto request) {
         Desenvolvedor desenvolvedor = new Desenvolvedor();
-        
-        // Mapeia dados básicos
         desenvolvedor.setNome(request.getNome());
         desenvolvedor.setSenioridade(request.getSenioridade());
         desenvolvedor.setValorHoraCusto(request.getValorHoraCusto());
         desenvolvedor.setValorHoraExtra(request.getValorHoraExtra());
 
-        // Busca dependências com a Exceção Customizada!
-        Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + request.getUsuarioId()));
-        desenvolvedor.setUsuario(usuario);
+        if (request.getUsuarioId() != null) {
+            Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + request.getUsuarioId()));
+            desenvolvedor.setUsuario(usuario);
+        }
 
         if (request.getProjetoId() != null) {
             Projeto projeto = projetoRepository.findById(request.getProjetoId())
@@ -52,39 +51,47 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
             desenvolvedor.setProjeto(projeto);
         }
 
-        Desenvolvedor savedDesenvolvedor = desenvolvedorRepository.save(desenvolvedor);
-        return mapEntityToResponse(savedDesenvolvedor);
+        return mapEntityToResponse(desenvolvedorRepository.save(desenvolvedor));
     }
 
     @Override
-    @Transactional // Garante que se algo der erro no meio, o banco faz "Rollback"
+    @Transactional
     public DesenvolvedorResponseDto atualizarDesenvolvedor(Long id, DesenvolvedorRequestDto request) {
-        // 1. A REGRA DE OURO: Busca o existente primeiro
         Desenvolvedor desenvolvedor = desenvolvedorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado com ID: " + id));
 
-        // 2. Altera campo a campo (preservando o que não foi enviado)
         desenvolvedor.setNome(request.getNome());
         desenvolvedor.setSenioridade(request.getSenioridade());
         desenvolvedor.setValorHoraCusto(request.getValorHoraCusto());
         desenvolvedor.setValorHoraExtra(request.getValorHoraExtra());
 
-        // 3. Verifica mudanças de relacionamentos
-        if (!desenvolvedor.getUsuario().getId().equals(request.getUsuarioId())) {
-            Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Novo Usuário não encontrado"));
-            desenvolvedor.setUsuario(usuario);
+        if (request.getUsuarioId() != null) {
+            Long usuarioAtualId = desenvolvedor.getUsuario() != null ? desenvolvedor.getUsuario().getId() : null;
+            if (!request.getUsuarioId().equals(usuarioAtualId)) {
+                Usuario usuario = usuarioRepository.findById(request.getUsuarioId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado"));
+                desenvolvedor.setUsuario(usuario);
+            }
         }
 
-        // 4. Salva o objeto que já está sendo monitorado pelo JPA
+        if (request.getProjetoId() != null) {
+            Long projetoAtualId = desenvolvedor.getProjeto() != null ? desenvolvedor.getProjeto().getId() : null;
+            if (!request.getProjetoId().equals(projetoAtualId)) {
+                Projeto projeto = projetoRepository.findById(request.getProjetoId())
+                        .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado"));
+                desenvolvedor.setProjeto(projeto);
+            }
+        } else {
+            desenvolvedor.setProjeto(null);
+        }
+
         return mapEntityToResponse(desenvolvedorRepository.save(desenvolvedor));
     }
 
     @Override
     public DesenvolvedorResponseDto buscarDesenvolvedor(Long id) {
-        Desenvolvedor desenvolvedor = desenvolvedorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado"));
-        return mapEntityToResponse(desenvolvedor);
+        return mapEntityToResponse(desenvolvedorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado")));
     }
 
     @Override
@@ -97,9 +104,8 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
     @Override
     @Transactional
     public void deletarDesenvolvedor(Long id) {
-        Desenvolvedor desenvolvedor = desenvolvedorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado"));
-        desenvolvedorRepository.delete(desenvolvedor);
+        desenvolvedorRepository.delete(desenvolvedorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado")));
     }
 
     private DesenvolvedorResponseDto mapEntityToResponse(Desenvolvedor desenvolvedor) {
@@ -109,19 +115,17 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
         response.setSenioridade(desenvolvedor.getSenioridade());
         response.setValorHoraCusto(desenvolvedor.getValorHoraCusto());
         response.setValorHoraExtra(desenvolvedor.getValorHoraExtra());
-        
-        // Data Flattening Seguro: Usuário (Garantindo que não vai dar NullPointerException)
+
         if (desenvolvedor.getUsuario() != null) {
             response.setUsuarioId(desenvolvedor.getUsuario().getId());
             response.setUsuarioEmail(desenvolvedor.getUsuario().getEmail());
         }
-        
-        // Data Flattening Seguro: Projeto
+
         if (desenvolvedor.getProjeto() != null) {
             response.setProjetoId(desenvolvedor.getProjeto().getId());
             response.setProjetoNome(desenvolvedor.getProjeto().getNome());
         }
-        
+
         return response;
     }
 }

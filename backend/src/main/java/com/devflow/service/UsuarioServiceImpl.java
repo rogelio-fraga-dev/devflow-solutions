@@ -28,18 +28,18 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     @Transactional
     public UsuarioResponseDto criarUsuario(UsuarioRequestDto request) {
-        // Regra de Negócio: Não permitir emails duplicados
         if (usuarioRepository.findByEmailIgnoreCase(request.getEmail()).isPresent()) {
             throw new IllegalArgumentException("Este e-mail já está em uso no sistema!");
         }
 
         Usuario usuario = new Usuario();
+        usuario.setNome(request.getNome());
         usuario.setEmail(request.getEmail());
-        usuario.setSenha(passwordEncoder.encode(request.getSenha()));
+        usuario.setSenha(passwordEncoder.encode(request.getSenha() != null ? request.getSenha() : ""));
         usuario.setRole(request.getRole());
+        usuario.setAtivo(request.isAtivo());
 
         usuario = usuarioRepository.save(usuario);
-
         return converterParaDto(usuario);
     }
 
@@ -52,8 +52,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public UsuarioResponseDto buscarUsuario(Long id) {
-        Usuario usuario = buscarPorId(id);
-        return converterParaDto(usuario);
+        return converterParaDto(buscarPorId(id));
     }
 
     @Override
@@ -61,29 +60,29 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponseDto atualizarUsuario(Long id, UsuarioRequestDto request) {
         Usuario usuario = buscarPorId(id);
 
-        // Regra de Negócio: Verificar se o novo email já existe e se NÃO pertence ao próprio usuário que estamos editando
         Optional<Usuario> usuarioExistente = usuarioRepository.findByEmailIgnoreCase(request.getEmail());
         if (usuarioExistente.isPresent() && !usuarioExistente.get().getId().equals(id)) {
             throw new IllegalArgumentException("Este e-mail já está em uso por outro usuário!");
         }
 
+        usuario.setNome(request.getNome());
         usuario.setEmail(request.getEmail());
-        usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(request.getRole());
+        usuario.setAtivo(request.isAtivo());
+
+        if (request.getSenha() != null && !request.getSenha().isBlank()) {
+            usuario.setSenha(passwordEncoder.encode(request.getSenha()));
+        }
 
         usuario = usuarioRepository.save(usuario);
-
         return converterParaDto(usuario);
     }
 
     @Override
     @Transactional
     public void deletarUsuario(Long id) {
-        Usuario usuario = buscarPorId(id);
-        usuarioRepository.delete(usuario);
+        usuarioRepository.delete(buscarPorId(id));
     }
-
-    // MÉTODOS AUXILIARES (Deixam o código mais limpo e evitam repetição)
 
     private Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id)
@@ -93,9 +92,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioResponseDto converterParaDto(Usuario usuario) {
         UsuarioResponseDto response = new UsuarioResponseDto();
         response.setId(usuario.getId());
+        response.setNome(usuario.getNome());
         response.setEmail(usuario.getEmail());
         response.setRole(usuario.getRole());
-        // A senha NUNCA é colocada aqui.
+        response.setAtivo(usuario.isAtivo());
         return response;
     }
 }
