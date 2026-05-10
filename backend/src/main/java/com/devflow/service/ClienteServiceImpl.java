@@ -24,14 +24,17 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public ClienteResponseDto criarCliente(ClienteRequestDto request) {
-        if (clienteRepository.findByCnpj(request.getCnpj()).isPresent()) {
-            throw new ConflictException("Já existe um cliente cadastrado com este CNPJ.");
+        if (request.getCnpj() != null && !request.getCnpj().isBlank()) {
+            if (clienteRepository.findByCnpj(request.getCnpj()).isPresent()) {
+                throw new ConflictException("Já existe um cliente cadastrado com este CNPJ.");
+            }
         }
 
         Cliente cliente = new Cliente();
         cliente.setRazaoSocial(request.getRazaoSocial());
         cliente.setCnpj(request.getCnpj());
         cliente.setPessoaContato(request.getPessoaContato());
+        cliente.setEndereco(request.getEndereco());
 
         cliente = clienteRepository.save(cliente);
         return mapToResponse(cliente);
@@ -40,21 +43,22 @@ public class ClienteServiceImpl implements ClienteService {
     @Override
     @Transactional
     public ClienteResponseDto atualizarCliente(Long id, ClienteRequestDto request) {
-        // 1. Buscar a entidade existente (se não existir -> 404)
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
 
-        // 2. Checar duplicidade de CNPJ apenas se estiver alterando para um CNPJ já existente
-        if (!cliente.getCnpj().equals(request.getCnpj()) && clienteRepository.findByCnpj(request.getCnpj()).isPresent()) {
-            throw new ConflictException("Já existe outro cliente cadastrado com este CNPJ.");
+        String novoCnpj = request.getCnpj();
+        if (novoCnpj != null && !novoCnpj.isBlank()) {
+            String cnpjAtual = cliente.getCnpj();
+            if (!novoCnpj.equals(cnpjAtual) && clienteRepository.findByCnpj(novoCnpj).isPresent()) {
+                throw new ConflictException("Já existe outro cliente cadastrado com este CNPJ.");
+            }
         }
 
-        // 3. Aplicar as alterações campo a campo (Merge controlado, preserva o Endereço)
         cliente.setRazaoSocial(request.getRazaoSocial());
         cliente.setCnpj(request.getCnpj());
         cliente.setPessoaContato(request.getPessoaContato());
+        cliente.setEndereco(request.getEndereco());
 
-        // 4. Salvar e retornar
         cliente = clienteRepository.save(cliente);
         return mapToResponse(cliente);
     }
@@ -78,15 +82,16 @@ public class ClienteServiceImpl implements ClienteService {
     public void deletarCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
-        
         clienteRepository.delete(cliente);
     }
+
     private ClienteResponseDto mapToResponse(Cliente cliente) {
         ClienteResponseDto response = new ClienteResponseDto();
         response.setId(cliente.getId());
         response.setRazaoSocial(cliente.getRazaoSocial());
         response.setCnpj(cliente.getCnpj());
         response.setPessoaContato(cliente.getPessoaContato());
+        response.setEndereco(cliente.getEndereco());
         return response;
     }
 }

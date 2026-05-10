@@ -17,7 +17,6 @@ public class ChangeRequestRequestDto {
     @PositiveOrZero(message = "O valor adicional não pode ser negativo")
     private BigDecimal valorAdicional;
 
-    @NotNull(message = "A data de aprovação é obrigatória")
     private LocalDate dataAprovacao;
 
     @NotNull(message = "O ID do projeto é obrigatório")
