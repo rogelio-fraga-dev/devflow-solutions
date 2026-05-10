@@ -29,22 +29,22 @@ public class ChangeRequestController {
         return ResponseEntity.ok(changeRequestService.listarChangeRequests());
     }
     @GetMapping("/projeto/{projetoId}")
-    public ResponseEntity<List<ChangeRequestResponseDto>> listarPorProjeto(@PathVariable Long projetoId) {
+    public ResponseEntity<List<ChangeRequestResponseDto>> listarPorProjeto(@PathVariable("projetoId") Long projetoId) {
         return ResponseEntity.ok(changeRequestService.listarPorProjeto(projetoId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ChangeRequestResponseDto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ChangeRequestResponseDto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(changeRequestService.buscarChangeRequest(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ChangeRequestResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody ChangeRequestRequestDto request) {
+    public ResponseEntity<ChangeRequestResponseDto> atualizar(@PathVariable("id") Long id, @Valid @RequestBody ChangeRequestRequestDto request) {
         return ResponseEntity.ok(changeRequestService.atualizarChangeRequest(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         changeRequestService.deletarChangeRequest(id);
         return ResponseEntity.noContent().build();
     }

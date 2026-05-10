@@ -34,9 +34,11 @@ public class UsuarioServiceImpl implements UsuarioService {
         }
 
         Usuario usuario = new Usuario();
+        usuario.setNome(request.getNome());
         usuario.setEmail(request.getEmail());
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(request.getRole());
+        usuario.setAtivo(request.getAtivo() != null ? request.getAtivo() : Boolean.TRUE);
 
         usuario = usuarioRepository.save(usuario);
 
@@ -67,9 +69,11 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new IllegalArgumentException("Este e-mail já está em uso por outro usuário!");
         }
 
+        usuario.setNome(request.getNome());
         usuario.setEmail(request.getEmail());
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(request.getRole());
+        usuario.setAtivo(request.getAtivo() != null ? request.getAtivo() : Boolean.TRUE);
 
         usuario = usuarioRepository.save(usuario);
 
@@ -93,8 +97,10 @@ public class UsuarioServiceImpl implements UsuarioService {
     private UsuarioResponseDto converterParaDto(Usuario usuario) {
         UsuarioResponseDto response = new UsuarioResponseDto();
         response.setId(usuario.getId());
+        response.setNome(usuario.getNome());
         response.setEmail(usuario.getEmail());
         response.setRole(usuario.getRole());
+        response.setAtivo(usuario.getAtivo());
         // A senha NUNCA é colocada aqui.
         return response;
     }

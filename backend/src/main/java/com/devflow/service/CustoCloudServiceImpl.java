@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class CustoCloudServiceImpl implements CustoCloudService {
 
     private final CustoCloudRepository custoCloudRepository;
@@ -135,3 +136,4 @@ public class CustoCloudServiceImpl implements CustoCloudService {
         return response;
     }
 }
+

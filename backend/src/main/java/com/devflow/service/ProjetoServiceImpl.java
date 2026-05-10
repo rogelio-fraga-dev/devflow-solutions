@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 @Service
+@Transactional(readOnly = true)
 public class ProjetoServiceImpl implements ProjetoService {
     private final ProjetoRepository projetoRepository;
     private final ClienteRepository clienteRepository;
@@ -27,17 +28,19 @@ public class ProjetoServiceImpl implements ProjetoService {
     @Override
     @Transactional
     public ProjetoResponseDto criarProjeto(ProjetoRequestDto request) {
-        // 1. Regra de Negócio: O Cliente existe?
-        Cliente cliente = clienteRepository.findById(request.getClienteId())
-                .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + request.getClienteId()));
-
         Projeto projeto = new Projeto();
         projeto.setNome(request.getNome());
         projeto.setStackTecnologica(request.getStackTecnologica());
         projeto.setBudgetTotal(request.getBudgetTotal());
         projeto.setDataInicio(request.getDataInicio());
         projeto.setDataPrevisaoEntrega(request.getDataPrevisaoEntrega());
-        projeto.setCliente(cliente);
+
+        // Cliente é opcional
+        if (request.getClienteId() != null) {
+            Cliente cliente = clienteRepository.findById(request.getClienteId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com ID: " + request.getClienteId()));
+            projeto.setCliente(cliente);
+        }
 
         // 2. Regras de Inicialização (O sistema define, não o usuário) 
         projeto.setCustoAtualAcumulado(BigDecimal.ZERO); 
@@ -62,7 +65,9 @@ public class ProjetoServiceImpl implements ProjetoService {
         projeto.setDataPrevisaoEntrega(request.getDataPrevisaoEntrega());
 
         // 3. Checar se o Cliente mudou
-        if (!projeto.getCliente().getId().equals(request.getClienteId())) {
+        if (request.getClienteId() == null) {
+            projeto.setCliente(null);
+        } else if (projeto.getCliente() == null || !projeto.getCliente().getId().equals(request.getClienteId())) {
             Cliente novoCliente = clienteRepository.findById(request.getClienteId())
                     .orElseThrow(() -> new ResourceNotFoundException("Novo Cliente não encontrado com ID: " + request.getClienteId()));
             projeto.setCliente(novoCliente);
@@ -110,8 +115,10 @@ public class ProjetoServiceImpl implements ProjetoService {
         response.setStatus(projeto.getStatus());
         
         // Entregando mastigado para não sobrecarregar o Front-end
-        response.setClienteId(projeto.getCliente().getId());
-        response.setClienteNome(projeto.getCliente().getRazaoSocial());
+        if (projeto.getCliente() != null) {
+            response.setClienteId(projeto.getCliente().getId());
+            response.setClienteNome(projeto.getCliente().getRazaoSocial());
+        }
         
         return response;
     }

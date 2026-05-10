@@ -18,6 +18,7 @@ export interface Projeto {
   dataPrevisaoEntrega: string;
   status: StatusProjeto;
   clienteId?: number;
+  clienteNome?: string;
 }
 
 export interface ProjetoRequest {

@@ -1,7 +1,7 @@
 package com.devflow.service;
 
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,6 +19,7 @@ import com.devflow.repository.SprintRepository;
 import com.devflow.repository.TimesheetRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class TimesheetServiceImpl implements TimesheetService {
 
     private final TimesheetRepository timesheetRepository;
@@ -126,6 +127,12 @@ public class TimesheetServiceImpl implements TimesheetService {
         }
 
         timesheetRepository.delete(timesheet);
+    }
+
+    @Override
+    public List<TimesheetResponseDto> listarTodos() {
+        return timesheetRepository.findAll().stream()
+                .map(this::converterParaDto).collect(Collectors.toList());
     }
 
     @Override

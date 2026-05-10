@@ -30,17 +30,17 @@ public class ClienteController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ClienteResponseDto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ClienteResponseDto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(clienteService.buscarCliente(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ClienteResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody ClienteRequestDto request) {
+    public ResponseEntity<ClienteResponseDto> atualizar(@PathVariable("id") Long id, @Valid @RequestBody ClienteRequestDto request) {
         return ResponseEntity.ok(clienteService.atualizarCliente(id, request));
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         clienteService.deletarCliente(id);
         return ResponseEntity.noContent().build(); // Retorna 204 No Content, conforme padrão
     }

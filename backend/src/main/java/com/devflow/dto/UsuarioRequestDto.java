@@ -8,15 +8,20 @@ import com.devflow.model.Role;
 
 @Data
 public class UsuarioRequestDto {
-    
+
+    @NotBlank(message = "O nome é obrigatório")
+    private String nome;
+
     @NotBlank(message = "O email é obrigatório")
     @Email(message = "Formato de e-mail inválido")
     private String email;
 
     @NotBlank(message = "A senha é obrigatória")
     private String senha;
-    
-    @NotNull(message = "A classificação de usuário é obrigatória (Dev ou Admin)")
+
+    @NotNull(message = "A classificação de usuário é obrigatória")
     private Role role;
+
+    private Boolean ativo = true;
 
 }

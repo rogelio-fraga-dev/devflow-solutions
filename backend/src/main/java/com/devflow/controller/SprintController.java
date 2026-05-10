@@ -27,23 +27,24 @@ public class SprintController {
     // Rota customizada para buscar Sprints de um Projeto específico
     // Exemplo de uso no Front-end: GET /sprints/projeto/5
     @GetMapping("/projeto/{projetoId}")
-    public ResponseEntity<List<SprintResponseDto>> listarPorProjeto(@PathVariable Long projetoId) {
+    public ResponseEntity<List<SprintResponseDto>> listarPorProjeto(@PathVariable("projetoId") Long projetoId) {
         return ResponseEntity.ok(sprintService.listarSprintsPorProjeto(projetoId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<SprintResponseDto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<SprintResponseDto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(sprintService.buscarSprint(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<SprintResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody SprintRequestDto request) {
+    public ResponseEntity<SprintResponseDto> atualizar(@PathVariable("id") Long id, @Valid @RequestBody SprintRequestDto request) {
         return ResponseEntity.ok(sprintService.atualizarSprint(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         sprintService.deletarSprint(id);
         return ResponseEntity.noContent().build();
     }
 }
+

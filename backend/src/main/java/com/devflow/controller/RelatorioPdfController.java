@@ -20,7 +20,7 @@ public class RelatorioPdfController {
     }
 
     @GetMapping("/{id}/financeiro/closeout/pdf")
-    public ResponseEntity<byte[]> baixarProjectCloseout(@PathVariable Long id) {
+    public ResponseEntity<byte[]> baixarProjectCloseout(@PathVariable("id") Long id) {
         byte[] pdfBytes = relatorioPdfService.gerarProjectCloseoutPdf(id);
 
         HttpHeaders headers = new HttpHeaders();
@@ -33,3 +33,4 @@ public class RelatorioPdfController {
                 .body(pdfBytes);
     }
 }
+

@@ -6,6 +6,8 @@ import com.devflow.model.Role;
 @Data
 public class UsuarioResponseDto {
     private Long id;
+    private String nome;
     private String email;
     private Role role;
+    private Boolean ativo;
 }

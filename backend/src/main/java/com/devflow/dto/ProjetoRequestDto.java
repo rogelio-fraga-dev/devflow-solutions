@@ -23,7 +23,7 @@ public class ProjetoRequestDto {
 
     private LocalDate dataPrevisaoEntrega;
     
-    @NotNull(message = "O ID do cliente é obrigatório para vincular o projeto ao cliente")
+    // Cliente é opcional — pode criar projeto sem cliente vinculado
     private Long clienteId;
 
 }

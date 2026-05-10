@@ -29,17 +29,17 @@ public class DesenvolvedorController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DesenvolvedorResponseDto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<DesenvolvedorResponseDto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(desenvolvedorService.buscarDesenvolvedor(id));
     }
     
     @PutMapping("/{id}")
-    public ResponseEntity<DesenvolvedorResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody DesenvolvedorRequestDto request) {
+    public ResponseEntity<DesenvolvedorResponseDto> atualizar(@PathVariable("id") Long id, @Valid @RequestBody DesenvolvedorRequestDto request) {
         return ResponseEntity.ok(desenvolvedorService.atualizarDesenvolvedor(id, request));
     }
     
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         desenvolvedorService.deletarDesenvolvedor(id);
         return ResponseEntity.noContent().build(); // Retorna 204 No Content
     }

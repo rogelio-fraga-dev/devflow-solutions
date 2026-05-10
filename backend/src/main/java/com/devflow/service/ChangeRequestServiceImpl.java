@@ -16,6 +16,7 @@ import com.devflow.repository.ChangeRequestRepository;
 import com.devflow.repository.ProjetoRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class ChangeRequestServiceImpl implements ChangeRequestService {
 
     private final ChangeRequestRepository changeRequestRepository;

@@ -20,6 +20,11 @@ public class TimesheetController {
         this.timesheetService = timesheetService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<TimesheetResponseDto>> listarTodos() {
+        return ResponseEntity.ok(timesheetService.listarTodos());
+    }
+
     @PostMapping
     public ResponseEntity<TimesheetResponseDto> registrarHoras(@Valid @RequestBody TimesheetRequestDto request) {
         TimesheetResponseDto response = timesheetService.criarTimesheet(request);
@@ -27,23 +32,24 @@ public class TimesheetController {
     }
 
     @GetMapping("/desenvolvedor/{desenvolvedorId}")
-    public ResponseEntity<List<TimesheetResponseDto>> buscarPorDesenvolvedor(@PathVariable Long desenvolvedorId) {
+    public ResponseEntity<List<TimesheetResponseDto>> buscarPorDesenvolvedor(@PathVariable("desenvolvedorId") Long desenvolvedorId) {
         return ResponseEntity.ok(timesheetService.buscarTimesheetPorDesenvolvedor(desenvolvedorId));
     }
 
     @GetMapping("/sprint/{sprintId}")
-    public ResponseEntity<List<TimesheetResponseDto>> buscarPorSprint(@PathVariable Long sprintId) {
+    public ResponseEntity<List<TimesheetResponseDto>> buscarPorSprint(@PathVariable("sprintId") Long sprintId) {
         return ResponseEntity.ok(timesheetService.buscarTimesheetPorSprint(sprintId));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TimesheetResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody TimesheetRequestDto request) {
+    public ResponseEntity<TimesheetResponseDto> atualizar(@PathVariable("id") Long id, @Valid @RequestBody TimesheetRequestDto request) {
         return ResponseEntity.ok(timesheetService.atualizarTimesheet(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         timesheetService.deletarTimesheet(id);
         return ResponseEntity.noContent().build();
     }
 }
+
