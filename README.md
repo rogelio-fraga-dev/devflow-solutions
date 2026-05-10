@@ -1,101 +1,110 @@
 <p align="center">
-  <img src="https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java"/>
+  <img src="https://img.shields.io/badge/Angular_21-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular"/>
+  <img src="https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java"/>
   <img src="https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot" alt="Spring Boot"/>
+  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
   <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
   <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"/>
   <img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="JWT"/>
-  <img src="https://img.shields.io/badge/JUnit5-25A162?style=for-the-badge&logo=junit5&logoColor=white" alt="JUnit5"/>
 </p>
 
-# 🚀 DevFlow Solutions - Backend API
+# 🚀 DevFlow Solutions — FullStack Project Management
 
-> **Projeto Integrador Universitário** focado no desenvolvimento de um motor de gestão financeira, alocação de timesheets e acompanhamento corporativo C-Level, com arquitetura robusta baseada em **Domain-Driven Design (DDD)** e **APIs RESTful**.
+> **Plataforma de Gestão de Projetos e Dashboards C-Level** focada em motor financeiro, alocação de timesheets e acompanhamento corporativo em tempo real. Uma solução completa que une uma API robusta em Spring Boot 4 a uma interface moderna e reativa em Angular 21.
 
 ---
 
-## 👨‍💻 Equipe de Engenharia Backend (Autores)
-O motor, a inteligência de negócios e a infraestrutura de dados foram completamente arquitetados, desenvolvidos e testados em conjunto por:
+## 👨‍💻 Equipe de Desenvolvimento (Autores)
+
+O projeto é fruto da integração entre as frentes de Engenharia de Software e Design de Interface:
+
+### ⚙️ Engenharia Backend e Infraestrutura
 - **Rogélio Claro Fraga**
 - **João Gabriel Barbosa Araujo Campos**
 
-*(A interface gráfica — Frontend Angular — é de responsabilidade da outra dupla integrada ao escopo do projeto).*
+### 🎨 Engenharia Frontend e UX/UI Design
+- **Elias Fernandes**
+- **Alexandre Farias**
 
 ---
 
-## 🎯 Objetivo e Escopo Empresarial
+## 🎯 Objetivo e Escopo
 O **DevFlow Solutions** funciona como a espinha dorsal de um sistema SaaS B2B. Ele processa, em tempo real, a viabilidade financeira e o consumo de orçamento de múltiplos contratos de tecnologia, oferecendo:
-- Lançamento de **Horas (Timesheets)** e conversão em custos reais.
-- Extração de **Nuvem e Aditivos** na base do projeto.
-- Cálculo nativo e imediato da **DRE (Demonstrativo do Resultado do Exercício)**.
-- Geração de *Project Closeout* inteligente em formato **PDF**.
+- **Dashboard Executivo:** Visualização rápida de KPIs financeiros e Burn Rate.
+- **Gestão de Timesheets:** Lançamento de horas e conversão em custos reais de alocação.
+- **Controle de Custos:** Extração de faturas de Nuvem (AWS/Azure/GCP) e Licenciamento de APIs.
+- **Budget Guard:** Sistema inteligente de alertas visuais e travas financeiras (80% / 100%).
+- **Project Closeout:** Geração automatizada de relatórios gerenciais em PDF.
 
 ---
 
-## 🧱 Arquitetura e Padrões Aplicados
+## 🧱 Arquitetura e Diferenciais Técnicos
 
-A equipe de backend realizou *refactorings* profundos e implementou padrões corporativos de alto nível, passando por 3 ciclos de estabilidades nas *branches* para fornecer a API blindada:
+### 1. ⚛️ Frontend Reativo (Angular 21 + Signals)
+A interface foi construída utilizando as tecnologias mais recentes do ecossistema Angular:
+- **Angular Signals:** Gestão de estado moderna para atualizações granulares de UI sem sobrecarga de Change Detection.
+- **Custom Design System:** UI premium desenvolvida com CSS nativo (Vanilla), focada em performance e estética industrial.
+- **Security Guards & Interceptors:** Proteção de rotas e injeção automática de tokens JWT em todas as requisições para a API.
+- **Responsive Dashboard:** Layout adaptável para dispositivos móveis e desktops.
 
-### 1. ⚡ Motor Metrológico e Financeiro (DRE)
-Serviço autônomo e de alta precisão que dispensa triggers de banco. Calcula a **Margem de Lucro Bruta** sob as classes filhas de Custo (`CustoCloud`, `CustoApi`, `ChangeRequest` e `Timesheet`), processando também o **Burn Rate %** em tempo real usando `BigDecimal` para evitar ponto flutuante na bolsa do projeto. 
-
-### 2. 🛡️ Budget Guard Patroll (JPA Life-cycle)
-Uso de métodos anotados com **`@PrePersist`** e **`@PreUpdate`** (Sentinel passivo do Hibernate) no domínio do `Projeto`. Ao se aproximar de **80% de consumo** orçamentário total, o sistema instantaneamente corta a saúde do projeto alterando seu estado transacional de `EM_ANDAMENTO` para `ALERTA` sem sobrecarregar a rede ou os Controllers.
-
-### 3. 🔒 Autenticação JWT (Stateless) e Autorização
-Um filtro customizado no Spring Security (`SecurityFilter`) processa algoritmos *HMAC256* assíncronos. Permite controle minucioso do Perfil Corporativo (Roles de sistema interligadas via `Enums`). Total flexibilidade, ausência de Sessões na memória e zero roubo de dados via N+1 Injection.
-
-### 4. 🚀 Zero N+1 Queries (Otimização Extrema)
-Refatoração de toda a modelagem de Banco de Dados. Substituição compulsória de relacionamentos impulsionados (`EAGER`) para `FetchType.LAZY` e exclusão de anomalias no Lombok (`@EqualsAndHashCode`), evitando o fenômeno cartesiano do JPA que derrubava os recursos da máquina virtual (JVM) com laços duplicados.
-
-### 5. 📄 Motor de Documentos (iTextPDF PDF Gen)
-Motor de emissão de relatório *On-the-Fly* de encerramento de escopo, rodando no EndPoint e disparando relatórios gerenciais customizados de lucro em folha A4 dinâmica com regras de cores indicativas (Verde = Superávit / Vermelho = Deficit de Budget).
-
-### 6. 🧪 TDD e Quality Assurance 
-A API Rest inteira roda abaixo de uma malha sofisticada de Testes de Integração e Unidade:
-- **Testes de Contrato (WebMvcTest):** Blindagem total das desserializações em JSON com `MockMvc`.
-- **Testes de Motor com Mockito:** Fraude orçamentária zero e confirmações seguras via `ReflectionTestUtils`.
+### 2. ⚡ Backend Metrológico (Spring Boot 4)
+O motor financeiro foi arquitetado para precisão extrema e segurança:
+- **Budget Guard Sentinel:** Uso de `@PreUpdate` e `@PrePersist` para monitoramento de budget no nível de domínio.
+- **Zero N+1 Queries:** Modelagem JPA otimizada com `FetchType.LAZY` e gerenciamento de transações estável.
+- **Security JWT (Stateless):** Autenticação robusta baseada em tokens, sem estado no servidor.
+- **API Versionada:** Endpoints estruturados sob o padrão `/api/v1/`.
 
 ---
 
-## 🛠️ Tecnologias Utilizadas
+## 🛠️ Stack Tecnológica
 
-* **Linguagem:** Java 21 LTS 
-* **Framework Web:** Spring Boot 3.3.0+
-* **Persistência e Banco de Dados:** JPA / Hibernate 6 + MySQL 8.0
-* **Migrações e Configurações:** Maven (Build Lifecycle)
-* **Design Patters e Bibliotecas:** JWT Auth0, iText Core (PDF), Lombok, FasterXML (Jackson JSR-310).
-* **Testes:** JUnit 5 Jupiter + Mockito + MockMvc
+### Frontend
+* **Framework:** Angular 21 (Standalone Components)
+* **Linguagem:** TypeScript
+* **Estado:** Signals & RxJS
+* **Estilização:** CSS3 Custom Properties (Design System)
+
+### Backend
+* **Linguagem:** Java 21 LTS
+* **Framework:** Spring Boot 4 (ou 3.3+)
+* **Banco de Dados:** MySQL 8.0 + Hibernate 6
+* **Relatórios:** iTextPDF (Geração de documentos On-the-Fly)
 * **Containerização:** Docker & Docker Compose
 
 ---
 
-## ⚙️ Como Executar a Aplicação (Instruções Repasse Front-End)
+## ⚙️ Como Executar a Aplicação
 
-A base de dados conta com provisionamento nativo do Docker. Sigam as ordens à risca para inicialização simultânea.
+### 1. Requisitos
+- Node.js (v20+)
+- Java JDK 21
+- Docker Desktop
 
-### 1. Iniciar o Banco de Dados (MySQL)
-No terminal root do projeto (`devflow-solutions`), levante a instância do Banco de Dados. Isso criará também o Database `devflow_db` via volumes.
-
+### 2. Backend e Banco de Dados
+No diretório raiz do projeto:
 ```bash
+# Sobe o MySQL via Docker
 docker-compose up -d
-```
 
-### 2. Executar e Subir a API REST (Spring Boot)
-Com o banco estável e a porta *3306* escutando a sua máquina, abra o diretório da pasta `backend` e efetue a descarga de bibliotecas e inicialização do servidor (Ele ficará alocado na rota padrão `http://localhost:8080/api/v1` ou `http://localhost:8080`):
-
-```bash
+# Inicia a API
 cd backend
-./mvnw clean install -DskipTests
 ./mvnw spring-boot:run
 ```
 
-### 3. Executar o Pipeline de Quality Assurance (Opcional)
-Para auditar e testar os limites do sistema, basta disparar individualmente:
+### 3. Frontend
+Em um novo terminal no diretório `frontend`:
 ```bash
-./mvnw test
+npm install
+npm start
 ```
-*(Saída esperada: `BUILD SUCCESS` com todas as malhas de injeção Web completas).*
+Acesse: `http://localhost:4200`
+
+### 4. Carga de Dados Inicial (Seed)
+Para popular o sistema com dados de teste (Projetos, Sprints, Desenvolvedores e Custos):
+```powershell
+# No Windows
+powershell -File .\docs\seed.ps1
+```
 
 ---
-> 💡 *Projeto Integrador Universitário - Backend Finalizado Exitosamente (Março de 2026).*
-> Desenvolvido com excelência técnica por Rogélio C. Fraga e João G. B. Araujo Campos.
+> 💡 *Projeto Integrador Universitário - Finalizado com excelência técnica pela equipe DevFlow (Maio de 2026).*
