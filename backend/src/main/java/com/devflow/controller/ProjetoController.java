@@ -29,19 +29,20 @@ public class ProjetoController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ProjetoResponseDto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ProjetoResponseDto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(projetoService.buscarProjeto(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<ProjetoResponseDto> atualizarProjeto(@PathVariable Long id, @Valid @RequestBody ProjetoRequestDto request) {
+    public ResponseEntity<ProjetoResponseDto> atualizarProjeto(@PathVariable("id") Long id, @Valid @RequestBody ProjetoRequestDto request) {
         return ResponseEntity.ok(projetoService.atualizarProjeto(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletarProjeto(@PathVariable Long id) {
+    public ResponseEntity<Void> deletarProjeto(@PathVariable("id") Long id) {
         projetoService.deletarProjeto(id);
         return ResponseEntity.noContent().build();
     }
 
 }
+

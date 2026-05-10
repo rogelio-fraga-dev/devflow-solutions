@@ -19,8 +19,9 @@ public class AnaliseFinanceiraController {
     }
 
     @GetMapping("/{id}/financeiro/dre")
-    public ResponseEntity<AnaliseFinanceiraDto> gerarDre(@PathVariable Long id) {
+    public ResponseEntity<AnaliseFinanceiraDto> gerarDre(@PathVariable("id") Long id) {
         AnaliseFinanceiraDto dre = analiseFinanceiraService.gerarDreProjeto(id);
         return ResponseEntity.ok(dre);
     }
 }
+

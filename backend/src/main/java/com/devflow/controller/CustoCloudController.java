@@ -32,22 +32,22 @@ public class CustoCloudController {
     }
 
     @GetMapping("/projeto/{projetoId}")
-    public ResponseEntity<List<CustoCloudResponseDto>> listarPorProjeto(@PathVariable Long projetoId) {
+    public ResponseEntity<List<CustoCloudResponseDto>> listarPorProjeto(@PathVariable("projetoId") Long projetoId) {
         return ResponseEntity.ok(custoCloudService.listarPorProjeto(projetoId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustoCloudResponseDto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<CustoCloudResponseDto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(custoCloudService.buscarCustoCloud(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustoCloudResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody CustoCloudRequestDto request) {
+    public ResponseEntity<CustoCloudResponseDto> atualizar(@PathVariable("id") Long id, @Valid @RequestBody CustoCloudRequestDto request) {
         return ResponseEntity.ok(custoCloudService.atualizarCustoCloud(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         custoCloudService.deletarCustoCloud(id);
         return ResponseEntity.noContent().build(); // Retorna 204 No Content (Sucesso sem corpo de resposta)
     }

@@ -15,6 +15,7 @@ import com.devflow.exception.ResourceNotFoundException;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class DesenvolvedorServiceImpl implements DesenvolvedorService {
 
     private final DesenvolvedorRepository desenvolvedorRepository;

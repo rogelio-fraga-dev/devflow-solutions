@@ -6,6 +6,7 @@ import java.util.List;
 
 public interface TimesheetService {    
     TimesheetResponseDto criarTimesheet(TimesheetRequestDto request);
+    List<TimesheetResponseDto> listarTodos();
     List<TimesheetResponseDto> buscarTimesheetPorDesenvolvedor(Long desenvolvedorId);
     List<TimesheetResponseDto> buscarTimesheetPorSprint(Long sprintId);
     TimesheetResponseDto atualizarTimesheet(Long id, TimesheetRequestDto request);

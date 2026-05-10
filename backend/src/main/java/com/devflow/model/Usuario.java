@@ -20,6 +20,7 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nome;
 
     @Column(nullable = false, unique = true)
@@ -34,7 +35,7 @@ public class Usuario implements UserDetails {
     private Role role;
 
     @Column(nullable = false)
-    private boolean ativo = true;
+    private Boolean ativo = true;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

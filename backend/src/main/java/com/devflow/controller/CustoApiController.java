@@ -32,22 +32,22 @@ public class CustoApiController {
     }
 
     @GetMapping("/projeto/{projetoId}")
-    public ResponseEntity<List<CustoApiResponseDto>> listarPorProjeto(@PathVariable Long projetoId) {
+    public ResponseEntity<List<CustoApiResponseDto>> listarPorProjeto(@PathVariable("projetoId") Long projetoId) {
         return ResponseEntity.ok(custoApiService.listarPorProjeto(projetoId));
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<CustoApiResponseDto> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<CustoApiResponseDto> buscarPorId(@PathVariable("id") Long id) {
         return ResponseEntity.ok(custoApiService.buscarCustoApi(id));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CustoApiResponseDto> atualizar(@PathVariable Long id, @Valid @RequestBody CustoApiRequestDto request) {
+    public ResponseEntity<CustoApiResponseDto> atualizar(@PathVariable("id") Long id, @Valid @RequestBody CustoApiRequestDto request) {
         return ResponseEntity.ok(custoApiService.atualizarCustoApi(id, request));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+    public ResponseEntity<Void> deletar(@PathVariable("id") Long id) {
         custoApiService.deletarCustoApi(id);
         return ResponseEntity.noContent().build(); // Retorna 204 (Sucesso, sem conteúdo na resposta)
     }

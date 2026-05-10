@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Transactional(readOnly = true)
 public class CustoApiServiceImpl implements CustoApiService {
 
     private final CustoApiRepository custoApiRepository;

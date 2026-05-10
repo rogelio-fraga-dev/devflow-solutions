@@ -1,7 +1,7 @@
 package com.devflow.service;
 
 import org.springframework.stereotype.Service;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.devflow.dto.SprintRequestDto;
 import com.devflow.dto.SprintResponseDto;
@@ -16,6 +16,7 @@ import com.devflow.repository.SprintRepository;
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class SprintServiceImpl implements SprintService {
 
     private final SprintRepository sprintRepository;
