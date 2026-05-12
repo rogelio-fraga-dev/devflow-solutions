@@ -1,26 +1,29 @@
 # ⚙️ DevFlow Manager — Roadmap Backend
 **Projeto Integrador ADS 2026/01 — DevFlow Solutions**
-**Responsável:** Rogélio Claro Fraga
 **Stack:** Spring Boot 4.0.3 · Java 21 · MySQL 8 · JPA/Hibernate · JWT · iText5
 
 > Documento exclusivo de backend. Para frontend, ver `ROADMAP_FRONTEND.md`.
 
 ---
 
-## 📋 Índice
+## 📋 Índice de Responsabilidades
 
-| # | Seção | Responsável | Prioridade |
-|---|---|---|---|
-| 0 | Bugs Críticos de Integração (lado backend) | **João Gabriel** | 🔴 IMEDIATO |
-| 1 | Segurança e Configuração de Produção | **Rogélio** | 🟠 ALTA |
-| 2 | Novos Endpoints e Serviços | **João Gabriel** | 🟠 ALTA |
-| 3 | Estrutura Multi-tenant (Empresa) | **João Gabriel** | 🟡 MÉDIA |
-| 4 | Evoluções de Domínio (Timesheet + DRE) | **João Gabriel** | 🟢 V1.5 |
-| 5 | Deploy AWS — Infraestrutura e Checklist | **Rogélio** | 🟠 PRÉ-ENTREGA |
+### 👨‍💻 PARTE JOÃO GABRIEL
+- [0. Bugs Críticos de Integração (lado backend)](#0-bugs-criticos-joao)
+- [2. Novos Endpoints e Serviços](#2-novos-endpoints-joao)
+- [3. Estrutura Multi-tenant (Empresa)](#3-multi-tenant-joao)
+- [4. Evoluções de Domínio (Timesheet + DRE)](#4-dominio-joao)
+
+### 🚀 PARTE ROGÉLIO CLARO
+- [1. Segurança e Configuração de Produção](#1-seguranca-rogelio)
+- [5. Deploy AWS — Infraestrutura e Checklist](#5-deploy-rogelio)
 
 ---
 
-## 🔴 PARTE 0 — Bugs Críticos (Lado Backend) [Responsável: João Gabriel]
+# 👨‍💻 PARTE JOÃO GABRIEL <a name="joao"></a>
+
+<a name="0-bugs-criticos-joao"></a>
+## 🔴 0. Bugs Críticos de Integração (Lado Backend)
 
 Identificados na auditoria de integração `elias-front` ↔ `rogeliofraga-dev`. **Resolver antes de qualquer nova feature.**
 
@@ -110,56 +113,8 @@ public List<TimesheetResponseDto> listarTodos() {
 
 ---
 
-## 🟠 PARTE 1 — Segurança e Configuração de Produção [Responsável: Rogélio]
-
-### 1.1 Variáveis de Ambiente — Migrar Segredos
-
-**Problema atual:** JWT secret e credenciais do banco provavelmente hardcoded em `application.properties`. Em produção isso é crítico.
-
-**`application.properties` de produção:**
-```properties
-spring.datasource.url=${DB_URL}
-spring.datasource.username=${DB_USER}
-spring.datasource.password=${DB_PASSWORD}
-
-jwt.secret=${JWT_SECRET}
-jwt.expiration=${JWT_EXPIRATION_MS:86400000}
-
-# Logging em produção
-logging.file.name=/var/log/devflow/app.log
-logging.level.com.devflow=INFO
-logging.level.org.hibernate.SQL=WARN
-```
-
-**Na EC2, configurar via arquivo `.env` ou systemd (ver Parte 5).**
-
----
-
-### 1.2 CORS — Configuração para Produção
-
-**`SecurityConfig.java` — atualizar a configuração de CORS:**
-```java
-@Bean
-public CorsConfigurationSource corsConfigurationSource() {
-    CorsConfiguration config = new CorsConfiguration();
-    config.setAllowedOrigins(List.of(
-        "http://localhost:4200",       // dev local
-        "https://xxxx.cloudfront.net" // prod — substituir pelo domínio real do CloudFront
-    ));
-    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
-    config.setAllowedHeaders(List.of("*"));
-    config.setAllowCredentials(true);
-    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-    source.registerCorsConfiguration("/api/**", config);
-    return source;
-}
-```
-
-> **Atenção:** Assim que o CloudFront for provisionado, substituir `xxxx.cloudfront.net` pelo domínio gerado e fazer rebuild do JAR.
-
----
-
-## 🟠 PARTE 2 — Novos Endpoints e Serviços [Responsável: João Gabriel]
+<a name="2-novos-endpoints-joao"></a>
+## 🟠 2. Novos Endpoints e Serviços
 
 ### 2.1 Dashboard Executivo Consolidado — Cross-Project
 
@@ -306,7 +261,8 @@ public ResponseEntity<List<ProdutividadeDevDto>> ranking() {
 
 ---
 
-## 🟡 PARTE 3 — Estrutura Multi-tenant (Empresa) [Responsável: João Gabriel]
+<a name="3-multi-tenant-joao"></a>
+## 🟡 3. Estrutura Multi-tenant (Empresa)
 
 **Motivação:** O roadmap original define que ao se registrar, o primeiro usuário se torna administrador da empresa e os outros devs entram apenas vendo os projetos da sua empresa. Isso exige um conceito de tenant no banco.
 
@@ -422,7 +378,8 @@ public LoginResponseDto registrarNovaEmpresa(RegistroEmpresaRequestDto request) 
 
 ---
 
-## 🟢 PARTE 4 — Evoluções de Domínio [Responsável: João Gabriel]
+<a name="4-dominio-joao"></a>
+## 🟢 4. Evoluções de Domínio
 
 ### 4.1 🔮 Forecast de Esgotamento de Budget
 
@@ -558,7 +515,60 @@ private BigDecimal custoNonBillable; // custo interno que o cliente não cobre
 
 ---
 
-## 🟠 PARTE 5 — Deploy AWS [Responsável: Rogélio]
+# 🚀 PARTE ROGÉLIO CLARO <a name="rogelio"></a>
+
+<a name="1-seguranca-rogelio"></a>
+## 🟠 1. Segurança e Configuração de Produção
+
+### 1.1 Variáveis de Ambiente — Migrar Segredos
+
+**Problema atual:** JWT secret e credenciais do banco provavelmente hardcoded em `application.properties`. Em produção isso é crítico.
+
+**`application.properties` de produção:**
+```properties
+spring.datasource.url=${DB_URL}
+spring.datasource.username=${DB_USER}
+spring.datasource.password=${DB_PASSWORD}
+
+jwt.secret=${JWT_SECRET}
+jwt.expiration=${JWT_EXPIRATION_MS:86400000}
+
+# Logging em produção
+logging.file.name=/var/log/devflow/app.log
+logging.level.com.devflow=INFO
+logging.level.org.hibernate.SQL=WARN
+```
+
+**Na EC2, configurar via arquivo `.env` ou systemd (ver Parte 5).**
+
+---
+
+### 1.2 CORS — Configuração para Produção
+
+**`SecurityConfig.java` — atualizar a configuração de CORS:**
+```java
+@Bean
+public CorsConfigurationSource corsConfigurationSource() {
+    CorsConfiguration config = new CorsConfiguration();
+    config.setAllowedOrigins(List.of(
+        "http://localhost:4200",       // dev local
+        "https://xxxx.cloudfront.net" // prod — substituir pelo domínio real do CloudFront
+    ));
+    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+    config.setAllowedHeaders(List.of("*"));
+    config.setAllowCredentials(true);
+    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    source.registerCorsConfiguration("/api/**", config);
+    return source;
+}
+```
+
+> **Atenção:** Assim que o CloudFront for provisionado, substituir `xxxx.cloudfront.net` pelo domínio gerado e fazer rebuild do JAR.
+
+---
+
+<a name="5-deploy-rogelio"></a>
+## 🟠 5. Deploy AWS — Infraestrutura e Checklist
 
 ### Infraestrutura Alvo
 
@@ -669,36 +679,6 @@ sudo journalctl -u devflow -f   # logs em tempo real
 
 ---
 
-## 📊 Resumo de Prioridades Backend
-
-```
-🔴 ESTA SEMANA (bugs)
-├── BUG 01: nome + ativo no Usuario         ← 30 min
-├── BUG 02: role no JWT                     ← 15 min
-└── BUG 03: GET /timesheets geral           ← 45 min
-
-🟠 ESTA SEMANA (features)
-├── Variáveis de ambiente                   ← 30 min
-├── CORS para produção                      ← 20 min
-└── DashboardExecutivo endpoint             ← 2h
-
-🟡 PRÓXIMA SEMANA
-├── Forecast de esgotamento (DRE)           ← 1h
-├── Endpoint ranking de produtividade       ← 1h
-└── Endpoint registro de empresa            ← 2h
-
-🟢 VALOR DIFERENCIAL (se sobrar tempo)
-├── Aprovação de timesheet (endpoint)       ← 2h
-└── Billable vs Non-Billable (campo + DRE)  ← 1h
-
-🚀 PRÉ-ENTREGA
-├── Build JAR produção                      ← 30 min
-├── Provisionar RDS + EC2                   ← 1.5h
-└── Deploy + validação                      ← 1h
-```
-
----
-
 ## 🏆 Diferenciais Técnicos do DevFlow vs. Concorrência
 
 | Diferencial | Harvest | Runn | **DevFlow** |
@@ -710,8 +690,6 @@ sudo journalctl -u devflow -f   # logs em tempo real
 | Sprint como unidade financeira de custo | ❌ | ❌ | ✅ |
 | Forecast de esgotamento com precisão diária | ✅ Parcial | ✅ Parcial | ✅ **Implementado** |
 | DRE exportável em PDF | ❌ | ❌ | ✅ |
-
-> *"O Budget Guard Patroll é nossa vantagem competitiva real. Nenhum concorrente faz rollback transacional automático por regra financeira em nível de banco. Esse mecanismo é o coração técnico do DevFlow."*
 
 ---
 
