@@ -8,11 +8,11 @@
 
 ## 📋 Índice de Responsabilidades
 
-### 👨‍💻 PARTE JOÃO GABRIEL
-- [0. Bugs Críticos de Integração (lado backend)](#0-bugs-criticos-joao)
-- [2. Novos Endpoints e Serviços](#2-novos-endpoints-joao)
-- [3. Estrutura Multi-tenant (Empresa)](#3-multi-tenant-joao)
-- [4. Evoluções de Domínio (Timesheet + DRE)](#4-dominio-joao)
+### 👨‍💻 PARTE JOÃO GABRIEL [CONCLUÍDO ✅]
+- [0. Bugs Críticos de Integração (lado backend)](#0-bugs-criticos-joao) [OK]
+- [2. Novos Endpoints e Serviços](#2-novos-endpoints-joao) [OK]
+- [3. Estrutura Multi-tenant (Empresa)](#3-multi-tenant-joao) [OK]
+- [4. Evoluções de Domínio (Timesheet + DRE)](#4-dominio-joao) [OK]
 
 ### 🚀 PARTE ROGÉLIO CLARO
 - [1. Segurança e Configuração de Produção](#1-seguranca-rogelio)
@@ -20,10 +20,10 @@
 
 ---
 
-# 👨‍💻 PARTE JOÃO GABRIEL <a name="joao"></a>
+# 👨‍💻 PARTE JOÃO GABRIEL [CONCLUÍDO ✅] <a name="joao"></a>
 
 <a name="0-bugs-criticos-joao"></a>
-## 🔴 0. Bugs Críticos de Integração (Lado Backend)
+## 🔴 0. Bugs Críticos de Integração — [CONCLUÍDO ✅]
 
 Identificados na auditoria de integração `elias-front` ↔ `rogeliofraga-dev`. **Resolver antes de qualquer nova feature.**
 
@@ -114,7 +114,7 @@ public List<TimesheetResponseDto> listarTodos() {
 ---
 
 <a name="2-novos-endpoints-joao"></a>
-## 🟠 2. Novos Endpoints e Serviços
+## 🟠 2. Novos Endpoints e Serviços — [CONCLUÍDO ✅]
 
 ### 2.1 Dashboard Executivo Consolidado — Cross-Project
 
@@ -262,7 +262,7 @@ public ResponseEntity<List<ProdutividadeDevDto>> ranking() {
 ---
 
 <a name="3-multi-tenant-joao"></a>
-## 🟡 3. Estrutura Multi-tenant (Empresa)
+## 🟡 3. Estrutura Multi-tenant (Empresa) — [CONCLUÍDO ✅]
 
 **Motivação:** O roadmap original define que ao se registrar, o primeiro usuário se torna administrador da empresa e os outros devs entram apenas vendo os projetos da sua empresa. Isso exige um conceito de tenant no banco.
 
@@ -379,7 +379,7 @@ public LoginResponseDto registrarNovaEmpresa(RegistroEmpresaRequestDto request) 
 ---
 
 <a name="4-dominio-joao"></a>
-## 🟢 4. Evoluções de Domínio
+## 🟢 4. Evoluções de Domínio — [CONCLUÍDO ✅]
 
 ### 4.1 🔮 Forecast de Esgotamento de Budget
 
