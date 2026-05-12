@@ -22,6 +22,10 @@ public class Cliente {
 
     private String pessoaContato;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
+
     @Embedded
     private Endereco endereco;
 }

@@ -30,6 +30,13 @@ public class Timesheet {
 
     private String descricaoTarefa;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private StatusTimesheet statusAprovacao = StatusTimesheet.PENDENTE;
+
+    @Column(nullable = false)
+    private Boolean billable = true;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "desenvolvedor_id", nullable = false)
     private Desenvolvedor desenvolvedor;

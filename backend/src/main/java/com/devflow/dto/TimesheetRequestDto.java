@@ -26,4 +26,6 @@ public class TimesheetRequestDto {
     private Double horasTrabalhadas;
     
     private Double horasExtras;
+    
+    private Boolean billable = true;
 }

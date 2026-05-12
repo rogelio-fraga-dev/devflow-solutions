@@ -12,7 +12,12 @@ import com.devflow.repository.ProjetoRepository;
 import com.devflow.repository.UsuarioRepository;
 import com.devflow.exception.ResourceNotFoundException;
 
+import com.devflow.dto.ProdutividadeDevDto;
+import com.devflow.model.Senioridade;
+import org.springframework.security.core.context.SecurityContextHolder;
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -128,5 +133,42 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
         }
 
         return response;
+    }
+
+    private Long getEmpresaLogadaId() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+        return usuario.getEmpresa().getId();
+    }
+
+    @Override
+    public List<ProdutividadeDevDto> gerarRankingProdutividade() {
+        Long empresaId = getEmpresaLogadaId();
+        List<Object[]> resultados = desenvolvedorRepository.findProdutividadeRankingByEmpresaId(empresaId);
+
+        return resultados.stream().map(row -> {
+            ProdutividadeDevDto dto = new ProdutividadeDevDto();
+            dto.setDesenvolvedorId(((Number) row[0]).longValue());
+            dto.setNomeDesenvolvedor((String) row[1]);
+            
+            // Tratamento seguro para o Enum Senioridade
+            Object senioridadeObj = row[2];
+            if (senioridadeObj != null) {
+                if (senioridadeObj instanceof Senioridade) {
+                    dto.setSenioridade(((Senioridade) senioridadeObj).name());
+                } else if (senioridadeObj instanceof String) {
+                    dto.setSenioridade((String) senioridadeObj);
+                } else if (senioridadeObj instanceof Integer) { // caso o JPA mapeie Enum como Ordinal
+                    dto.setSenioridade(Senioridade.values()[(Integer) senioridadeObj].name());
+                }
+            }
+            
+            dto.setTotalHorasLancadas(((Number) row[3]).doubleValue());
+            dto.setTotalHorasExtras(((Number) row[4]).doubleValue());
+            dto.setCustoTotalGerado((BigDecimal) row[5]);
+            dto.setTotalSprintsParticipados(((Number) row[6]).longValue());
+            return dto;
+        }).collect(Collectors.toList());
     }
 }
