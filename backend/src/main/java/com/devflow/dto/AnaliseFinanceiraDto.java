@@ -4,6 +4,8 @@ import com.devflow.model.StatusProjeto;
 import lombok.Data;
 import java.math.BigDecimal;
 
+import java.time.LocalDate;
+
 @Data
 public class AnaliseFinanceiraDto {
     private Long projetoId;
@@ -18,4 +20,14 @@ public class AnaliseFinanceiraDto {
     private Double burnRatePercentual;
     private Double margemLucroPercentual;
     private Boolean alertaRiscoImediato;
+
+    // Forecast
+    private LocalDate dataPrevisaoEsgotamento;
+    private Double diasRestantesEstimados;
+    private String mensagemForecast;
+
+    // Billable
+    private Double totalHorasBillable;
+    private Double totalHorasNonBillable;
+    private BigDecimal custoNonBillable;
 }

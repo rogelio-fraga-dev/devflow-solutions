@@ -43,4 +43,10 @@ public class DesenvolvedorController {
         desenvolvedorService.deletarDesenvolvedor(id);
         return ResponseEntity.noContent().build(); // Retorna 204 No Content
     }
+
+    @GetMapping("/produtividade")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','GESTOR')")
+    public ResponseEntity<List<com.devflow.dto.ProdutividadeDevDto>> ranking() {
+        return ResponseEntity.ok(desenvolvedorService.gerarRankingProdutividade());
+    }
 }

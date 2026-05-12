@@ -51,5 +51,19 @@ public class TimesheetController {
         timesheetService.deletarTimesheet(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping("/{id}/aprovar")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','GESTOR')")
+    public ResponseEntity<Void> aprovar(@PathVariable("id") Long id) {
+        timesheetService.aprovarTimesheet(id);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/{id}/rejeitar")
+    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','GESTOR')")
+    public ResponseEntity<Void> rejeitar(@PathVariable("id") Long id) {
+        timesheetService.rejeitarTimesheet(id);
+        return ResponseEntity.ok().build();
+    }
 }
 

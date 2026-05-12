@@ -11,4 +11,6 @@ public interface TimesheetService {
     List<TimesheetResponseDto> buscarTimesheetPorSprint(Long sprintId);
     TimesheetResponseDto atualizarTimesheet(Long id, TimesheetRequestDto request);
     void deletarTimesheet(Long id);
+    void aprovarTimesheet(Long id);
+    void rejeitarTimesheet(Long id);
 }

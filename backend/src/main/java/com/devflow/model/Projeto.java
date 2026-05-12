@@ -40,6 +40,10 @@ public class Projeto {
     @JoinColumn(name = "cliente_id", nullable = true)
     private Cliente cliente;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "empresa_id")
+    private Empresa empresa;
+
     /**
      * Budget Guard Patroll (Sentinela Ativo do Ciclo de Vida Financeiro)
      *

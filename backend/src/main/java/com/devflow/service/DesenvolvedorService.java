@@ -2,6 +2,7 @@ package com.devflow.service;
 
 import com.devflow.dto.DesenvolvedorRequestDto;
 import com.devflow.dto.DesenvolvedorResponseDto;
+import com.devflow.dto.ProdutividadeDevDto;
 import java.util.List;
 
 public interface DesenvolvedorService {
@@ -10,4 +11,5 @@ public interface DesenvolvedorService {
     DesenvolvedorResponseDto buscarDesenvolvedor(Long id);
     DesenvolvedorResponseDto atualizarDesenvolvedor(Long id, DesenvolvedorRequestDto request);
     void deletarDesenvolvedor(Long id);
+    List<ProdutividadeDevDto> gerarRankingProdutividade();
 }

@@ -11,7 +11,7 @@ services:
       MYSQL_USER: devflow_user
       MYSQL_PASSWORD: devflow_senha123
     ports:
-      - "3306:3306"
+      - "3307:3306"
     volumes:
       - devflow_mysqldata:/var/lib/mysql
 

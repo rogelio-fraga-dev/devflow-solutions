@@ -34,6 +34,7 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/api/v1/auth/registrar").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll() // Para criar o primeiro Admin
                         .anyRequest().authenticated()
                 )
