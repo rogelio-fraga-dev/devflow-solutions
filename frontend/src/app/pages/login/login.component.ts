@@ -83,8 +83,7 @@ import { AuthService } from '../../core/services/auth.service';
       </div>
 
       <!-- Right: decorative space theme -->
-      <div class="login-right" style="width: 480px; min-width: 480px; background: linear-gradient(0deg, #F5F4F3 29.83%, #D2C5FF 56.75%, #345C59 76.84%, #000000 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; position: relative; overflow: hidden; color: #fff;">
-        <img src="assets/cloud_203_e5c027668b4b.webp" alt="Cloud" style="position: absolute; width: 150%; opacity: 0.3; top: 0; left: -25%; mix-blend-mode: screen; pointer-events: none;">
+      <div class="login-right" style="width: 480px; min-width: 480px; background: linear-gradient(135deg, #1f1f1f 0%, var(--color_accent_deep_purple) 50%, var(--color_main_bg) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; position: relative; overflow: hidden; color: #fff;">
         
         <div style="position: relative; z-index: 2; text-align: center;">
           <h2 style="font-family: var(--font_display); font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Controle Absoluto.</h2>

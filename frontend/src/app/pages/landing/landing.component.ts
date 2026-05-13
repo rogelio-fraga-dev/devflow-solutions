@@ -7,8 +7,7 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="hero-clone" style="position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(0deg, #F5F4F3 29.83%, #D2C5FF 56.75%, #345C59 76.84%, #000000 100%); overflow: hidden; color: #fff;">
-      <img src="assets/cloud_203_e5c027668b4b.webp" class="hero-img" alt="Cloud Element" style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 80%; max-width: 1000px; opacity: 0.6; z-index: 1; mix-blend-mode: screen;">
+    <div class="hero-clone" style="position: relative; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; background: linear-gradient(135deg, #1f1f1f 0%, var(--color_accent_deep_purple) 50%, var(--color_main_bg) 100%); overflow: hidden; color: #fff;">
       
       <!-- Nav -->
       <nav class="ds-nav" style="position: fixed; top: 0; left: 0; right: 0; height: 80px; background: rgba(0,0,0,0.4); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; padding: 0 40px; border-bottom: 1px solid rgba(255,255,255,0.1);">

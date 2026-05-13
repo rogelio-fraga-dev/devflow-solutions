@@ -163,8 +163,8 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-family: inherit;
-  color: var(--text-primary);
-  background: #fff;
+  color: #ffffff;
+  background: rgba(255,255,255,0.05);
   outline: none;
   transition: border-color .15s, box-shadow .15s;
 
@@ -176,6 +176,7 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
 }
 
 .select { cursor: pointer; appearance: auto; }
+.select option { background: var(--color_main_bg); color: #fff; }
 .textarea { resize: vertical; min-height: 80px; }
 
 .label {
