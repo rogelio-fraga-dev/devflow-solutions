@@ -11,6 +11,10 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
   },
   {
+    path: 'registro',
+    loadComponent: () => import('./pages/registro/registro.component').then(m => m.RegistroComponent)
+  },
+  {
     path: 'app',
     loadComponent: () => import('./pages/app-shell/app-shell.component').then(m => m.AppShellComponent),
     canActivate: [authGuard],
@@ -59,6 +63,14 @@ export const routes: Routes = [
       {
         path: 'custos-cloud',
         loadComponent: () => import('./pages/custos-cloud/custos-cloud.component').then(m => m.CustosCloudComponent)
+      },
+      {
+        path: 'perfil',
+        loadComponent: () => import('./pages/perfil/perfil.component').then(m => m.PerfilComponent)
+      },
+      {
+        path: 'ajuda',
+        loadComponent: () => import('./pages/ajuda/ajuda.component').then(m => m.AjudaComponent)
       }
     ]
   },

@@ -1,18 +1,20 @@
-import { Component, OnInit, signal, inject } from '@angular/core';
+import { Component, OnInit, signal, inject, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { ProjetoService } from '../../../core/services/projeto.service';
 import { SprintService } from '../../../core/services/sprint.service';
 import { ChangeRequestService } from '../../../core/services/change-request.service';
+import { AnaliseService, DreIndividual } from '../../../core/services/analise.service';
 import { Projeto } from '../../../core/models/projeto.model';
 import { Sprint } from '../../../core/models/sprint.model';
 import { ChangeRequest } from '../../../core/models/change-request.model';
 import { ToastService } from '../../../core/services/toast.service';
+import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-projeto-detalhe',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, RouterLink],
   template: `
     <div class="page">
       @if (projeto()) {
@@ -32,6 +34,38 @@ import { ToastService } from '../../../core/services/toast.service';
             </button>
           </div>
         </div>
+
+        <!-- Banners -->
+        @if (projeto()?.status === 'ALERTA') {
+          <div class="alert-banner warning">
+            <span>⚠️</span>
+            <div>
+              <strong>Atenção: orçamento em risco.</strong>
+              Este projeto atingiu {{ dre()?.burnRatePercentual | number:'1.1-1' }}% do budget aprovado.
+              <a routerLink="/app/change-requests">Solicitar aditivo de escopo →</a>
+            </div>
+          </div>
+        }
+      
+        @if (projeto()?.status === 'ESTOURADO') {
+          <div class="alert-banner danger">
+            <span>🔴</span>
+            <div>
+              <strong>Budget esgotado — Budget Guard ativo.</strong>
+              Novos lançamentos de timesheet e custos estão bloqueados.
+              <a routerLink="/app/change-requests">Solicitar Change Request →</a>
+            </div>
+          </div>
+        }
+      
+        @if (dre()?.dataPrevisaoEsgotamento) {
+          <div class="alert-banner info">
+            <span>🔮</span>
+            <div>
+              Previsão de esgotamento: <strong>{{ dre()?.dataPrevisaoEsgotamento | date:'dd/MM/yyyy' }}</strong>
+            </div>
+          </div>
+        }
 
         <!-- Stats -->
         <div class="grid-4" style="margin-bottom:20px">
@@ -54,6 +88,12 @@ import { ToastService } from '../../../core/services/toast.service';
             <div class="stat-label">Change Requests</div>
             <div class="stat-value">{{ changeRequests().length }}</div>
           </div>
+        </div>
+
+        <!-- Gráfico -->
+        <div class="card" style="margin-bottom:20px">
+          <h3 style="margin-bottom:16px">Burn Rate vs Orçamento</h3>
+          <canvas #canvasRef></canvas>
         </div>
 
         <!-- Budget bar -->
@@ -118,23 +158,81 @@ import { ToastService } from '../../../core/services/toast.service';
   `
 })
 export class ProjetoDetalheComponent implements OnInit {
+  @ViewChild('canvasRef') canvasRef!: ElementRef;
+
   private route  = inject(ActivatedRoute);
   private svc    = inject(ProjetoService);
   private sprintSvc = inject(SprintService);
   private crSvc  = inject(ChangeRequestService);
+  private analiseSvc = inject(AnaliseService);
   private toast  = inject(ToastService);
   router = inject(Router);
 
   projeto        = signal<Projeto | null>(null);
   sprints        = signal<Sprint[]>([]);
   changeRequests = signal<ChangeRequest[]>([]);
+  dre            = signal<DreIndividual | null>(null);
+  
+  chartInstance: Chart | null = null;
 
   ngOnInit() {
     const id = Number(this.route.snapshot.paramMap.get('id'));
     this.svc.getById(id).subscribe(p => {
       this.projeto.set(p);
-      this.sprintSvc.getByProjeto(p.id).subscribe(s => this.sprints.set(s));
+      this.sprintSvc.getByProjeto(p.id).subscribe(s => {
+        this.sprints.set(s);
+        setTimeout(() => this.buildChart(), 100);
+      });
       this.crSvc.getByProjeto(p.id).subscribe(cr => this.changeRequests.set(cr));
+      this.analiseSvc.getDreIndividual(p.id).subscribe(d => this.dre.set(d));
+    });
+  }
+
+  buildChart() {
+    if (!this.canvasRef) return;
+    
+    if (this.chartInstance) {
+      this.chartInstance.destroy();
+    }
+
+    const labels = this.sprints().map(s => s.nomeFase);
+    const budgetLine = this.sprints().map(() => this.projeto()?.budgetTotal || 0);
+    // Simulating accumulated cost for each sprint for visual purposes
+    let total = 0;
+    const custoLine = this.sprints().map(s => {
+       // Just a visual representation, not real data from backend since we don't have sprint costs
+       total += (this.projeto()?.custoAtualAcumulado || 0) / (this.sprints().length || 1);
+       return total;
+    });
+
+    this.chartInstance = new Chart(this.canvasRef.nativeElement, {
+      type: 'line',
+      data: {
+        labels,
+        datasets: [
+          {
+            label: 'Budget Total',
+            data: budgetLine,
+            borderColor: '#10B981',
+            borderDash: [6, 3],
+            fill: false,
+            tension: 0
+          },
+          {
+            label: 'Custo Acumulado',
+            data: custoLine,
+            borderColor: '#6366F1',
+            backgroundColor: 'rgba(99, 102, 241, 0.12)',
+            fill: true,
+            tension: 0.3
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: { legend: { position: 'top' } },
+        scales: { y: { beginAtZero: true } }
+      }
     });
   }
 

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../environments/environment';
 import { Timesheet, TimesheetRequest } from '../models/timesheet.model';
+import { Observable } from 'rxjs';
 
 @Injectable({ providedIn: 'root' })
 export class TimesheetService {
@@ -9,6 +10,7 @@ export class TimesheetService {
 
   constructor(private http: HttpClient) {}
 
+  getAll(): Observable<Timesheet[]> { return this.http.get<Timesheet[]>(this.url); }
   getByDesenvolvedor(desenvolvedorId: number) { return this.http.get<Timesheet[]>(`${this.url}/desenvolvedor/${desenvolvedorId}`); }
   getBySprint(sprintId: number) { return this.http.get<Timesheet[]>(`${this.url}/sprint/${sprintId}`); }
   create(data: TimesheetRequest) { return this.http.post<Timesheet>(this.url, data); }

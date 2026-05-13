@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { Desenvolvedor, DesenvolvedorRequest } from '../models/desenvolvedor.model';
 
@@ -14,4 +15,6 @@ export class DesenvolvedorService {
   create(data: DesenvolvedorRequest) { return this.http.post<Desenvolvedor>(this.url, data); }
   update(id: number, data: DesenvolvedorRequest) { return this.http.put<Desenvolvedor>(`${this.url}/${id}`, data); }
   delete(id: number) { return this.http.delete<void>(`${this.url}/${id}`); }
+
+  getProdutividade(): Observable<any[]> { return this.http.get<any[]>(`${this.url}/produtividade`); }
 }
