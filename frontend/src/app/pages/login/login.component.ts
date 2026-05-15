@@ -83,24 +83,23 @@ import { AuthService } from '../../core/services/auth.service';
       </div>
 
       <!-- Right: decorative space theme -->
-      <div class="login-right" style="width: 480px; min-width: 480px; background: linear-gradient(135deg, #1f1f1f 0%, var(--color_accent_deep_purple) 50%, var(--color_main_bg) 100%); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; position: relative; overflow: hidden; color: #fff;">
-        
+      <div class="login-right">
         <div style="position: relative; z-index: 2; text-align: center;">
           <h2 style="font-family: var(--font_display); font-size: 36px; margin-bottom: 16px; line-height: 1.1;">Controle Absoluto.</h2>
           <p style="font-family: var(--font_text); font-size: 16px; color: rgba(255,255,255,0.8); line-height: 1.6; margin-bottom: 40px;">Seu budget em tempo real. Sem surpresas no fim do mês.</p>
           
-          <div class="right-stats" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; width: 100%;">
+          <div class="right-stats" style="grid-template-columns: repeat(2, 1fr);">
             @for (s of stats; track s.label) {
-              <div class="card stat" style="text-align: center; padding: 20px; background: rgba(255,255,255,.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 16px; backdrop-filter: blur(10px);">
+              <div class="stat">
                 <div class="stat-val" style="font-size: 24px; font-family: var(--font_display); margin-bottom: 4px;">{{ s.value }}</div>
-                <div class="stat-lbl" style="font-size: 12px; color: rgba(255,255,255,.6); text-transform: uppercase; letter-spacing: 0.05em;">{{ s.label }}</div>
+                <div class="stat-lbl">{{ s.label }}</div>
               </div>
             }
           </div>
 
           <div style="margin-top: 48px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
             @for (b of badges; track b) {
-              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.7); background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.05);">
+              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.7); background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.08);">
                 <span>{{ b }}</span>
               </div>
             }

@@ -110,10 +110,30 @@ import { extractErrorMessage } from '../../core/utils/error.util';
       </div>
       
       <!-- Right Side Banner -->
-      <div class="login-right" style="flex: 1; min-width: 480px; background: linear-gradient(135deg, #1f1f1f 0%, var(--color_accent_deep_purple) 50%, var(--color_main_bg) 100%); display: none; flex-direction: column; align-items: center; justify-content: center; padding: 48px; position: relative; overflow: hidden; color: #fff;">
+      <div class="login-right" style="flex: 1; min-width: 480px; display: none;">
         <div style="max-width: 400px; text-align: center; position: relative; z-index: 2;">
           <h2 style="font-family: var(--font_display); font-size: 32px; font-weight: 800; margin-bottom: 16px; line-height: 1.1;">Proteja a margem de lucro dos seus projetos.</h2>
-          <p style="font-family: var(--font_text); font-size: 16px; opacity: 0.8; line-height: 1.6;">O DevFlow Solutions permite acompanhar em tempo real as despesas de equipe, infraestrutura em nuvem e o burn rate geral.</p>
+          <p style="font-family: var(--font_text); font-size: 16px; opacity: 0.8; line-height: 1.6; margin-bottom: 40px;">O DevFlow Solutions permite acompanhar em tempo real as despesas de equipe, infraestrutura em nuvem e o burn rate geral.</p>
+          
+          <div class="right-stats" style="grid-template-columns: repeat(2, 1fr);">
+            <div class="stat">
+              <div class="stat-val" style="font-size: 22px; font-family: var(--font_display); margin-bottom: 4px;">B2B</div>
+              <div class="stat-lbl">Plataforma</div>
+            </div>
+            <div class="stat">
+              <div class="stat-val" style="font-size: 22px; font-family: var(--font_display); margin-bottom: 4px;">100%</div>
+              <div class="stat-lbl">Controle</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.7); background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.08);">
+              <span>🔒 Dados criptografados</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.7); background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.08);">
+              <span>✅ Setup em minutos</span>
+            </div>
+          </div>
         </div>
       </div>
       <style>
