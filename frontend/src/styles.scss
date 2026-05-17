@@ -971,81 +971,124 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
 }
 
 .login-right {
-  width: 420px;
-  min-width: 420px;
-  background: linear-gradient(160deg, #4F46E5 0%, #7C3AED 50%, #1E1B4B 100%);
+  width: 480px;
+  min-width: 480px;
+  position: relative;
+  overflow: hidden;
+  color: #fff;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 48px;
-  position: relative;
-  overflow: hidden;
-  color: #fff;
+
+  /* Aurora background */
+  background: #000;
 
   &::before {
     content: '';
-    position: absolute;
-    inset: 0;
+    position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse at 30% 20%, rgba(99,102,241,0.3) 0%, transparent 60%),
-      radial-gradient(ellipse at 70% 80%, rgba(124,58,237,0.25) 0%, transparent 50%);
+      radial-gradient(ellipse at 20% 20%, rgba(79,70,229,0.6) 0%, transparent 55%),
+      radial-gradient(ellipse at 80% 80%, rgba(124,58,237,0.5) 0%, transparent 50%),
+      radial-gradient(ellipse at 60% 10%, rgba(49,46,129,0.4) 0%, transparent 45%);
+    animation: login-aurora 12s ease-in-out infinite alternate;
     pointer-events: none;
+    z-index: 0;
   }
 
   &::after {
     content: '';
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.04) 0%, transparent 70%);
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
     pointer-events: none;
+    z-index: 1;
   }
 
   .right-logo-mark {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
-    background: rgba(255,255,255,.15);
+    width: 56px; height: 56px; border-radius: 16px;
+    background: rgba(255,255,255,.12);
     backdrop-filter: blur(8px);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 800;
-    font-size: 22px;
+    border: 1px solid rgba(255,255,255,0.15);
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; font-size: 22px;
     margin-bottom: 20px;
-    position: relative;
-    z-index: 2;
+    position: relative; z-index: 2;
   }
 
-  h2 { font-size: 24px; font-weight: 800; margin-bottom: 10px; text-align: center; position: relative; z-index: 2; }
-  p  { font-size: 14px; color: rgba(255,255,255,.65); text-align: center; line-height: 1.6; margin-bottom: 32px; position: relative; z-index: 2; }
+  h2 {
+    font-size: 32px; font-weight: 800;
+    margin-bottom: 12px; text-align: center;
+    position: relative; z-index: 2;
+    background: linear-gradient(to bottom, #fff, rgba(255,255,255,0.8));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    letter-spacing: -0.02em;
+  }
+  p {
+    font-size: 15px; color: rgba(255,255,255,.6);
+    text-align: center; line-height: 1.6;
+    margin-bottom: 40px;
+    position: relative; z-index: 2;
+  }
 
   .right-stats {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(2, 1fr);
     gap: 12px;
     width: 100%;
-    position: relative;
-    z-index: 2;
+    position: relative; z-index: 2;
 
     .stat {
       text-align: center;
-      padding: 14px;
-      background: rgba(255,255,255,.08);
+      padding: 16px;
+      background: rgba(255,255,255,.05);
       border: 1px solid rgba(255,255,255,0.1);
       border-radius: 12px;
-      backdrop-filter: blur(8px);
-      transition: background 0.3s ease, transform 0.3s ease;
+      backdrop-filter: blur(12px);
+      transition: background 0.3s, transform 0.3s, box-shadow 0.3s;
 
       &:hover {
-        background: rgba(255,255,255,.14);
-        transform: translateY(-2px);
+        background: rgba(255,255,255,.1);
+        transform: translateY(-3px);
+        box-shadow: 0 8px 32px rgba(79,70,229,0.2);
       }
 
-      .stat-val { font-size: 20px; font-weight: 800; }
-      .stat-lbl { font-size: 10px; color: rgba(255,255,255,.6); margin-top: 2px; text-transform: uppercase; letter-spacing: 0.05em; }
+      .stat-val { font-size: 22px; font-weight: 800; color: #fff; }
+      .stat-lbl { font-size: 10px; color: rgba(255,255,255,.5); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.08em; }
     }
   }
+
+  .right-badges {
+    display: flex; flex-direction: column;
+    gap: 10px; align-items: center;
+    margin-top: 32px;
+    position: relative; z-index: 2;
+
+    .right-badge {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: rgba(255,255,255,.7);
+      background: rgba(255,255,255,0.06);
+      padding: 8px 18px; border-radius: 100px;
+      border: 1px solid rgba(255,255,255,0.1);
+      backdrop-filter: blur(8px);
+      transition: background 0.3s, border-color 0.3s;
+
+      &:hover {
+        background: rgba(255,255,255,0.1);
+        border-color: rgba(255,255,255,0.2);
+      }
+    }
+  }
+}
+
+@keyframes login-aurora {
+  0%   { opacity: 1; }
+  50%  { opacity: 0.7; filter: hue-rotate(15deg); }
+  100% { opacity: 1; }
 }
 
 .login-field {

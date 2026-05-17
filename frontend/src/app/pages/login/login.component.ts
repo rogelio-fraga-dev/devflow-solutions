@@ -11,7 +11,7 @@ import { AuthService } from '../../core/services/auth.service';
   template: `
     <div class="login-page" style="display: flex; height: 100vh; overflow: hidden; background-color: var(--color_main_bg);">
       <!-- Left: form -->
-      <div class="login-left" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; background: var(--color_main_bg); position: relative;">
+      <div class="login-left" style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 48px; background: #000; position: relative;">
         <button class="back-btn" routerLink="/" style="position: absolute; top: 24px; left: 24px; display: flex; align-items: center; gap: 6px; font-size: 13px; color: var(--text-secondary); background: transparent; border: none; cursor: pointer; font-family: inherit;">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
             <polyline points="15 18 9 12 15 6"/>
@@ -19,7 +19,7 @@ import { AuthService } from '../../core/services/auth.service';
           Voltar ao início
         </button>
 
-        <div class="login-form-container card" style="width: 100%; max-width: 400px; padding: 40px;">
+        <div class="login-form-container card" style="width: 100%; max-width: 400px; padding: 40px; border-color: rgba(79,70,229,0.3); box-shadow: 0 0 60px -20px rgba(79,70,229,0.3), inset 0 1px 0 rgba(255,255,255,0.06);">
           <div style="margin-bottom:32px">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
               <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--color_accent_deep_purple),var(--color_accent_purple));display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-size:14px">D</div>
@@ -76,7 +76,7 @@ import { AuthService } from '../../core/services/auth.service';
             <a href="#" style="color:var(--color_accent_purple);text-decoration:none; font-weight: 600;">Esqueceu a senha?</a>
           </div>
 
-          <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 14px;" [disabled]="loading()" (click)="submit()">
+          <button class="btn btn-primary" style="width: 100%; justify-content: center; padding: 15px; font-size: 15px; background: linear-gradient(135deg, #4F46E5, #7C3AED); box-shadow: 0 4px 24px rgba(79,70,229,0.4); letter-spacing: 0.01em;" [disabled]="loading()" (click)="submit()">
             {{ loading() ? 'Autenticando...' : 'Entrar no Sistema' }}
           </button>
         </div>
@@ -97,11 +97,9 @@ import { AuthService } from '../../core/services/auth.service';
             }
           </div>
 
-          <div style="margin-top: 48px; display: flex; flex-direction: column; gap: 12px; align-items: center;">
+          <div class="right-badges">
             @for (b of badges; track b) {
-              <div style="display:flex;align-items:center;gap:8px;font-size:13px;color:rgba(255,255,255,.7); background: rgba(0,0,0,0.2); padding: 8px 16px; border-radius: 100px; border: 1px solid rgba(255,255,255,0.08);">
-                <span>{{ b }}</span>
-              </div>
+              <div class="right-badge"><span>{{ b }}</span></div>
             }
           </div>
         </div>
