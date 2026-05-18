@@ -46,7 +46,10 @@ export class AuthService {
   private decodeToken(token: string): CurrentUser | null {
     try {
       const decoded: any = jwtDecode(token);
-      return { email: decoded.sub, role: decoded.role };
+      return {
+        email: decoded.sub,
+        role: decoded.role ?? 'DESENVOLVEDOR' // fallback seguro enquanto o backend não é corrigido
+      };
     } catch {
       return null;
     }

@@ -2,6 +2,7 @@ import { Component, input, output, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 export interface NavItem {
   label: string;
@@ -68,6 +69,7 @@ export interface NavItem {
 })
 export class SidebarComponent {
   auth = inject(AuthService);
+  sanitizer = inject(DomSanitizer);
 
   collapsed = input(false);
   navItems  = input<NavItem[]>([]);
@@ -80,7 +82,7 @@ export class SidebarComponent {
     return name.slice(0, 2).toUpperCase();
   }
 
-  getIcon(name: string): string {
+  getIcon(name: string): SafeHtml {
     const icons: Record<string, string> = {
       folder: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>`,
       zap:    `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>`,
@@ -93,6 +95,6 @@ export class SidebarComponent {
       cpu:    `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="14" x2="23" y2="14"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="14" x2="4" y2="14"/></svg>`,
       cloud:  `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>`,
     };
-    return icons[name] || icons['folder'];
+    return this.sanitizer.bypassSecurityTrustHtml(icons[name] || icons['folder']);
   }
 }

@@ -205,12 +205,9 @@ export class TimesheetComponent implements OnInit {
     } else {
       const devIds = this.devs().map(d => d.id);
       if (!devIds.length) { this.timesheets.set([]); return; }
-      Promise.all(devIds.map(id => this.svc.getByDesenvolvedor(id).toPromise()))
-        .then(results => {
-          const all = (results.flat() as Timesheet[]).filter(Boolean);
-          const uniq = Array.from(new Map(all.map(t => [t.id, t])).values());
-          this.timesheets.set(uniq);
-        });
+      this.svc.getAll().subscribe(timesheets => {
+        this.timesheets.set(timesheets);
+      });
     }
   }
 
