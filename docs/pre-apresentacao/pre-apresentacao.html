@@ -384,6 +384,69 @@
                 box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
             }
         }
+
+        /* --- ESTILOS DE IMPRESSÃO (CTRL + P -> PDF EM MODO PAISAGEM) --- */
+        @media print {
+            @page {
+                size: landscape;
+                margin: 0;
+            }
+
+            body, html {
+                overflow: visible !important;
+                height: auto !important;
+                width: auto !important;
+                background-color: #06040f !important; /* Preserva o fundo escuro autoral */
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .presentation-container {
+                width: 100vw !important;
+                height: auto !important;
+                padding: 0 !important;
+                display: block !important;
+            }
+
+            /* Torna todos os slides visíveis no print e adiciona quebra de página */
+            .slide {
+                display: flex !important;
+                opacity: 1 !important;
+                visibility: visible !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                height: 100vh !important;
+                width: 100vw !important;
+                padding: 40px 80px 80px 80px !important;
+                box-sizing: border-box !important;
+                justify-content: flex-start !important;
+                align-items: stretch !important;
+            }
+
+            /* Centralização para slides de capa e agradecimento */
+            #slide-1, #slide-9 {
+                justify-content: center !important;
+                align-items: center !important;
+            }
+
+            /* Ocultar elementos interativos e de navegação */
+            .controls-overlay,
+            .keyboard-tip,
+            .nav-btn,
+            .progress-indicator,
+            .page-num {
+                display: none !important;
+            }
+
+            /* Ajustes finos para mockups e imagens no PDF */
+            .system-window {
+                max-height: 420px !important;
+            }
+
+            .glass-panel {
+                page-break-inside: avoid !important;
+            }
+        }
     </style>
 </head>
 
@@ -686,17 +749,17 @@
             </div>
         </div>
 
-        <!-- ================= SLIDE 7: GESTÃO DE EQUIPES E SENIORIDADE (print5.png) ================= -->
+        <!-- ================= SLIDE 7: GESTÃO DE DESENVOLVEDORES E SENIORIDADE (print5.png) ================= -->
         <div class="slide" id="slide-7">
-            <h2 class="slide-header">06. Recursos & Custos Operacionais <span>Painel de Equipes</span></h2>
+            <h2 class="slide-header">06. Gestão de Desenvolvedores <span>Custos e Senioridades</span></h2>
             <div class="grid-2">
                 <div class="grid-left">
                     <div class="glass-panel">
                         <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
-                            <i class="fa-solid fa-users-gear" style="margin-right: 8px;"></i>Pool de Profissionais e Custos
+                            <i class="fa-solid fa-user-gear" style="margin-right: 8px;"></i>Gestão de Desenvolvedores e Senioridades
                         </h3>
                         <p style="font-size: 14px; margin-bottom: 15px;">
-                            Para que os apontamentos de esforço e o cálculo de DRE funcionem com precisão, o sistema conta com uma aba central de cadastro de equipes e recursos de desenvolvimento.
+                            Para que os apontamentos de esforço e o cálculo de DRE funcionem com precisão, o sistema conta com uma aba central de cadastro de desenvolvedores e parametrização de custos operacionais.
                         </p>
                         <ul class="highlight-list">
                             <li class="highlight-item">
@@ -778,74 +841,18 @@
             </div>
         </div>
 
-        <!-- ================= SLIDE 9: ARQUITETURA E ROADMAP (STATUS DE ANDAMENTO 80%) ================= -->
-        <div class="slide" id="slide-9">
-            <h2 class="slide-header">08. Considerações Finais & Andamento <span>Status do Projeto</span></h2>
-            <div style="display: flex; flex-direction: column; gap: 25px; flex-grow: 1; justify-content: center; height: calc(100% - 60px);">
-                
-                <!-- Purple Progress Bar representing 80% completion -->
-                <div class="glass-panel" style="background: rgba(79, 70, 229, 0.03); border-color: rgba(79, 70, 229, 0.2); padding: 25px;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                        <span style="color: #fff; font-weight: 700; font-size: 18px; font-family: 'Outfit', sans-serif;">Progresso Atual do MVP</span>
-                        <span style="color: var(--accent-purple); font-weight: 800; font-family: monospace; font-size: 24px; text-shadow: 0 0 10px rgba(139, 92, 246, 0.4);">80% CONCLUÍDO</span>
-                    </div>
-                    <div class="progress-track" style="height: 14px; background: rgba(255,255,255,0.05); border-radius: 10px; overflow: hidden; border: 1px solid var(--border-glass);">
-                        <div class="progress-fill" style="width: 80%; height: 100%; background: linear-gradient(90deg, var(--accent-purple-deep), var(--accent-purple)); border-radius: 10px; box-shadow: 0 0 15px rgba(139, 92, 246, 0.6);"></div>
-                    </div>
+        <!-- ================= SLIDE 9: TELA DE OBRIGADO ================= -->
+        <div class="slide" id="slide-9" style="justify-content: center; align-items: center; height: 100%; text-align: center;">
+            <div class="glass-panel" style="max-width: 600px; padding: 50px; display: flex; flex-direction: column; align-items: center; gap: 20px; border-color: rgba(79, 70, 229, 0.2); box-shadow: 0 15px 35px -5px rgba(79, 70, 229, 0.15); margin: auto;">
+                <div style="width: 80px; height: 80px; border-radius: 50%; background: rgba(210, 197, 255, 0.1); display: flex; justify-content: center; align-items: center; border: 1px solid var(--accent-purple); margin-bottom: 10px; box-shadow: 0 0 20px rgba(210, 197, 255, 0.2);">
+                    <i class="fa-solid fa-circle-check" style="font-size: 40px; color: var(--accent-purple);"></i>
                 </div>
-
-                <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px;">
-                    <!-- O que já está feito -->
-                    <div class="glass-panel">
-                        <h3 style="color: var(--accent-green); font-size: 16px; font-weight: 600; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px;">
-                            <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i>Frentes Finalizadas (80%)
-                        </h3>
-                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-circle-check" style="color: var(--accent-green);"></i>
-                                <span style="color: #fff;">Motor Financeiro DRE e KPIs Calculados</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-circle-check" style="color: var(--accent-green);"></i>
-                                <span style="color: #fff;">Mecanismo de Travas Budget Guard no Banco</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-circle-check" style="color: var(--accent-green);"></i>
-                                <span style="color: #fff;">Gerenciamento de Estados Granular com Signals</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-circle-check" style="color: var(--accent-green);"></i>
-                                <span style="color: #fff;">Segurança de Acesso Stateless Baseada em JWT</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-circle-check" style="color: var(--accent-green);"></i>
-                                <span style="color: #fff;">Massa de Dados de Teste Populada (Seeds)</span>
-                            </li>
-                        </ul>
-                    </div>
-
-                    <!-- Frentes Pendentes / Em andamento -->
-                    <div class="glass-panel">
-                        <h3 style="color: var(--status-warning); font-size: 16px; font-weight: 600; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid var(--border-glass); padding-bottom: 8px;">
-                            <i class="fa-solid fa-hourglass-half" style="margin-right: 8px;"></i>Próximas Etapas (20%)
-                        </h3>
-                        <ul style="list-style: none; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-clock" style="color: var(--status-warning);"></i>
-                                <span style="color: #fff;">Upload e Configuração de Infraestrutura na Nuvem AWS</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-clock" style="color: var(--status-warning);"></i>
-                                <span style="color: #fff;">Correções e Polimentos de Pequenos Bugs no Frontend</span>
-                            </li>
-                            <li style="display: flex; align-items: center; gap: 10px;">
-                                <i class="fa-regular fa-clock" style="color: var(--status-warning);"></i>
-                                <span style="color: #fff;">Refinamentos de Validação e Updates nas APIs Backend</span>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-
+                <h1 style="font-size: 54px; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -1px; margin: 0; background: linear-gradient(135deg, #fff 30%, var(--accent-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">
+                    Muito Obrigado!
+                </h1>
+                <p style="font-size: 16px; color: var(--text-muted); line-height: 1.6; max-width: 450px;">
+                    DevFlow Solutions — Simplificando a gestão de escopo e o controle de viabilidade financeira em tempo real.
+                </p>
             </div>
         </div>
 
