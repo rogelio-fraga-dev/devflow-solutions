@@ -15,15 +15,22 @@ import { extractErrorMessage } from '../../core/utils/error.util';
   imports: [CommonModule, FormsModule, ConfirmModalComponent],
   template: `
     <div class="page">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Custos Cloud</h1>
-          <p class="page-subtitle">Infraestrutura em nuvem por projeto e mês</p>
+      <div class="page-header" style="align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px;">
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(79,70,229,0.4);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          </div>
+          <div>
+            <h1 class="page-title" style="margin:0;font-size:32px;letter-spacing:-1px;">Custos Cloud</h1>
+            <p class="page-subtitle" style="font-size:15px;margin:0">Infraestrutura em nuvem por projeto e mês</p>
+          </div>
         </div>
-        <button class="btn btn-primary" (click)="openDrawer(null)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Registrar Custo
-        </button>
+        <div style="display:flex;gap:12px;">
+          <button class="btn btn-primary" style="padding:10px 20px" (click)="openDrawer(null)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Registrar Custo
+          </button>
+        </div>
       </div>
 
       <!-- Stats -->
@@ -63,6 +70,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
         <table class="table">
           <thead>
             <tr>
+              <th style="width: 40px; text-align: center;"></th>
               <th>Projeto</th>
               <th>Provedor</th>
               <th>Mês de Referência</th>
@@ -72,7 +80,13 @@ import { extractErrorMessage } from '../../core/utils/error.util';
           </thead>
           <tbody>
             @for (c of filtered(); track c.id) {
-              <tr>
+              <tr style="cursor: pointer;" (click)="toggleCloudDetail(c.id)">
+                <td style="width: 40px; text-align: center; vertical-align: middle;">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                       [style.transform]="expandedCloudId() === c.id ? 'rotate(180deg)' : 'none'" style="transition: transform 0.2s; color: var(--purple-dark);">
+                    <polyline points="6 9 12 15 18 9"></polyline>
+                  </svg>
+                </td>
                 <td style="font-weight:600">{{ projetoNome(c.projetoId) }}</td>
                 <td>
                   <span style="padding:3px 10px;border-radius:20px;font-size:12px;font-weight:700;background:{{ provColor(c.provedor) }}20;color:{{ provColor(c.provedor) }}">{{ c.provedor }}</span>
@@ -80,7 +94,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                 <td style="color:var(--text-muted)">{{ c.mesReferencia }}</td>
                 <td style="text-align:right;font-weight:700;color:#0EA5E9">{{ c.valorFatura | currency:'BRL':'symbol':'1.2-2' }}</td>
                 <td>
-                  <div style="display:flex;gap:6px;justify-content:flex-end">
+                  <div style="display:flex;gap:6px;justify-content:flex-end" (click)="$event.stopPropagation()">
                     <button class="btn btn-ghost" style="padding:6px 10px" (click)="openDrawer(c)">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
                     </button>
@@ -90,41 +104,80 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                   </div>
                 </td>
               </tr>
+              @if (expandedCloudId() === c.id) {
+                <tr style="background: rgba(139, 92, 246, 0.03);">
+                  <td colspan="6" style="padding: 16px 24px; border-bottom: 1px solid rgba(139, 92, 246, 0.15);">
+                    <div style="display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--purple); padding-left: 16px;">
+                      <div>
+                        <strong style="color: #fff; font-size: 13px;">Detalhes do Custo de Nuvem:</strong>
+                        <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">Fatura referente ao serviço de infraestrutura e hospedagem em nuvem.</span>
+                      </div>
+                      <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 4px;">
+                        <div>
+                          <strong style="color: #fff; font-size: 13px;">Provedor de Nuvem:</strong>
+                          <span class="chip" style="margin-left: 8px; font-weight:700; background:{{ provColor(c.provedor) }}20; color:{{ provColor(c.provedor) }}">{{ c.provedor }}</span>
+                        </div>
+                        <div>
+                          <strong style="color: #fff; font-size: 13px;">Mês Competência:</strong>
+                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ c.mesReferencia }}</span>
+                        </div>
+                        <div>
+                          <strong style="color: #fff; font-size: 13px;">Valor da Fatura:</strong>
+                          <span style="color: #0EA5E9; margin-left: 8px; font-weight:700; font-size: 13px;">{{ c.valorFatura | currency:'BRL':'symbol':'1.2-2' }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              }
             }
             @empty {
-              <tr><td colspan="5"><div class="empty-state"><p>Nenhum custo cloud encontrado</p></div></td></tr>
+              <tr><td colspan="6"><div class="empty-state"><p>Nenhum custo cloud encontrado</p></div></td></tr>
             }
           </tbody>
         </table>
       </div>
     </div>
 
+    <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
-      <div class="drawer-overlay" (click)="drawerOpen.set(false)"></div>
-      <div class="drawer">
-        <div class="drawer-header">
-          <h3>{{ editingId() ? 'Editar Custo Cloud' : 'Registrar Custo Cloud' }}</h3>
-          <button class="btn btn-ghost" style="padding:6px" (click)="drawerOpen.set(false)">✕</button>
-        </div>
-        <div class="drawer-body">
-          <div class="form-group">
-            <label class="label">Projeto *</label>
-            <select class="select" [(ngModel)]="form.projetoId">
-              <option [ngValue]="0">Selecione...</option>
-              @for (p of projetos(); track p.id) { <option [ngValue]="p.id">{{ p.nome }}</option> }
-            </select>
+      <div class="modal-overlay" (click)="drawerOpen.set(false)">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Custo Cloud' : 'Registrar Custo Cloud' }}</h3>
+            <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
-          <div class="form-group">
-            <label class="label">Provedor</label>
-            <select class="select" [(ngModel)]="form.provedor">
-              @for (p of provedores; track p) { <option [value]="p">{{ p }}</option> }
-            </select>
+          
+          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
+            <div class="form-group">
+              <label class="label">Projeto *</label>
+              <select class="select" [(ngModel)]="form.projetoId">
+                <option [ngValue]="0">Selecione...</option>
+                @for (p of projetos(); track p.id) { <option [ngValue]="p.id">{{ p.nome }}</option> }
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="label">Provedor *</label>
+              <select class="select" [(ngModel)]="form.provedor">
+                @for (p of provedores; track p) { <option [value]="p">{{ p }}</option> }
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="label">Mês de Referência *</label>
+              <input class="input" type="month" [(ngModel)]="form.mesReferencia" />
+            </div>
+            
+            <div class="form-group">
+              <label class="label">Valor da Fatura (R$) *</label>
+              <input class="input" type="number" step="0.01" placeholder="0.00" [(ngModel)]="form.valorFatura" />
+            </div>
           </div>
-          <div class="form-group"><label class="label">Mês de Referência *</label><input class="input" type="month" [(ngModel)]="form.mesReferencia" /></div>
-          <div class="form-group"><label class="label">Valor da Fatura (R$) *</label><input class="input" type="number" step="0.01" placeholder="0.00" [(ngModel)]="form.valorFatura" /></div>
-          <div style="display:flex;gap:10px;margin-top:8px">
-            <button class="btn btn-ghost" style="flex:1" (click)="drawerOpen.set(false)">Cancelar</button>
-            <button class="btn btn-primary" style="flex:1" [disabled]="saving()" (click)="save()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
+          
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button class="btn btn-ghost" style="padding: 10px 20px;" (click)="drawerOpen.set(false)">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 10px 24px;" [disabled]="saving()" (click)="save()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
           </div>
         </div>
       </div>
@@ -148,6 +201,16 @@ export class CustosCloudComponent implements OnInit {
   filterProvedor = '';
   provedores: ProvedorCloud[] = ['AWS','AZURE','GCP','ORACLE','DIGITALOCEAN'];
   form: CustoCloudRequest = { provedor: 'AWS', valorFatura: 0, mesReferencia: '', projetoId: 0 };
+
+  expandedCloudId = signal<number | null>(null);
+
+  toggleCloudDetail(id: number) {
+    if (this.expandedCloudId() === id) {
+      this.expandedCloudId.set(null);
+    } else {
+      this.expandedCloudId.set(id);
+    }
+  }
 
   ngOnInit() {
     this.projSvc.getAll().subscribe(p => this.projetos.set(p));

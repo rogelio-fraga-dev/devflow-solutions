@@ -1,4 +1,4 @@
-export type Senioridade = 'ESTAGIARIO' | 'JUNIOR' | 'PLENO' | 'SENIOR' | 'ESPECIALISTA';
+export type Senioridade = 'JUNIOR' | 'PLENO' | 'SENIOR' | 'GESTOR_TECH_LEAD';
 
 export interface Desenvolvedor {
   id: number;
@@ -7,7 +7,6 @@ export interface Desenvolvedor {
   valorHoraCusto: number;
   valorHoraExtra: number;
   usuarioId?: number;
-  projetoId?: number;
 }
 
 export interface DesenvolvedorRequest {
@@ -16,5 +15,4 @@ export interface DesenvolvedorRequest {
   valorHoraCusto: number;
   valorHoraExtra: number;
   usuarioId?: number;
-  projetoId?: number;
 }

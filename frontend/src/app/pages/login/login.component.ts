@@ -133,7 +133,7 @@ export class LoginComponent {
     this.loading.set(true);
     this.error.set('');
     this.auth.login({ email: this.email, senha: this.password }).subscribe({
-      next: () => this.router.navigate(['/app/projetos']),
+      next: () => this.router.navigate(['/app/dashboard']),
       error: () => {
         this.error.set('Credenciais inválidas. Verifique os dados e tente novamente.');
         this.loading.set(false);

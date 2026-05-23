@@ -18,6 +18,9 @@ export interface Sprint {
   status: StatusSprint;
   dataInicio: string;
   dataFim: string;
+  objetivo?: string;
+  observacoes?: string;
+  horasEstimadas?: number;
   projetoId: number;
 }
 
@@ -26,5 +29,8 @@ export interface SprintRequest {
   status: StatusSprint;
   dataInicio: string;
   dataFim: string;
+  objetivo?: string;
+  observacoes?: string;
+  horasEstimadas?: number;
   projetoId: number;
 }

@@ -21,6 +21,4 @@ public class DesenvolvedorRequestDto {
     private BigDecimal valorHoraExtra;
 
     private Long usuarioId;
-
-    private Long projetoId;
 }

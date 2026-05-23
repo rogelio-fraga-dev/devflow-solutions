@@ -1,0 +1,12 @@
+1. ⚙️ Admin (Acesso Total)
+E-mail: admin_final@devflow.com
+Senha: Admin@2026
+Role: ADMIN
+2. 🎨 Gestor de Projetos
+E-mail: gestor_final@devflow.com
+Senha: Dev@2026
+Role: GESTOR
+3. 👨‍💻 Desenvolvedores (Controle e Timesheets)
+E-mail: dev1_final@devflow.com ou dev2_final@devflow.com
+Senha: Dev@2026
+Role: DESENVOLVEDOR

@@ -29,8 +29,7 @@ public class Desenvolvedor {
     @JoinColumn(name = "usuario_id", unique = true)
     private Usuario usuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "projeto_id")
-    private Projeto projeto;
+    @ManyToMany(mappedBy = "desenvolvedores")
+    private java.util.List<Projeto> projetos = new java.util.ArrayList<>();
 
 }

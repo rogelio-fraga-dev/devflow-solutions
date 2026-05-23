@@ -10,6 +10,7 @@ export const routes: Routes = [
     path: 'login',
     loadComponent: () => import('./pages/login/login.component').then(m => m.LoginComponent)
   },
+
   {
     path: 'registro',
     loadComponent: () => import('./pages/registro/registro.component').then(m => m.RegistroComponent)
@@ -19,7 +20,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/app-shell/app-shell.component').then(m => m.AppShellComponent),
     canActivate: [authGuard],
     children: [
-      { path: '', redirectTo: 'projetos', pathMatch: 'full' },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      {
+        path: 'dashboard',
+        loadComponent: () => import('./pages/financeiro/financeiro.component').then(m => m.FinanceiroComponent)
+      },
       {
         path: 'projetos',
         loadComponent: () => import('./pages/projetos/projetos-lista/projetos-lista.component').then(m => m.ProjetosListaComponent)
@@ -63,6 +68,10 @@ export const routes: Routes = [
       {
         path: 'custos-cloud',
         loadComponent: () => import('./pages/custos-cloud/custos-cloud.component').then(m => m.CustosCloudComponent)
+      },
+      {
+        path: 'custos-adicionais',
+        loadComponent: () => import('./pages/custos-adicionais/custos-adicionais.component').then(m => m.CustosAdicionaisComponent)
       },
       {
         path: 'perfil',

@@ -41,6 +41,9 @@ public class SprintServiceImpl implements SprintService {
         sprint.setNomeFase(request.getNomeFase());
         sprint.setDataInicio(request.getDataInicio());
         sprint.setDataFim(request.getDataFim());
+        sprint.setObjetivo(request.getObjetivo());
+        sprint.setObservacoes(request.getObservacoes());
+        sprint.setHorasEstimadas(request.getHorasEstimadas());
         sprint.setProjeto(projeto);
         sprint.setStatus(request.getStatus() != null ? request.getStatus() : SprintStatus.PLANEJADA);
 
@@ -79,6 +82,9 @@ public class SprintServiceImpl implements SprintService {
         sprint.setNomeFase(request.getNomeFase());
         sprint.setDataInicio(request.getDataInicio());
         sprint.setDataFim(request.getDataFim());
+        sprint.setObjetivo(request.getObjetivo());
+        sprint.setObservacoes(request.getObservacoes());
+        sprint.setHorasEstimadas(request.getHorasEstimadas());
 
         if (request.getStatus() != null) {
             sprint.setStatus(request.getStatus());
@@ -100,6 +106,9 @@ public class SprintServiceImpl implements SprintService {
         response.setNomeFase(sprint.getNomeFase());
         response.setDataInicio(sprint.getDataInicio());
         response.setDataFim(sprint.getDataFim());
+        response.setObjetivo(sprint.getObjetivo());
+        response.setObservacoes(sprint.getObservacoes());
+        response.setHorasEstimadas(sprint.getHorasEstimadas());
         response.setStatus(sprint.getStatus());
         response.setProjetoId(sprint.getProjeto().getId());
         response.setProjetoNome(sprint.getProjeto().getNome());

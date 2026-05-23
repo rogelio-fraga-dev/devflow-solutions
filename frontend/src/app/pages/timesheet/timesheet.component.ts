@@ -19,137 +19,208 @@ import { extractErrorMessage } from '../../core/utils/error.util';
   imports: [CommonModule, FormsModule, ConfirmModalComponent],
   template: `
     <div class="page">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Timesheet</h1>
-          <p class="page-subtitle">Registro de horas trabalhadas</p>
+      <div class="page-header" style="align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px;">
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(79,70,229,0.4);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          </div>
+          <div>
+            <h1 class="page-title" style="margin:0;font-size:32px;letter-spacing:-1px;">Timesheet</h1>
+            <p class="page-subtitle" style="font-size:15px;margin:0">Registro de horas trabalhadas</p>
+          </div>
         </div>
-        <button class="btn btn-primary" (click)="openDrawer(null)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Registrar Horas
-        </button>
-      </div>
-
-      <!-- Filters -->
-      <div class="card" style="margin-bottom:20px">
-        <div style="display:flex;gap:12px">
-          <select class="select" [(ngModel)]="filterDev" (ngModelChange)="loadTimesheets()">
-            <option value="">Todos os devs</option>
-            @for (d of devs(); track d.id) { <option [value]="d.id">{{ d.nome }}</option> }
-          </select>
-          <select class="select" [(ngModel)]="filterSprint" (ngModelChange)="loadTimesheets()">
-            <option value="">Todas as sprints</option>
-            @for (s of sprints(); track s.id) { <option [value]="s.id">{{ projetoNome(s.projetoId) }} – {{ s.nomeFase }}</option> }
-          </select>
+        <div style="display:flex;gap:12px;">
+          <button class="btn btn-primary" style="padding:10px 20px" (click)="openDrawer(null)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Registrar Horas
+          </button>
         </div>
       </div>
 
-      <!-- Summary -->
-      <div class="grid-3" style="margin-bottom:20px">
-        <div class="stat-card">
-          <div class="stat-label">Horas Normais</div>
-          <div class="stat-value">{{ totalHoras() }}h</div>
+      <!-- Filters in Premium Glass Card -->
+      <div class="card card-premium" style="margin-bottom: 24px; padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--purple-light)"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Filtrar Timesheet:</span>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Horas Extras</div>
-          <div class="stat-value" style="color:var(--purple)">{{ totalExtras() }}h</div>
+        <select class="select" style="max-width: 240px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: #fff;" [(ngModel)]="filterDev" (ngModelChange)="loadTimesheets()">
+          <option value="">Todos os devs</option>
+          @for (d of devs(); track d.id) { <option [value]="d.id">{{ d.nome }}</option> }
+        </select>
+        <select class="select" style="max-width: 280px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: #fff;" [(ngModel)]="filterSprint" (ngModelChange)="loadTimesheets()">
+          <option value="">Todas as sprints</option>
+          @for (s of sprints(); track s.id) { <option [value]="s.id">{{ projetoNome(s.projetoId) }} – {{ s.nomeFase }}</option> }
+        </select>
+      </div>
+
+      <!-- Summary in Premium Glass Cards -->
+      <div class="grid-3" style="margin-bottom:24px">
+        <div class="card card-premium" style="margin:0; display:flex; flex-direction:column; justify-content:space-between; min-height:110px;">
+          <div>
+            <div class="stat-label" style="font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted)">Horas Normais</div>
+            <div class="stat-value" style="font-size:32px;font-weight:800;color:#fff;margin-top:8px">{{ totalHoras() }}h</div>
+          </div>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Total de Registros</div>
-          <div class="stat-value">{{ timesheets().length }}</div>
+        <div class="card card-premium" style="margin:0; display:flex; flex-direction:column; justify-content:space-between; min-height:110px; position:relative; overflow:hidden;">
+          <div style="position:absolute;top:0;right:0;width:80px;height:80px;background:radial-gradient(circle, rgba(139,92,246,0.15) 0%, transparent 70%);pointer-events:none;"></div>
+          <div>
+            <div class="stat-label" style="font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted)">Horas Extras</div>
+            <div class="stat-value" style="font-size:32px;font-weight:800;color:var(--purple-light);margin-top:8px">{{ totalExtras() }}h</div>
+          </div>
+        </div>
+        <div class="card card-premium" style="margin:0; display:flex; flex-direction:column; justify-content:space-between; min-height:110px;">
+          <div>
+            <div class="stat-label" style="font-size:12px;text-transform:uppercase;letter-spacing:0.5px;color:var(--text-muted)">Total de Registros</div>
+            <div class="stat-value" style="font-size:32px;font-weight:800;color:#10B981;margin-top:8px">{{ timesheets().length }}</div>
+          </div>
         </div>
       </div>
 
-      <!-- Table -->
-      <div class="card">
-        <table class="table">
-          <thead>
-            <tr>
-              <th>Desenvolvedor</th>
-              <th>Sprint</th>
-              <th>Data</th>
-              <th>Horas Trabalhadas</th>
-              <th>Horas Extras</th>
-              <th>Tarefa</th>
-              <th style="text-align:right">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (t of timesheets(); track t.id) {
+      <!-- Table in Premium Glass Card -->
+      <div class="card card-premium" style="padding: 0; overflow: hidden;">
+        <div class="table-wrapper">
+          <table class="table">
+            <thead>
               <tr>
-                <td style="font-weight:600">{{ devNome(t.desenvolvedorId) }}</td>
-                <td style="color:var(--text-muted)">{{ sprintLabel(t.sprintId) }}</td>
-                <td>{{ t.dataRegistro | date:'dd/MM/yy' }}</td>
-                <td>{{ t.horasTrabalhadas }}h</td>
-                <td>
-                  @if (t.horasExtras > 0) {
-                    <span class="chip purple">{{ t.horasExtras }}h</span>
-                  } @else { <span style="color:var(--text-muted)">—</span> }
-                </td>
-                <td style="color:var(--text-muted);font-size:12px;max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.descricaoTarefa }}</td>
-                <td>
-                  <div style="display:flex;gap:6px;justify-content:flex-end">
-                    <button class="btn btn-ghost" style="padding:6px 10px" (click)="openDrawer(t)">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                    </button>
-                    <button class="btn btn-ghost" style="padding:6px 10px;color:#EF4444" (click)="confirmDel = t">
-                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
-                    </button>
-                  </div>
-                </td>
+                <th style="width: 40px; text-align: center;"></th>
+                <th>Desenvolvedor</th>
+                <th>Sprint</th>
+                <th>Data</th>
+                <th>Horas Trabalhadas</th>
+                <th>Horas Extras</th>
+                <th style="text-align:right">Ações</th>
               </tr>
-            }
-            @empty {
-              <tr><td colspan="7"><div class="empty-state"><p>Nenhum registro encontrado</p></div></td></tr>
-            }
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              @for (t of paginatedTimesheets(); track t.id) {
+                <tr style="cursor: pointer;" (click)="toggleTsDetail(t.id)">
+                  <td style="width: 40px; text-align: center; vertical-align: middle;">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+                         [style.transform]="expandedTsId() === t.id ? 'rotate(180deg)' : 'none'" style="transition: transform 0.2s; color: var(--purple-light);">
+                      <polyline points="6 9 12 15 18 9"></polyline>
+                    </svg>
+                  </td>
+                  <td style="font-weight:600">{{ devNome(t.desenvolvedorId) }}</td>
+                  <td style="color:var(--text-secondary)">{{ sprintLabel(t.sprintId) }}</td>
+                  <td>{{ t.dataRegistro | date:'dd/MM/yy' }}</td>
+                  <td>{{ t.horasTrabalhadas }}h</td>
+                  <td>
+                    @if (t.horasExtras > 0) {
+                      <span class="chip-premium purple" style="border:1px solid rgba(139,92,246,0.25)">
+                        <span class="dot-ping"></span>
+                        {{ t.horasExtras }}h extra
+                      </span>
+                    } @else { <span style="color:var(--text-muted)">—</span> }
+                  </td>
+                  <td>
+                    <div style="display:flex;gap:6px;justify-content:flex-end" (click)="$event.stopPropagation()">
+                      <button class="btn btn-ghost" style="padding:6px 10px" (click)="openDrawer(t)">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                      </button>
+                      <button class="btn btn-ghost" style="padding:6px 10px;color:#EF4444" (click)="confirmDel = t">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/></svg>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+                @if (expandedTsId() === t.id) {
+                  <tr style="background: rgba(139, 92, 246, 0.03);">
+                    <td colspan="7" style="padding: 16px 24px; border-bottom: 1px solid rgba(139, 92, 246, 0.15);">
+                      <div style="display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--purple); padding-left: 16px;">
+                        <div>
+                          <strong style="color: #fff; font-size: 13px;">Descrição Detalhada da Tarefa:</strong>
+                          <div style="color: var(--text-secondary); margin-top: 4px; font-size: 13px; line-height: 1.5;">{{ t.descricaoTarefa || 'Nenhuma descrição fornecida.' }}</div>
+                        </div>
+                        <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 4px;">
+                          <div>
+                            <strong style="color: #fff; font-size: 13px;">Colaborador:</strong>
+                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ devNome(t.desenvolvedorId) }}</span>
+                          </div>
+                          <div>
+                            <strong style="color: #fff; font-size: 13px;">Sprint Associada:</strong>
+                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ sprintLabel(t.sprintId) }}</span>
+                          </div>
+                          <div>
+                            <strong style="color: #fff; font-size: 13px;">Data Lançamento:</strong>
+                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ t.dataRegistro | date:'dd/MM/yyyy' }}</span>
+                          </div>
+                        </div>
+                      </div>
+                    </td>
+                  </tr>
+                }
+              }
+              @empty {
+                <tr><td colspan="7"><div class="empty-state"><p>Nenhum registro encontrado</p></div></td></tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        @if (totalPages() > 1) {
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-top: 1px solid var(--border)">
+            <button class="btn btn-ghost" style="padding: 8px 16px"
+                    [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+            <span style="font-size: 13px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+            <button class="btn btn-ghost" style="padding: 8px 16px"
+                    [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
+          </div>
+        }
       </div>
     </div>
 
+    <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
-      <div class="drawer-overlay" (click)="drawerOpen.set(false)"></div>
-      <div class="drawer">
-        <div class="drawer-header">
-          <h3>{{ editingId() ? 'Editar Registro' : 'Registrar Horas' }}</h3>
-          <button class="btn btn-ghost" style="padding:6px" (click)="drawerOpen.set(false)">✕</button>
-        </div>
-        <div class="drawer-body">
-          <div class="form-group">
-            <label class="label">Desenvolvedor *</label>
-            <select class="select" [(ngModel)]="form.desenvolvedorId">
-              <option [ngValue]="0">Selecione...</option>
-              @for (d of devs(); track d.id) { <option [ngValue]="d.id">{{ d.nome }}</option> }
-            </select>
+      <div class="modal-overlay" (click)="drawerOpen.set(false)">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw; max-height: 90vh; overflow-y: auto;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Registro' : 'Registrar Horas' }}</h3>
+            <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
-          <div class="form-group">
-            <label class="label">Sprint *</label>
-            <select class="select" [(ngModel)]="form.sprintId">
-              <option [ngValue]="0">Selecione...</option>
-              @for (s of sprints(); track s.id) { <option [ngValue]="s.id">{{ projetoNome(s.projetoId) }} – {{ s.nomeFase }}</option> }
-            </select>
-          </div>
-          <div class="form-group">
-            <label class="label">Data do Registro *</label>
-            <input class="input" type="date" [(ngModel)]="form.dataRegistro" />
-          </div>
-          <div class="form-row">
+          
+          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
             <div class="form-group">
-              <label class="label">Horas Trabalhadas</label>
-              <input class="input" type="number" step="0.5" placeholder="8" [(ngModel)]="form.horasTrabalhadas" />
+              <label class="label">Desenvolvedor *</label>
+              <select class="select" [(ngModel)]="form.desenvolvedorId">
+                <option [ngValue]="0">Selecione...</option>
+                @for (d of devs(); track d.id) { <option [ngValue]="d.id">{{ d.nome }}</option> }
+              </select>
             </div>
+            
             <div class="form-group">
-              <label class="label">Horas Extras</label>
-              <input class="input" type="number" step="0.5" placeholder="0" [(ngModel)]="form.horasExtras" />
+              <label class="label">Sprint *</label>
+              <select class="select" [(ngModel)]="form.sprintId">
+                <option [ngValue]="0">Selecione...</option>
+                @for (s of sprints(); track s.id) { <option [ngValue]="s.id">{{ projetoNome(s.projetoId) }} – {{ s.nomeFase }}</option> }
+              </select>
+            </div>
+            
+            <div class="form-group">
+              <label class="label">Data do Registro *</label>
+              <input class="input" type="date" [(ngModel)]="form.dataRegistro" />
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label class="label">Horas Trabalhadas</label>
+                <input class="input" type="number" step="0.5" placeholder="8" [(ngModel)]="form.horasTrabalhadas" />
+              </div>
+              
+              <div class="form-group">
+                <label class="label">Horas Extras</label>
+                <input class="input" type="number" step="0.5" placeholder="0" [(ngModel)]="form.horasExtras" />
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label class="label">Descrição da Tarefa</label>
+              <textarea class="textarea" rows="3" placeholder="O que foi feito..." [(ngModel)]="form.descricaoTarefa"></textarea>
             </div>
           </div>
-          <div class="form-group">
-            <label class="label">Descrição da Tarefa</label>
-            <textarea class="textarea" rows="3" placeholder="O que foi feito..." [(ngModel)]="form.descricaoTarefa"></textarea>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:8px">
-            <button class="btn btn-ghost" style="flex:1" (click)="drawerOpen.set(false)">Cancelar</button>
-            <button class="btn btn-primary" style="flex:1" [disabled]="saving()" (click)="save()">
+          
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button class="btn btn-ghost" style="padding: 10px 20px;" (click)="drawerOpen.set(false)">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 10px 24px;" [disabled]="saving()" (click)="save()">
               {{ saving() ? 'Salvando...' : 'Salvar' }}
             </button>
           </div>
@@ -186,6 +257,30 @@ export class TimesheetComponent implements OnInit {
   filterDev    = '';
   filterSprint = '';
   form: TimesheetRequest = this.emptyForm();
+
+  currentPage = signal(1); // Mapeado no seeder
+  pageSize = 10;
+  expandedTsId = signal<number | null>(null);
+
+  paginatedTimesheets() {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.timesheets().slice(start, start + this.pageSize);
+  }
+
+  totalPages() {
+    return Math.max(1, Math.ceil(this.timesheets().length / this.pageSize));
+  }
+
+  prevPage() { if (this.currentPage() > 1) this.currentPage.update(v => v - 1); }
+  nextPage() { if (this.currentPage() < this.totalPages()) this.currentPage.update(v => v + 1); }
+
+  toggleTsDetail(id: number) {
+    if (this.expandedTsId() === id) {
+      this.expandedTsId.set(null);
+    } else {
+      this.expandedTsId.set(id);
+    }
+  }
 
   ngOnInit() {
     this.devSvc.getAll().subscribe(d => this.devs.set(d));

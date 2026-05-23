@@ -23,4 +23,8 @@ public class SprintRequestDto {
     private Long projetoId;
 
     private SprintStatus status;
+
+    private String objetivo;
+    private String observacoes;
+    private Integer horasEstimadas;
 }

@@ -11,10 +11,9 @@ export class DesenvolvedorService {
   constructor(private http: HttpClient) {}
 
   getAll() { return this.http.get<Desenvolvedor[]>(this.url); }
+  getProdutividade() { return this.http.get<any[]>(`${this.url}/produtividade`); }
   getById(id: number) { return this.http.get<Desenvolvedor>(`${this.url}/${id}`); }
   create(data: DesenvolvedorRequest) { return this.http.post<Desenvolvedor>(this.url, data); }
   update(id: number, data: DesenvolvedorRequest) { return this.http.put<Desenvolvedor>(`${this.url}/${id}`, data); }
   delete(id: number) { return this.http.delete<void>(`${this.url}/${id}`); }
-
-  getProdutividade(): Observable<any[]> { return this.http.get<any[]>(`${this.url}/produtividade`); }
 }

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +33,17 @@ public class ChangeRequest {
 
     @Column(name = "data_aprovacao", nullable = true)
     private LocalDate dataAprovacao;
+
+    @Enumerated(EnumType.STRING)
+    private StatusChangeRequest status;
+
+    @Column(name = "impacto_horas")
+    private Integer impactoHoras;
+
+    private String solicitante;
+
+    @Column(columnDefinition = "TEXT")
+    private String justificativa;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "projeto_id", nullable = false)

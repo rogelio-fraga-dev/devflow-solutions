@@ -15,15 +15,22 @@ import { extractErrorMessage } from '../../core/utils/error.util';
   imports: [CommonModule, FormsModule, ConfirmModalComponent],
   template: `
     <div class="page">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Desenvolvedores</h1>
-          <p class="page-subtitle">Equipe técnica e alocações</p>
+      <div class="page-header" style="align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px;">
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(79,70,229,0.4);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>
+          </div>
+          <div>
+            <h1 class="page-title" style="margin:0;font-size:32px;letter-spacing:-1px;">Desenvolvedores</h1>
+            <p class="page-subtitle" style="font-size:15px;margin:0">Equipe técnica e alocações</p>
+          </div>
         </div>
-        <button class="btn btn-primary" (click)="openDrawer(null)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Novo Desenvolvedor
-        </button>
+        <div style="display:flex;gap:12px;">
+          <button class="btn btn-primary" style="padding:10px 20px" (click)="openDrawer(null)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo Desenvolvedor
+          </button>
+        </div>
       </div>
 
       <!-- Counters by seniority -->
@@ -46,7 +53,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
 
       <!-- Cards -->
       <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px">
-        @for (d of filtered(); track d.id) {
+        @for (d of paginated(); track d.id) {
           <div class="card">
             <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:14px">
               <div style="display:flex;align-items:center;gap:10px">
@@ -60,10 +67,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
               <span style="padding:2px 8px;border-radius:20px;font-size:11px;font-weight:700;background:{{ senColor(d.senioridade) }}20;color:{{ senColor(d.senioridade) }}">{{ d.senioridade }}</span>
             </div>
             <div style="display:flex;flex-direction:column;gap:6px;font-size:12px;color:var(--text-muted);margin-bottom:14px">
-              <div style="display:flex;justify-content:space-between">
-                <span>Projeto</span>
-                <span style="color:var(--text-primary);font-weight:500">{{ projetoNome(d.projetoId) }}</span>
-              </div>
+
               <div style="display:flex;justify-content:space-between">
                 <span>Taxa/hora</span>
                 <span style="color:var(--text-primary);font-weight:700">{{ d.valorHoraCusto | currency:'BRL':'symbol':'1.2-2' }}</span>
@@ -85,37 +89,56 @@ import { extractErrorMessage } from '../../core/utils/error.util';
           <div class="card" style="grid-column:1/-1"><div class="empty-state"><p>Nenhum desenvolvedor encontrado</p></div></div>
         }
       </div>
+
+      <!-- Pagination Controls -->
+      @if (totalPages() > 1) {
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;">
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+                  [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+          <span style="font-size: 13px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+                  [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
+        </div>
+      }
     </div>
 
+    <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
-      <div class="drawer-overlay" (click)="drawerOpen.set(false)"></div>
-      <div class="drawer">
-        <div class="drawer-header">
-          <h3>{{ editingId() ? 'Editar Desenvolvedor' : 'Novo Desenvolvedor' }}</h3>
-          <button class="btn btn-ghost" style="padding:6px" (click)="drawerOpen.set(false)">✕</button>
-        </div>
-        <div class="drawer-body">
-          <div class="form-group"><label class="label">Nome *</label><input class="input" placeholder="Nome completo" [(ngModel)]="form.nome" /></div>
-          <div class="form-group">
-            <label class="label">Senioridade</label>
-            <select class="select" [(ngModel)]="form.senioridade">
-              @for (s of senList; track s) { <option [value]="s">{{ s }}</option> }
-            </select>
+      <div class="modal-overlay" (click)="drawerOpen.set(false)">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Desenvolvedor' : 'Novo Desenvolvedor' }}</h3>
+            <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
-          <div class="form-group">
-            <label class="label">Projeto</label>
-            <select class="select" [(ngModel)]="form.projetoId">
-              <option [ngValue]="undefined">— Sem projeto —</option>
-              @for (p of projetos(); track p.id) { <option [ngValue]="p.id">{{ p.nome }}</option> }
-            </select>
+          
+          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
+            <div class="form-group">
+              <label class="label">Nome *</label>
+              <input class="input" placeholder="Nome completo" [(ngModel)]="form.nome" />
+            </div>
+            
+            <div class="form-group">
+              <label class="label">Senioridade</label>
+              <select class="select" [(ngModel)]="form.senioridade">
+                @for (s of senList; track s) { <option [value]="s">{{ s }}</option> }
+              </select>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label class="label">Taxa/hora (R$)</label>
+                <input class="input" type="number" step="0.01" placeholder="0.00" [(ngModel)]="form.valorHoraCusto" />
+              </div>
+              <div class="form-group">
+                <label class="label">Hora extra (R$)</label>
+                <input class="input" type="number" step="0.01" placeholder="0.00" [(ngModel)]="form.valorHoraExtra" />
+              </div>
+            </div>
           </div>
-          <div class="form-row">
-            <div class="form-group"><label class="label">Taxa/hora (R$)</label><input class="input" type="number" step="0.01" placeholder="0.00" [(ngModel)]="form.valorHoraCusto" /></div>
-            <div class="form-group"><label class="label">Hora extra (R$)</label><input class="input" type="number" step="0.01" placeholder="0.00" [(ngModel)]="form.valorHoraExtra" /></div>
-          </div>
-          <div style="display:flex;gap:10px;margin-top:8px">
-            <button class="btn btn-ghost" style="flex:1" (click)="drawerOpen.set(false)">Cancelar</button>
-            <button class="btn btn-primary" style="flex:1" [disabled]="saving()" (click)="save()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
+          
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button class="btn btn-ghost" style="padding: 10px 20px;" (click)="drawerOpen.set(false)">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 10px 24px;" [disabled]="saving()" (click)="save()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
           </div>
         </div>
       </div>
@@ -128,31 +151,43 @@ export class DesenvolvedoresComponent implements OnInit {
   private svc     = inject(DesenvolvedorService);
   private projSvc = inject(ProjetoService);
   private toast   = inject(ToastService);
-
   devs       = signal<Desenvolvedor[]>([]);
-  projetos   = signal<Projeto[]>([]);
   saving     = signal(false);
   drawerOpen = signal(false);
   editingId  = signal<number|null>(null);
   confirmDel: Desenvolvedor | null = null;
   search = '';
-  senList: Senioridade[] = ['ESTAGIARIO','JUNIOR','PLENO','SENIOR','ESPECIALISTA'];
+  senList: Senioridade[] = ['JUNIOR','PLENO','SENIOR','GESTOR_TECH_LEAD'];
   form: DesenvolvedorRequest = this.emptyForm();
+
+  currentPage = signal(1);
+  pageSize = 10;
 
   ngOnInit() {
     this.svc.getAll().subscribe(d => this.devs.set(d));
-    this.projSvc.getAll().subscribe(p => this.projetos.set(p));
   }
 
   filtered() { return this.devs().filter(d => !this.search || d.nome.toLowerCase().includes(this.search.toLowerCase())); }
+  
+  paginated() {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filtered().slice(start, start + this.pageSize);
+  }
+
+  totalPages() {
+    return Math.max(1, Math.ceil(this.filtered().length / this.pageSize));
+  }
+
+  nextPage() { if (this.currentPage() < this.totalPages()) this.currentPage.update(v => v + 1); }
+  prevPage() { if (this.currentPage() > 1) this.currentPage.update(v => v - 1); }
+
   countBySen(s: Senioridade) { return this.devs().filter(d => d.senioridade === s).length; }
-  senColor(s: string) { const m: Record<string,string> = { ESTAGIARIO:'#6366F1',JUNIOR:'#10B981',PLENO:'#F59E0B',SENIOR:'#EF4444',ESPECIALISTA:'#7C3AED' }; return m[s]||'#64748B'; }
+  senColor(s: string) { const m: Record<string,string> = { JUNIOR:'#10B981',PLENO:'#F59E0B',SENIOR:'#EF4444',GESTOR_TECH_LEAD:'#7C3AED' }; return m[s]||'#64748B'; }
   initials(n: string) { const p = n.split(' '); return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():n.slice(0,2).toUpperCase(); }
-  projetoNome(id?: number) { return id ? this.projetos().find(p => p.id === id)?.nome || '—' : '—'; }
 
   openDrawer(d: Desenvolvedor | null) {
     this.editingId.set(d?.id ?? null);
-    this.form = d ? { nome: d.nome, senioridade: d.senioridade, valorHoraCusto: d.valorHoraCusto, valorHoraExtra: d.valorHoraExtra, projetoId: d.projetoId } : this.emptyForm();
+    this.form = d ? { nome: d.nome, senioridade: d.senioridade, valorHoraCusto: d.valorHoraCusto, valorHoraExtra: d.valorHoraExtra } : this.emptyForm();
     this.drawerOpen.set(true);
   }
 

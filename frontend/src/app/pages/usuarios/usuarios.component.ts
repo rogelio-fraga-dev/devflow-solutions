@@ -13,15 +13,22 @@ import { extractErrorMessage } from '../../core/utils/error.util';
   imports: [CommonModule, FormsModule, ConfirmModalComponent],
   template: `
     <div class="page">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Usuários</h1>
-          <p class="page-subtitle">Gerenciamento de acesso ao sistema</p>
+      <div class="page-header" style="align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px;">
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(79,70,229,0.4);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+          <div>
+            <h1 class="page-title" style="margin:0;font-size:32px;letter-spacing:-1px;">Usuários</h1>
+            <p class="page-subtitle" style="font-size:15px;margin:0">Gerenciamento de acesso ao sistema</p>
+          </div>
         </div>
-        <button class="btn btn-primary" (click)="openDrawer(null)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Novo Usuário
-        </button>
+        <div style="display:flex;gap:12px;">
+          <button class="btn btn-primary" style="padding:10px 20px" (click)="openDrawer(null)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo Usuário
+          </button>
+        </div>
       </div>
 
       <div class="card" style="margin-bottom:20px">
@@ -46,7 +53,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             </tr>
           </thead>
           <tbody>
-            @for (u of filtered(); track u.id) {
+            @for (u of paginated(); track u.id) {
               <tr>
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
@@ -81,43 +88,62 @@ import { extractErrorMessage } from '../../core/utils/error.util';
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination Controls -->
+      @if (totalPages() > 1) {
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;">
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+                  [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+          <span style="font-size: 13px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+                  [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
+        </div>
+      }
     </div>
 
+    <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
-      <div class="drawer-overlay" (click)="drawerOpen.set(false)"></div>
-      <div class="drawer">
-        <div class="drawer-header">
-          <h3>{{ editingId() ? 'Editar Usuário' : 'Novo Usuário' }}</h3>
-          <button class="btn btn-ghost" style="padding:6px" (click)="drawerOpen.set(false)">✕</button>
-        </div>
-        <div class="drawer-body">
-          <div class="form-group">
-            <label class="label">Nome *</label>
-            <input class="input" placeholder="Nome completo" [(ngModel)]="form.nome" />
+      <div class="modal-overlay" (click)="drawerOpen.set(false)">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Usuário' : 'Novo Usuário' }}</h3>
+            <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
-          <div class="form-group">
-            <label class="label">E-mail *</label>
-            <input class="input" type="email" placeholder="email@empresa.com" [(ngModel)]="form.email" />
-          </div>
-          @if (!editingId()) {
+          
+          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
             <div class="form-group">
-              <label class="label">Senha *</label>
-              <input class="input" type="password" placeholder="Mínimo 6 caracteres" [(ngModel)]="form.senha" />
+              <label class="label">Nome *</label>
+              <input class="input" placeholder="Nome completo" [(ngModel)]="form.nome" />
             </div>
-          }
-          <div class="form-group">
-            <label class="label">Perfil</label>
-            <select class="select" [(ngModel)]="form.role">
-              @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
-            </select>
+            
+            <div class="form-group">
+              <label class="label">E-mail *</label>
+              <input class="input" type="email" placeholder="email@empresa.com" [(ngModel)]="form.email" />
+            </div>
+            
+            @if (!editingId()) {
+              <div class="form-group">
+                <label class="label">Senha *</label>
+                <input class="input" type="password" placeholder="Mínimo 6 caracteres" [(ngModel)]="form.senha" />
+              </div>
+            }
+            
+            <div class="form-group">
+              <label class="label">Perfil</label>
+              <select class="select" [(ngModel)]="form.role">
+                @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
+              </select>
+            </div>
+            
+            <div style="display:flex;align-items:center;gap:8px;">
+              <input type="checkbox" id="u-ativo" [(ngModel)]="form.ativo" />
+              <label for="u-ativo" style="font-size:13px;cursor:pointer">Usuário ativo</label>
+            </div>
           </div>
-          <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-            <input type="checkbox" id="u-ativo" [(ngModel)]="form.ativo" />
-            <label for="u-ativo" style="font-size:13px;cursor:pointer">Usuário ativo</label>
-          </div>
-          <div style="display:flex;gap:10px">
-            <button class="btn btn-ghost" style="flex:1" (click)="drawerOpen.set(false)">Cancelar</button>
-            <button class="btn btn-primary" style="flex:1" [disabled]="saving()" (click)="save()">
+          
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button class="btn btn-ghost" style="padding: 10px 20px;" (click)="drawerOpen.set(false)">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 10px 24px;" [disabled]="saving()" (click)="save()">
               {{ saving() ? 'Salvando...' : 'Salvar' }}
             </button>
           </div>
@@ -148,9 +174,24 @@ export class UsuariosComponent implements OnInit {
   roles: Role[] = ['ADMIN','GESTOR','DESENVOLVEDOR','CLIENTE'];
   form: UsuarioRequest = this.emptyForm();
 
+  currentPage = signal(1);
+  pageSize = 10;
+
   ngOnInit() { this.svc.getAll().subscribe(u => this.usuarios.set(u)); }
 
   filtered() { return this.usuarios().filter(u => !this.search || u.nome.toLowerCase().includes(this.search.toLowerCase()) || u.email.toLowerCase().includes(this.search.toLowerCase())); }
+  
+  paginated() {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filtered().slice(start, start + this.pageSize);
+  }
+
+  totalPages() {
+    return Math.max(1, Math.ceil(this.filtered().length / this.pageSize));
+  }
+
+  nextPage() { if (this.currentPage() < this.totalPages()) this.currentPage.update(v => v + 1); }
+  prevPage() { if (this.currentPage() > 1) this.currentPage.update(v => v - 1); }
 
   initials(nome: string) { const p = nome.split(' '); return p.length >= 2 ? (p[0][0]+p[p.length-1][0]).toUpperCase() : nome.slice(0,2).toUpperCase(); }
 

@@ -13,15 +13,22 @@ import { extractErrorMessage } from '../../core/utils/error.util';
   imports: [CommonModule, FormsModule, ConfirmModalComponent],
   template: `
     <div class="page">
-      <div class="page-header">
-        <div>
-          <h1 class="page-title">Clientes</h1>
-          <p class="page-subtitle">Base de clientes cadastrados</p>
+      <div class="page-header" style="align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px;">
+        <div style="display: flex; gap: 20px; align-items: center;">
+          <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(79,70,229,0.4);">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+          </div>
+          <div>
+            <h1 class="page-title" style="margin:0;font-size:32px;letter-spacing:-1px;">Clientes</h1>
+            <p class="page-subtitle" style="font-size:15px;margin:0">Base de clientes cadastrados</p>
+          </div>
         </div>
-        <button class="btn btn-primary" (click)="openDrawer(null)">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-          Novo Cliente
-        </button>
+        <div style="display:flex;gap:12px;">
+          <button class="btn btn-primary" style="padding:10px 20px" (click)="openDrawer(null)">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Novo Cliente
+          </button>
+        </div>
       </div>
 
       <div class="card" style="margin-bottom:20px">
@@ -46,7 +53,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             </tr>
           </thead>
           <tbody>
-            @for (c of filtered(); track c.id) {
+            @for (c of paginated(); track c.id) {
               <tr>
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
@@ -77,26 +84,59 @@ import { extractErrorMessage } from '../../core/utils/error.util';
           </tbody>
         </table>
       </div>
+
+      <!-- Pagination Controls -->
+      @if (totalPages() > 1) {
+        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;">
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+                  [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+          <span style="font-size: 13px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+                  [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
+        </div>
+      }
     </div>
 
+    <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
-      <div class="drawer-overlay" (click)="drawerOpen.set(false)"></div>
-      <div class="drawer">
-        <div class="drawer-header">
-          <h3>{{ editingId() ? 'Editar Cliente' : 'Novo Cliente' }}</h3>
-          <button class="btn btn-ghost" style="padding:6px" (click)="drawerOpen.set(false)">✕</button>
-        </div>
-        <div class="drawer-body">
-          <div class="form-group"><label class="label">Razão Social *</label><input class="input" placeholder="Nome ou Razão Social" [(ngModel)]="form.razaoSocial" /></div>
-          <div class="form-group"><label class="label">CNPJ</label><input class="input" placeholder="00.000.000/0001-00" [(ngModel)]="form.cnpj" /></div>
-          <div class="form-group"><label class="label">Pessoa de Contato</label><input class="input" placeholder="Nome do contato" [(ngModel)]="form.pessoaContato" /></div>
-          <div class="form-row">
-            <div class="form-group"><label class="label">Cidade</label><input class="input" placeholder="São Paulo" [(ngModel)]="form.endereco!.cidade" /></div>
-            <div class="form-group"><label class="label">Estado</label><input class="input" placeholder="SP" [(ngModel)]="form.endereco!.estado" /></div>
+      <div class="modal-overlay" (click)="drawerOpen.set(false)">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+            <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Cliente' : 'Novo Cliente' }}</h3>
+            <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
-          <div style="display:flex;gap:10px;margin-top:8px">
-            <button class="btn btn-ghost" style="flex:1" (click)="drawerOpen.set(false)">Cancelar</button>
-            <button class="btn btn-primary" style="flex:1" [disabled]="saving()" (click)="save()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
+          
+          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
+            <div class="form-group">
+              <label class="label">Razão Social *</label>
+              <input class="input" placeholder="Nome ou Razão Social" [(ngModel)]="form.razaoSocial" />
+            </div>
+            
+            <div class="form-group">
+              <label class="label">CNPJ</label>
+              <input class="input" placeholder="00.000.000/0001-00" [(ngModel)]="form.cnpj" />
+            </div>
+            
+            <div class="form-group">
+              <label class="label">Pessoa de Contato</label>
+              <input class="input" placeholder="Nome do contato" [(ngModel)]="form.pessoaContato" />
+            </div>
+            
+            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 12px;">
+              <div class="form-group">
+                <label class="label">Cidade</label>
+                <input class="input" placeholder="São Paulo" [(ngModel)]="form.endereco!.cidade" />
+              </div>
+              <div class="form-group">
+                <label class="label">Estado</label>
+                <input class="input" placeholder="SP" [(ngModel)]="form.endereco!.estado" />
+              </div>
+            </div>
+          </div>
+          
+          <div style="display:flex; gap:12px; justify-content:flex-end;">
+            <button class="btn btn-ghost" style="padding: 10px 20px;" (click)="drawerOpen.set(false)">Cancelar</button>
+            <button class="btn btn-primary" style="padding: 10px 24px;" [disabled]="saving()" (click)="save()">{{ saving() ? 'Salvando...' : 'Salvar' }}</button>
           </div>
         </div>
       </div>
@@ -117,9 +157,25 @@ export class ClientesComponent implements OnInit {
   search = '';
   form: ClienteRequest = this.emptyForm();
 
+  currentPage = signal(1);
+  pageSize = 10;
+
   ngOnInit() { this.svc.getAll().subscribe(c => this.clientes.set(c)); }
 
   filtered() { return this.clientes().filter(c => !this.search || c.razaoSocial.toLowerCase().includes(this.search.toLowerCase())); }
+  
+  paginated() {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filtered().slice(start, start + this.pageSize);
+  }
+
+  totalPages() {
+    return Math.max(1, Math.ceil(this.filtered().length / this.pageSize));
+  }
+
+  nextPage() { if (this.currentPage() < this.totalPages()) this.currentPage.update(v => v + 1); }
+  prevPage() { if (this.currentPage() > 1) this.currentPage.update(v => v - 1); }
+
   initials(n: string) { const p = n.split(' '); return p.length>=2?(p[0][0]+p[p.length-1][0]).toUpperCase():n.slice(0,2).toUpperCase(); }
 
   openDrawer(c: Cliente | null) {

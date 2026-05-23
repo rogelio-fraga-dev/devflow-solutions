@@ -10,7 +10,7 @@ export class TimesheetService {
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Timesheet[]> { return this.http.get<Timesheet[]>(this.url); }
+  getAll() { return this.http.get<Timesheet[]>(this.url); }
   getByDesenvolvedor(desenvolvedorId: number) { return this.http.get<Timesheet[]>(`${this.url}/desenvolvedor/${desenvolvedorId}`); }
   getBySprint(sprintId: number) { return this.http.get<Timesheet[]>(`${this.url}/sprint/${sprintId}`); }
   create(data: TimesheetRequest) { return this.http.post<Timesheet>(this.url, data); }

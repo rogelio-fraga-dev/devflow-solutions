@@ -23,6 +23,15 @@ public class Sprint {
     
     @Enumerated(EnumType.STRING)
     private SprintStatus status;
+
+    @Column(columnDefinition = "TEXT")
+    private String objetivo;
+
+    @Column(columnDefinition = "TEXT")
+    private String observacoes;
+
+    @Column(name = "horas_estimadas")
+    private Integer horasEstimadas;
     
     @Column(name = "data_inicio", nullable = false)
     private LocalDate dataInicio;

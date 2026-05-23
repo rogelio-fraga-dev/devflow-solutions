@@ -22,6 +22,15 @@ public class Projeto {
 
     private String stackTecnologica;
 
+    @Column(columnDefinition = "TEXT")
+    private String descricao;
+
+    @Enumerated(EnumType.STRING)
+    private PrioridadeProjeto prioridade;
+
+    @Enumerated(EnumType.STRING)
+    private RiscoProjeto riscoAtual;
+
     @Column(nullable = false, precision = 15, scale = 2)
     private BigDecimal budgetTotal;
 
@@ -43,6 +52,18 @@ public class Projeto {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "gestor_id", nullable = false)
+    private Usuario gestorResponsavel;
+
+    @ManyToMany
+    @JoinTable(
+        name = "tb_projeto_desenvolvedor",
+        joinColumns = @JoinColumn(name = "projeto_id"),
+        inverseJoinColumns = @JoinColumn(name = "desenvolvedor_id")
+    )
+    private java.util.List<Desenvolvedor> desenvolvedores = new java.util.ArrayList<>();
 
     /**
      * Budget Guard Patroll (Sentinela Ativo do Ciclo de Vida Financeiro)
@@ -72,8 +93,8 @@ public class Projeto {
                 .divide(this.budgetTotal, 4, RoundingMode.HALF_UP)
                 .multiply(new BigDecimal("100"));
 
-        // NÍVEL CRÍTICO: 100% — Rollback total da transação (Budget Guard ativo)
-        if (percentualGasto.compareTo(new BigDecimal("100.00")) >= 0) {
+        // NÍVEL CRÍTICO: > 100% — Rollback total da transação (Budget Guard ativo)
+        if (percentualGasto.compareTo(new BigDecimal("100.00")) > 0) {
             throw new BusinessRuleException(
                 "Operação bloqueada pelo Budget Guard: o projeto '" + this.nome +
                 "' atingiu " + percentualGasto.setScale(1, RoundingMode.HALF_UP) +
@@ -82,8 +103,11 @@ public class Projeto {
             );
         }
 
-        // NÍVEL DE RISCO: 80% — Alerta mas permite continuar
-        if (percentualGasto.compareTo(new BigDecimal("80.00")) >= 0) {
+        // NÍVEL DE ESTOURO EXATO: 100%
+        if (percentualGasto.compareTo(new BigDecimal("100.00")) == 0) {
+            this.status = StatusProjeto.ESTOURADO;
+        } else if (percentualGasto.compareTo(new BigDecimal("80.00")) >= 0) {
+            // NÍVEL DE RISCO: 80% — Alerta mas permite continuar
             this.status = StatusProjeto.ALERTA;
         }
     }

@@ -42,6 +42,10 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
         cr.setDescricaoMudanca(request.getDescricaoMudanca());
         cr.setValorAdicional(request.getValorAdicional());
         cr.setDataAprovacao(request.getDataAprovacao());
+        cr.setStatus(request.getStatus() != null ? request.getStatus() : com.devflow.model.StatusChangeRequest.PENDENTE);
+        cr.setImpactoHoras(request.getImpactoHoras());
+        cr.setSolicitante(request.getSolicitante());
+        cr.setJustificativa(request.getJustificativa());
         cr.setProjeto(projeto);
 
         cr = changeRequestRepository.save(cr);
@@ -90,6 +94,12 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
         crExistente.setDescricaoMudanca(request.getDescricaoMudanca());
         crExistente.setValorAdicional(request.getValorAdicional());
         crExistente.setDataAprovacao(request.getDataAprovacao());
+        if (request.getStatus() != null) {
+            crExistente.setStatus(request.getStatus());
+        }
+        crExistente.setImpactoHoras(request.getImpactoHoras());
+        crExistente.setSolicitante(request.getSolicitante());
+        crExistente.setJustificativa(request.getJustificativa());
         crExistente.setProjeto(novoProjeto);
 
         ChangeRequest crAtualizado = changeRequestRepository.save(crExistente);
@@ -130,6 +140,10 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
         response.setDescricaoMudanca(cr.getDescricaoMudanca());
         response.setValorAdicional(cr.getValorAdicional());
         response.setDataAprovacao(cr.getDataAprovacao());
+        response.setStatus(cr.getStatus());
+        response.setImpactoHoras(cr.getImpactoHoras());
+        response.setSolicitante(cr.getSolicitante());
+        response.setJustificativa(cr.getJustificativa());
         
         // Data Flattening
         response.setProjetoId(cr.getProjeto().getId());

@@ -25,7 +25,6 @@ public class AnaliseFinanceiraController {
     }
 
     @GetMapping("/dashboard-executivo")
-    @org.springframework.security.access.prepost.PreAuthorize("hasAnyRole('ADMIN','GESTOR')")
     public ResponseEntity<com.devflow.dto.DashboardExecutivoDto> dashboardExecutivo() {
         return ResponseEntity.ok(analiseFinanceiraService.gerarDashboardExecutivo());
     }

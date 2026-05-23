@@ -10,6 +10,11 @@ public class ChangeRequestResponseDto {
     private String descricaoMudanca;
     private BigDecimal valorAdicional;
     private LocalDate dataAprovacao;
+    
+    private com.devflow.model.StatusChangeRequest status;
+    private Integer impactoHoras;
+    private String solicitante;
+    private String justificativa;
 
     // Data Flattening (Achatamento de dados do Projeto)
     private Long projetoId;

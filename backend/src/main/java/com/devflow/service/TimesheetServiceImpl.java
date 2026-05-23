@@ -28,15 +28,18 @@ public class TimesheetServiceImpl implements TimesheetService {
     private final DesenvolvedorRepository desenvolvedorRepository;
     private final SprintRepository sprintRepository;
     private final ProjetoRepository projetoRepository;
+    private final com.devflow.repository.UsuarioRepository usuarioRepository;
 
     public TimesheetServiceImpl(TimesheetRepository timesheetRepository, 
                                 DesenvolvedorRepository desenvolvedorRepository, 
                                 SprintRepository sprintRepository, 
-                                ProjetoRepository projetoRepository) {
+                                ProjetoRepository projetoRepository,
+                                com.devflow.repository.UsuarioRepository usuarioRepository) {
         this.timesheetRepository = timesheetRepository;
         this.desenvolvedorRepository = desenvolvedorRepository;
         this.sprintRepository = sprintRepository;
         this.projetoRepository = projetoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
@@ -44,6 +47,19 @@ public class TimesheetServiceImpl implements TimesheetService {
     public TimesheetResponseDto criarTimesheet(TimesheetRequestDto request) {
         Desenvolvedor desenvolvedor = buscarDesenvolvedor(request.getDesenvolvedorId());
         Sprint sprint = buscarSprint(request.getSprintId());
+
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.devflow.model.Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email).orElse(null);
+
+        if (usuario != null && com.devflow.model.Role.DESENVOLVEDOR == usuario.getRole()) {
+            if (desenvolvedor.getUsuario() == null || !desenvolvedor.getUsuario().getId().equals(usuario.getId())) {
+                throw new BusinessRuleException("Você só pode lançar horas para si mesmo.");
+            }
+        }
+
+        if (!sprint.getProjeto().getDesenvolvedores().contains(desenvolvedor)) {
+            throw new BusinessRuleException("O desenvolvedor não está vinculado a este projeto.");
+        }
 
         // 1. Salvar a entidade Timesheet como PENDENTE (sem somar custo ainda)
         Timesheet timesheet = new Timesheet();
@@ -122,8 +138,22 @@ public class TimesheetServiceImpl implements TimesheetService {
 
     @Override
     public List<TimesheetResponseDto> listarTodos() {
-        return timesheetRepository.findAll().stream()
-                .map(this::converterParaDto).collect(Collectors.toList());
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.devflow.model.Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email).orElse(null);
+        
+        java.util.stream.Stream<Timesheet> stream = timesheetRepository.findAll().stream();
+        
+        if (usuario != null) {
+            if (com.devflow.model.Role.GESTOR == usuario.getRole()) {
+                stream = stream.filter(t -> t.getSprint().getProjeto().getGestorResponsavel() != null 
+                    && t.getSprint().getProjeto().getGestorResponsavel().getId().equals(usuario.getId()));
+            } else if (com.devflow.model.Role.DESENVOLVEDOR == usuario.getRole()) {
+                stream = stream.filter(t -> t.getDesenvolvedor().getUsuario() != null 
+                    && t.getDesenvolvedor().getUsuario().getId().equals(usuario.getId()));
+            }
+        }
+        
+        return stream.map(this::converterParaDto).collect(Collectors.toList());
     }
 
     @Override

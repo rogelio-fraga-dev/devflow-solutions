@@ -40,6 +40,14 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setRole(request.getRole());
         usuario.setAtivo(request.getAtivo() != null ? request.getAtivo() : Boolean.TRUE);
 
+        // Atribuir a mesma empresa do usuário logado
+        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        if (emailLogado != null && !emailLogado.equals("anonymousUser")) {
+            final Usuario userToUpdate = usuario;
+            usuarioRepository.findByEmailIgnoreCase(emailLogado)
+                .ifPresent(admin -> userToUpdate.setEmpresa(admin.getEmpresa()));
+        }
+
         usuario = usuarioRepository.save(usuario);
 
         return converterParaDto(usuario);

@@ -15,8 +15,4 @@ public class DesenvolvedorResponseDto {
     // Data Flattening do Usuário
     private Long usuarioId;
     private String usuarioEmail; 
-    
-    // Data Flattening do Projeto (pode ser nulo se ele não estiver alocado)
-    private Long projetoId; 
-    private String projetoNome;
 }

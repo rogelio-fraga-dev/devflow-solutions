@@ -21,4 +21,9 @@ public class ChangeRequestRequestDto {
 
     @NotNull(message = "O ID do projeto é obrigatório")
     private Long projetoId;
+
+    private com.devflow.model.StatusChangeRequest status;
+    private Integer impactoHoras;
+    private String solicitante;
+    private String justificativa;
 }

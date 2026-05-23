@@ -23,7 +23,10 @@ import java.time.temporal.ChronoUnit;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
+import org.springframework.transaction.annotation.Transactional;
+
 @Service
+@Transactional(readOnly = true)
 public class AnaliseFinanceiraService {
 
     private final ProjetoRepository projetoRepository;
@@ -142,8 +145,21 @@ public class AnaliseFinanceiraService {
     }
 
     public DashboardExecutivoDto gerarDashboardExecutivo() {
-        Long empresaId = getEmpresaLogadaId();
-        List<Projeto> todos = projetoRepository.findByEmpresaId(empresaId);
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+            
+        Long empresaId = usuario.getEmpresa().getId();
+        List<Projeto> todosOrig = projetoRepository.findByEmpresaId(empresaId);
+        
+        java.util.stream.Stream<Projeto> stream = todosOrig.stream();
+        if (com.devflow.model.Role.GESTOR == usuario.getRole()) {
+            stream = stream.filter(p -> p.getGestorResponsavel() != null && p.getGestorResponsavel().getId().equals(usuario.getId()));
+        } else if (com.devflow.model.Role.DESENVOLVEDOR == usuario.getRole()) {
+            stream = stream.filter(p -> p.getDesenvolvedores().stream().anyMatch(d -> d.getUsuario() != null && d.getUsuario().getId().equals(usuario.getId())));
+        }
+        
+        List<Projeto> todos = stream.collect(Collectors.toList());
 
         BigDecimal totalBudget = todos.stream()
             .map(Projeto::getBudgetTotal)

@@ -51,12 +51,6 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
             desenvolvedor.setUsuario(usuario);
         }
 
-        if (request.getProjetoId() != null) {
-            Projeto projeto = projetoRepository.findById(request.getProjetoId())
-                    .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + request.getProjetoId()));
-            desenvolvedor.setProjeto(projeto);
-        }
-
         return mapEntityToResponse(desenvolvedorRepository.save(desenvolvedor));
     }
 
@@ -80,16 +74,7 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
             }
         }
 
-        if (request.getProjetoId() != null) {
-            Long projetoAtualId = desenvolvedor.getProjeto() != null ? desenvolvedor.getProjeto().getId() : null;
-            if (!request.getProjetoId().equals(projetoAtualId)) {
-                Projeto projeto = projetoRepository.findById(request.getProjetoId())
-                        .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado"));
-                desenvolvedor.setProjeto(projeto);
-            }
-        } else {
-            desenvolvedor.setProjeto(null);
-        }
+
 
         return mapEntityToResponse(desenvolvedorRepository.save(desenvolvedor));
     }
@@ -127,10 +112,7 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
             response.setUsuarioEmail(desenvolvedor.getUsuario().getEmail());
         }
 
-        if (desenvolvedor.getProjeto() != null) {
-            response.setProjetoId(desenvolvedor.getProjeto().getId());
-            response.setProjetoNome(desenvolvedor.getProjeto().getNome());
-        }
+
 
         return response;
     }
@@ -166,7 +148,14 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
             
             dto.setTotalHorasLancadas(((Number) row[3]).doubleValue());
             dto.setTotalHorasExtras(((Number) row[4]).doubleValue());
-            dto.setCustoTotalGerado((BigDecimal) row[5]);
+            Object custoObj = row[5];
+            if (custoObj instanceof BigDecimal) {
+                dto.setCustoTotalGerado((BigDecimal) custoObj);
+            } else if (custoObj instanceof Number) {
+                dto.setCustoTotalGerado(BigDecimal.valueOf(((Number) custoObj).doubleValue()));
+            } else {
+                dto.setCustoTotalGerado(BigDecimal.ZERO);
+            }
             dto.setTotalSprintsParticipados(((Number) row[6]).longValue());
             return dto;
         }).collect(Collectors.toList());

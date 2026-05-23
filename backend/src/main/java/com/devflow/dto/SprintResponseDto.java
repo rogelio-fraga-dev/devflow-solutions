@@ -13,6 +13,10 @@ public class SprintResponseDto {
     private LocalDate dataInicio;
     private LocalDate dataFim;
     
+    private String objetivo;
+    private String observacoes;
+    private Integer horasEstimadas;
+    
     // Data Flattening (Achatamento)
     private Long projetoId;
     private String projetoNome;
