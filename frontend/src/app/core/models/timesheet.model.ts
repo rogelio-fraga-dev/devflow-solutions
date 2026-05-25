@@ -6,6 +6,8 @@ export interface Timesheet {
   descricaoTarefa: string;
   desenvolvedorId: number;
   sprintId: number;
+  projetoId?: number;
+  projetoNome?: string;
 }
 
 export interface TimesheetRequest {

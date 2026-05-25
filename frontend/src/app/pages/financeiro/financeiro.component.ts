@@ -410,8 +410,10 @@ export class FinanceiroComponent implements OnInit, OnDestroy {
   }
 
   loadConsolidatedMetrics() {
-    // Sprints
     const projetosList = this.dashboard()?.projetos || [];
+    const projectIds = new Set(projetosList.map(p => p.id));
+
+    // Sprints
     if (projetosList.length > 0) {
       const spReqs = projetosList.map(p => this.sprintSvc.getByProjeto(p.id).toPromise());
       Promise.all(spReqs).then(res => {
@@ -423,32 +425,37 @@ export class FinanceiroComponent implements OnInit, OnDestroy {
 
     // Change Requests
     this.crSvc.getAll().subscribe(crs => {
-      this.crsApprovedCount.set(crs.filter(c => c.status === 'APROVADO').length);
-      this.crsPendingCount.set(crs.filter(c => c.status === 'PENDENTE' || c.status === 'EM_ANALISE').length);
-      this.crsApprovedValue.set(crs.filter(c => c.status === 'APROVADO').reduce((acc, c) => acc + (c.valorAdicional || 0), 0));
+      const filtered = crs.filter(c => projectIds.has(c.projetoId));
+      this.crsApprovedCount.set(filtered.filter(c => c.status === 'APROVADO').length);
+      this.crsPendingCount.set(filtered.filter(c => c.status === 'PENDENTE' || c.status === 'EM_ANALISE').length);
+      this.crsApprovedValue.set(filtered.filter(c => c.status === 'APROVADO').reduce((acc, c) => acc + (c.valorAdicional || 0), 0));
     });
 
     // Timesheets
     this.tsSvc.getAll().subscribe(ts => {
-      this.timesheetHours.set(ts.reduce((acc, t) => acc + (t.horasTrabalhadas || 0), 0));
-      this.timesheetExtras.set(ts.reduce((acc, t) => acc + (t.horasExtras || 0), 0));
+      const filtered = ts.filter(t => t.projetoId ? projectIds.has(t.projetoId) : false);
+      this.timesheetHours.set(filtered.reduce((acc, t) => acc + (t.horasTrabalhadas || 0), 0));
+      this.timesheetExtras.set(filtered.reduce((acc, t) => acc + (t.horasExtras || 0), 0));
     });
 
     // Cloud Costs
     this.cloudSvc.getAll().subscribe(clouds => {
-      this.cloudCostsSum.set(clouds.reduce((acc, c) => acc + (c.valorFatura || 0), 0));
+      const filtered = clouds.filter(c => projectIds.has(c.projetoId));
+      this.cloudCostsSum.set(filtered.reduce((acc, c) => acc + (c.valorFatura || 0), 0));
       this.loadCharts();
     });
 
     // API Costs
     this.apiSvc.getAll().subscribe(apis => {
-      this.apiCostsSum.set(apis.reduce((acc, a) => acc + (a.valorLicenca || 0), 0));
+      const filtered = apis.filter(a => projectIds.has(a.projetoId));
+      this.apiCostsSum.set(filtered.reduce((acc, a) => acc + (a.valorLicenca || 0), 0));
       this.loadCharts();
     });
 
     // Additional Costs
     this.adicionalSvc.getAll().subscribe(adicionais => {
-      this.adicionalCostsSum.set(adicionais.reduce((acc, a) => acc + (a.valorAdicional || 0), 0));
+      const filtered = adicionais.filter(a => projectIds.has(a.projetoId));
+      this.adicionalCostsSum.set(filtered.reduce((acc, a) => acc + (a.valorAdicional || 0), 0));
       this.loadCharts();
     });
   }

@@ -144,6 +144,10 @@ public class TimesheetServiceImpl implements TimesheetService {
         java.util.stream.Stream<Timesheet> stream = timesheetRepository.findAll().stream();
         
         if (usuario != null) {
+            stream = stream.filter(t -> t.getSprint() != null && t.getSprint().getProjeto() != null 
+                && t.getSprint().getProjeto().getEmpresa() != null 
+                && t.getSprint().getProjeto().getEmpresa().getId().equals(usuario.getEmpresa().getId()));
+                
             if (com.devflow.model.Role.GESTOR == usuario.getRole()) {
                 stream = stream.filter(t -> t.getSprint().getProjeto().getGestorResponsavel() != null 
                     && t.getSprint().getProjeto().getGestorResponsavel().getId().equals(usuario.getId()));
@@ -245,6 +249,10 @@ public class TimesheetServiceImpl implements TimesheetService {
         res.setSprintNome(timesheet.getSprint().getNomeFase().name());
         res.setStatusAprovacao(timesheet.getStatusAprovacao());
         res.setBillable(timesheet.getBillable());
+        if (timesheet.getSprint() != null && timesheet.getSprint().getProjeto() != null) {
+            res.setProjetoId(timesheet.getSprint().getProjeto().getId());
+            res.setProjetoNome(timesheet.getSprint().getProjeto().getNome());
+        }
         return res;
     }
 }

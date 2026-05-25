@@ -20,10 +20,14 @@ public class CustoCloudServiceImpl implements CustoCloudService {
 
     private final CustoCloudRepository custoCloudRepository;
     private final ProjetoRepository projetoRepository;
+    private final com.devflow.repository.UsuarioRepository usuarioRepository;
 
-    public CustoCloudServiceImpl(CustoCloudRepository custoCloudRepository, ProjetoRepository projetoRepository) {
+    public CustoCloudServiceImpl(CustoCloudRepository custoCloudRepository, 
+                                 ProjetoRepository projetoRepository,
+                                 com.devflow.repository.UsuarioRepository usuarioRepository) {
         this.custoCloudRepository = custoCloudRepository;
         this.projetoRepository = projetoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
@@ -49,7 +53,23 @@ public class CustoCloudServiceImpl implements CustoCloudService {
 
     @Override
     public List<CustoCloudResponseDto> listarTodos() {
+        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.devflow.model.Usuario usuario = usuarioRepository.findByEmailIgnoreCase(emailLogado)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+
+        List<Projeto> todosProjetos = projetoRepository.findByEmpresaId(usuario.getEmpresa().getId());
+        java.util.stream.Stream<Projeto> streamProjetos = todosProjetos.stream();
+
+        if (com.devflow.model.Role.GESTOR == usuario.getRole()) {
+            streamProjetos = streamProjetos.filter(p -> p.getGestorResponsavel() != null && p.getGestorResponsavel().getId().equals(usuario.getId()));
+        } else if (com.devflow.model.Role.DESENVOLVEDOR == usuario.getRole()) {
+            streamProjetos = streamProjetos.filter(p -> p.getDesenvolvedores().stream().anyMatch(d -> d.getUsuario() != null && d.getUsuario().getId().equals(usuario.getId())));
+        }
+
+        java.util.Set<Long> idsProjetosAcessiveis = streamProjetos.map(Projeto::getId).collect(Collectors.toSet());
+
         return custoCloudRepository.findAll().stream()
+                .filter(cc -> cc.getProjeto() != null && idsProjetosAcessiveis.contains(cc.getProjeto().getId()))
                 .map(this::converterParaDto)
                 .collect(Collectors.toList());
     }

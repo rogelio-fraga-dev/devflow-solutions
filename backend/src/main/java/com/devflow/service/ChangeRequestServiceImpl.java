@@ -21,11 +21,14 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
 
     private final ChangeRequestRepository changeRequestRepository;
     private final ProjetoRepository projetoRepository;
+    private final com.devflow.repository.UsuarioRepository usuarioRepository;
 
     public ChangeRequestServiceImpl(ChangeRequestRepository changeRequestRepository, 
-                                    ProjetoRepository projetoRepository) {
+                                    ProjetoRepository projetoRepository,
+                                    com.devflow.repository.UsuarioRepository usuarioRepository) {
         this.changeRequestRepository = changeRequestRepository;
         this.projetoRepository = projetoRepository;
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
@@ -54,8 +57,23 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
     }
     @Override
     public List<ChangeRequestResponseDto> listarChangeRequests() {
-        // Busca todos no banco e converte um por um para DTO
+        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.devflow.model.Usuario usuario = usuarioRepository.findByEmailIgnoreCase(emailLogado)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+
+        List<Projeto> todosProjetos = projetoRepository.findByEmpresaId(usuario.getEmpresa().getId());
+        java.util.stream.Stream<Projeto> streamProjetos = todosProjetos.stream();
+
+        if (com.devflow.model.Role.GESTOR == usuario.getRole()) {
+            streamProjetos = streamProjetos.filter(p -> p.getGestorResponsavel() != null && p.getGestorResponsavel().getId().equals(usuario.getId()));
+        } else if (com.devflow.model.Role.DESENVOLVEDOR == usuario.getRole()) {
+            streamProjetos = streamProjetos.filter(p -> p.getDesenvolvedores().stream().anyMatch(d -> d.getUsuario() != null && d.getUsuario().getId().equals(usuario.getId())));
+        }
+
+        java.util.Set<Long> idsProjetosAcessiveis = streamProjetos.map(Projeto::getId).collect(Collectors.toSet());
+
         return changeRequestRepository.findAll().stream()
+                .filter(cr -> cr.getProjeto() != null && idsProjetosAcessiveis.contains(cr.getProjeto().getId()))
                 .map(this::converterParaDto)
                 .collect(Collectors.toList());
     }

@@ -66,7 +66,17 @@ interface MembroEquipe {
                   <span class="chip-premium {{ getRiscoClass(projeto()!.riscoAtual) }}">Risco: {{ projeto()!.riscoAtual }}</span>
                 }
               </div>
-              <p class="page-subtitle" style="font-size:15px;margin:0">{{ projeto()!.stackTecnologica }}</p>
+              <p class="page-subtitle" style="font-size:15px;margin:0;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+                <span><strong>Stack:</strong> {{ projeto()!.stackTecnologica }}</span>
+                @if (projeto()!.gestorNome) {
+                  <span style="color:var(--text-muted)">•</span>
+                  <span><strong>Gestor:</strong> <span style="color:var(--purple-dark); font-weight:700;">{{ projeto()!.gestorNome }}</span></span>
+                }
+                @if (projeto()!.clienteNome) {
+                  <span style="color:var(--text-muted)">•</span>
+                  <span><strong>Cliente:</strong> {{ projeto()!.clienteNome }}</span>
+                }
+              </p>
             </div>
           </div>
           <div style="display:flex;gap:12px;">
@@ -161,7 +171,19 @@ interface MembroEquipe {
           </div>
           
           <div class="card card-premium" style="margin: 0; display: flex; flex-direction: column; gap: 12px; justify-content: center; min-height: 160px;">
-            <h3 style="font-size: 15px; margin-bottom: 4px; letter-spacing: -0.5px;">Cronograma & Orçamento</h3>
+            <h3 style="font-size: 15px; margin-bottom: 4px; letter-spacing: -0.5px;">Gestão & Datas</h3>
+            @if (projeto()!.gestorNome) {
+              <div style="display:flex; justify-content:space-between; font-size:13px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
+                <span style="color: var(--text-muted);">Gestor Responsável:</span>
+                <span style="font-weight:700; color: var(--purple-dark)">{{ projeto()!.gestorNome }}</span>
+              </div>
+            }
+            @if (projeto()!.clienteNome) {
+              <div style="display:flex; justify-content:space-between; font-size:13px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
+                <span style="color: var(--text-muted);">Cliente:</span>
+                <span style="font-weight:600;">{{ projeto()!.clienteNome }}</span>
+              </div>
+            }
             <div style="display:flex; justify-content:space-between; font-size:13px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
               <span style="color: var(--text-muted);">Data de Início:</span>
               <span style="font-weight:600;">{{ projeto()!.dataInicio | date:'dd/MM/yyyy' }}</span>

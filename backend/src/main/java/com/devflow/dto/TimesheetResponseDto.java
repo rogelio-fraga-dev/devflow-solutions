@@ -17,6 +17,8 @@ public class TimesheetResponseDto {
     private String desenvolvedorNome;
     private Long sprintId;
     private String sprintNome;
+    private Long projetoId;
+    private String projetoNome;
     private com.devflow.model.StatusTimesheet statusAprovacao;
     private Boolean billable;
 }
