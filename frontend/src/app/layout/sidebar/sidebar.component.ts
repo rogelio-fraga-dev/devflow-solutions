@@ -46,7 +46,7 @@ export interface NavItem {
       <div class="sidebar-user" (click)="goToProfile()" title="Meu Perfil">
         <div class="sidebar-avatar">{{ initials(auth.currentUser()?.email) }}</div>
         <div class="sidebar-user-info">
-          <div class="user-name">{{ auth.currentUser()?.email?.split('@')[0] | titlecase }}</div>
+          <div class="user-name">{{ auth.currentUser()?.nome || (auth.currentUser()?.email?.split('@')[0] | titlecase) }}</div>
           <div class="user-role">{{ auth.currentUser()?.role }}</div>
         </div>
       </div>
@@ -83,6 +83,8 @@ export class SidebarComponent {
   }
 
   initials(email?: string | null): string {
+    const nome = this.auth.currentUser()?.nome;
+    if (nome) return nome.substring(0, 2).toUpperCase();
     if (!email) return 'U';
     const name = email.split('@')[0];
     const parts = name.split(/[._-]/);

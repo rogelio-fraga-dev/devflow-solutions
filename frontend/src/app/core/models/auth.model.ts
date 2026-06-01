@@ -10,4 +10,6 @@ export interface LoginResponse {
 export interface CurrentUser {
   email: string;
   role: 'ADMIN' | 'GESTOR' | 'DESENVOLVEDOR' | 'CLIENTE';
+  nome?: string;
+  empresa?: string;
 }

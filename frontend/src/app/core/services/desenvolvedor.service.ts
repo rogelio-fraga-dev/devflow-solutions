@@ -12,6 +12,7 @@ export class DesenvolvedorService {
 
   getAll() { return this.http.get<Desenvolvedor[]>(this.url); }
   getProdutividade() { return this.http.get<any[]>(`${this.url}/produtividade`); }
+  getMinhaProdutividade() { return this.http.get<any>(`${this.url}/me/produtividade`); }
   getById(id: number) { return this.http.get<Desenvolvedor>(`${this.url}/${id}`); }
   create(data: DesenvolvedorRequest) { return this.http.post<Desenvolvedor>(this.url, data); }
   update(id: number, data: DesenvolvedorRequest) { return this.http.put<Desenvolvedor>(`${this.url}/${id}`, data); }

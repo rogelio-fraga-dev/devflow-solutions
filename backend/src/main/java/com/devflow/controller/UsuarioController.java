@@ -46,4 +46,11 @@ public class UsuarioController {
         usuarioService.deletarUsuario(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PutMapping("/alterar-senha")
+    public ResponseEntity<Void> alterarSenha(@Valid @RequestBody com.devflow.dto.AlterarSenhaDto dto) {
+        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        usuarioService.alterarSenha(emailLogado, dto);
+        return ResponseEntity.ok().build();
+    }
 }

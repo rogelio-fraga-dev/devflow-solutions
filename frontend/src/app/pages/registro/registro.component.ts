@@ -183,7 +183,7 @@ export class RegistroComponent {
       this.isLoading.set(true);
       const payload = { ...this.empresaForm.value, ...this.adminForm.value };
       
-      this.authService.login(payload as any).subscribe({
+      this.authService.registrar(payload).subscribe({
         next: (res) => {
           this.toast.success('Empresa criada! Você é o administrador. Convide seus devs em Usuários.');
           this.router.navigate(['/app/projetos']);

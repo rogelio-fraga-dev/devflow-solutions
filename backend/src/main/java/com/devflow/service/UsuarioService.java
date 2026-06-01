@@ -10,4 +10,5 @@ public interface UsuarioService {
      UsuarioResponseDto buscarUsuario(Long id);
      UsuarioResponseDto atualizarUsuario(Long id, UsuarioRequestDto request);
      void deletarUsuario(Long id);
+     void alterarSenha(String email, com.devflow.dto.AlterarSenhaDto dto);
 }

@@ -96,6 +96,7 @@ export class AppShellComponent implements OnInit {
     { label: 'Meus Projetos',   path: '/app/projetos',         icon: 'folder'    },
     { label: 'Lançar Horas',    path: '/app/timesheet',        icon: 'clock'     },
     { label: 'Meus Sprints',    path: '/app/sprints',          icon: 'zap'       },
+    { label: 'Meu Perfil',     path: '/app/perfil',           icon: 'user'      },
     { label: 'Ajuda',           path: '/app/ajuda',            icon: 'help'      },
   ];
 }

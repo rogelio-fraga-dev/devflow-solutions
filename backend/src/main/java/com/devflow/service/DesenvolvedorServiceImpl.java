@@ -87,7 +87,9 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
 
     @Override
     public List<DesenvolvedorResponseDto> listarDesenvolvedores() {
+        Long empresaId = getEmpresaLogadaId();
         return desenvolvedorRepository.findAll().stream()
+                .filter(d -> d.getUsuario() != null && d.getUsuario().getEmpresa() != null && d.getUsuario().getEmpresa().getId().equals(empresaId))
                 .map(this::mapEntityToResponse)
                 .toList();
     }
@@ -159,5 +161,35 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
             dto.setTotalSprintsParticipados(((Number) row[6]).longValue());
             return dto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public ProdutividadeDevDto getMinhaProdutividade() {
+        String emailLogado = SecurityContextHolder.getContext().getAuthentication().getName();
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(emailLogado)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+
+        Desenvolvedor dev = desenvolvedorRepository.findAll().stream()
+                .filter(d -> d.getUsuario() != null && d.getUsuario().getId().equals(usuario.getId()))
+                .findFirst()
+                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado para este usuário"));
+
+        // Get the ranking for the whole company, then filter for this dev
+        List<ProdutividadeDevDto> ranking = gerarRankingProdutividade();
+        return ranking.stream()
+                .filter(p -> p.getDesenvolvedorId().equals(dev.getId()))
+                .findFirst()
+                .orElseGet(() -> {
+                    // Se não tiver timesheets ainda, retorna zerado com os dados básicos
+                    ProdutividadeDevDto dto = new ProdutividadeDevDto();
+                    dto.setDesenvolvedorId(dev.getId());
+                    dto.setNomeDesenvolvedor(dev.getNome());
+                    dto.setSenioridade(dev.getSenioridade().name());
+                    dto.setTotalHorasLancadas(0.0);
+                    dto.setTotalHorasExtras(0.0);
+                    dto.setCustoTotalGerado(BigDecimal.ZERO);
+                    dto.setTotalSprintsParticipados(0L);
+                    return dto;
+                });
     }
 }

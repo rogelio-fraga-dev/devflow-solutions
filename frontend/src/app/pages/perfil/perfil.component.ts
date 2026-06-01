@@ -1,8 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { OnInit } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service';
+import { UsuarioService } from '../../core/services/usuario.service';
+import { DesenvolvedorService } from '../../core/services/desenvolvedor.service';
 import { ToastService } from '../../core/services/toast.service';
+import { extractErrorMessage } from '../../core/utils/error.util';
 
 @Component({
   selector: 'app-perfil',
@@ -47,7 +51,7 @@ import { ToastService } from '../../core/services/toast.service';
                 </div>
                 <div>
                   <div style="font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.4px;">
-                    {{ auth.currentUser()?.email?.split('@')?.[0] | titlecase }}
+                    {{ auth.currentUser()?.nome || (auth.currentUser()?.email?.split('@')?.[0] | titlecase) }}
                   </div>
                   <div style="color: var(--text-secondary); font-size: 13px; margin-top: 2px;">{{ auth.currentUser()?.email }}</div>
                   <div style="margin-top: 8px; display: flex; gap: 6px;">
@@ -62,7 +66,7 @@ import { ToastService } from '../../core/services/toast.service';
               <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--border); padding-top: 20px;">
                 <div style="display: flex; justify-content: space-between; font-size: 13px;">
                   <span style="color: var(--text-secondary);">Organização Corporativa</span>
-                  <span style="font-weight: 600; color: #fff;">DevFlow Solutions</span>
+                  <span style="font-weight: 600; color: #fff;">{{ auth.currentUser()?.empresa || 'DevFlow Solutions' }}</span>
                 </div>
                 <div style="display: flex; justify-content: space-between; font-size: 13px;">
                   <span style="color: var(--text-secondary);">Nível de Permissão</span>
@@ -71,11 +75,11 @@ import { ToastService } from '../../core/services/toast.service';
                 @if (auth.currentUser()?.role === 'DESENVOLVEDOR') {
                   <div style="display: flex; justify-content: space-between; font-size: 13px;">
                     <span style="color: var(--text-secondary);">Senioridade Cadastrada</span>
-                    <span style="font-weight: 600; color: #fff;">Pleno</span>
+                    <span style="font-weight: 600; color: #fff;">{{ devStats?.senioridade || 'Pleno' }}</span>
                   </div>
                   <div style="display: flex; justify-content: space-between; font-size: 13px;">
                     <span style="color: var(--text-secondary);">Faturamento Custo/Hora</span>
-                    <span style="font-weight: 600; color: #10B981;">R$ 85,00 / hora</span>
+                    <span style="font-weight: 600; color: #10B981;">Definido pelo gestor</span>
                   </div>
                 }
               </div>
@@ -123,7 +127,7 @@ import { ToastService } from '../../core/services/toast.service';
               <div class="card card-premium glow-indigo" style="margin: 0; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Total de Horas Trabalhadas</span>
-                  <div style="font-size: 32px; font-weight: 800; color: #fff; margin-top: 6px; font-family: var(--font_display);">342h</div>
+                  <div style="font-size: 32px; font-weight: 800; color: #fff; margin-top: 6px; font-family: var(--font_display);">{{ (devStats?.totalHorasLancadas || 0) + (devStats?.totalHorasExtras || 0) }}h</div>
                 </div>
                 <div style="background: rgba(99, 102, 241, 0.1); padding: 12px; border-radius: 12px; color: #6366F1;">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
@@ -132,8 +136,8 @@ import { ToastService } from '../../core/services/toast.service';
               
               <div class="card card-premium glow-indigo" style="margin: 0; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
-                  <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Projetos Alocados</span>
-                  <div style="font-size: 32px; font-weight: 800; color: #fff; margin-top: 6px; font-family: var(--font_display);">4</div>
+                  <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Sprints Participados</span>
+                  <div style="font-size: 32px; font-weight: 800; color: #fff; margin-top: 6px; font-family: var(--font_display);">{{ devStats?.totalSprintsParticipados || 0 }}</div>
                 </div>
                 <div style="background: rgba(139, 92, 246, 0.1); padding: 12px; border-radius: 12px; color: #8B5CF6;">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
@@ -143,7 +147,7 @@ import { ToastService } from '../../core/services/toast.service';
               <div class="card card-premium glow-indigo" style="margin: 0; padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;">
                 <div>
                   <span style="font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); font-weight: 700;">Custo Acumulado Gerado</span>
-                  <div style="font-size: 32px; font-weight: 800; color: #10B981; margin-top: 6px; font-family: var(--font_display);">R$ 29.070</div>
+                  <div style="font-size: 32px; font-weight: 800; color: #10B981; margin-top: 6px; font-family: var(--font_display);">{{ (devStats?.custoTotalGerado || 0) | currency:'BRL':'symbol':'1.0-0' }}</div>
                 </div>
                 <div style="background: rgba(16, 185, 129, 0.1); padding: 12px; border-radius: 12px; color: #10B981;">
                   <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
@@ -156,15 +160,30 @@ import { ToastService } from '../../core/services/toast.service';
     </div>
   `
 })
-export class PerfilComponent {
+export class PerfilComponent implements OnInit {
   auth = inject(AuthService);
+  usuarioService = inject(UsuarioService);
+  devService = inject(DesenvolvedorService);
   toast = inject(ToastService);
 
   senhaAtual = '';
   novaSenha = '';
   confirmarSenha = '';
+  loading = false;
+  devStats: any = null;
+
+  ngOnInit() {
+    if (this.auth.currentUser()?.role === 'DESENVOLVEDOR') {
+      this.devService.getMinhaProdutividade().subscribe({
+        next: (stats) => this.devStats = stats,
+        error: (err) => console.error('Erro ao buscar stats do dev', err)
+      });
+    }
+  }
 
   initials(): string {
+    const nome = this.auth.currentUser()?.nome;
+    if (nome) return nome.substring(0, 2).toUpperCase();
     const email = this.auth.currentUser()?.email;
     if (!email) return 'U';
     return email.slice(0, 2).toUpperCase();
@@ -179,9 +198,23 @@ export class PerfilComponent {
       this.toast.error('A confirmação da nova senha não confere.');
       return;
     }
-    this.toast.success('Senha atualizada com sucesso!');
-    this.senhaAtual = '';
-    this.novaSenha = '';
-    this.confirmarSenha = '';
+
+    this.loading = true;
+    this.usuarioService.alterarSenha({
+      senhaAtual: this.senhaAtual,
+      novaSenha: this.novaSenha
+    }).subscribe({
+      next: () => {
+        this.loading = false;
+        this.toast.success('Senha atualizada com sucesso!');
+        this.senhaAtual = '';
+        this.novaSenha = '';
+        this.confirmarSenha = '';
+      },
+      error: (err) => {
+        this.loading = false;
+        this.toast.error(extractErrorMessage(err) || 'Erro ao alterar a senha');
+      }
+    });
   }
 }

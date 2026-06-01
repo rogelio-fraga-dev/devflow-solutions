@@ -49,4 +49,9 @@ public class DesenvolvedorController {
     public ResponseEntity<List<com.devflow.dto.ProdutividadeDevDto>> ranking() {
         return ResponseEntity.ok(desenvolvedorService.gerarRankingProdutividade());
     }
+
+    @GetMapping("/me/produtividade")
+    public ResponseEntity<com.devflow.dto.ProdutividadeDevDto> minhaProdutividade() {
+        return ResponseEntity.ok(desenvolvedorService.getMinhaProdutividade());
+    }
 }

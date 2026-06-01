@@ -95,6 +95,20 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
+    @Override
+    @Transactional
+    public void alterarSenha(String email, com.devflow.dto.AlterarSenhaDto dto) {
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + email));
+
+        if (!passwordEncoder.matches(dto.getSenhaAtual(), usuario.getSenha())) {
+            throw new IllegalArgumentException("Senha atual incorreta");
+        }
+
+        usuario.setSenha(passwordEncoder.encode(dto.getNovaSenha()));
+        usuarioRepository.save(usuario);
+    }
+
     // MÉTODOS AUXILIARES (Deixam o código mais limpo e evitam repetição)
 
     private Usuario buscarPorId(Long id) {

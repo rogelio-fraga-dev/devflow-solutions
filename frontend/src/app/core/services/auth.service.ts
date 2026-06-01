@@ -6,6 +6,14 @@ import { environment } from '../../../environments/environment';
 import { LoginRequest, LoginResponse, CurrentUser } from '../models/auth.model';
 import { jwtDecode } from 'jwt-decode';
 
+export interface DecodedToken {
+  sub: string;
+  role?: string;
+  nome?: string;
+  empresa?: string;
+  exp: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private readonly TOKEN_KEY = 'devflow_token';
@@ -15,6 +23,15 @@ export class AuthService {
 
   login(credentials: LoginRequest) {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials).pipe(
+      tap(res => {
+        localStorage.setItem(this.TOKEN_KEY, res.token);
+        this.currentUser.set(this.decodeToken(res.token));
+      })
+    );
+  }
+
+  registrar(payload: any) {
+    return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/registrar`, payload).pipe(
       tap(res => {
         localStorage.setItem(this.TOKEN_KEY, res.token);
         this.currentUser.set(this.decodeToken(res.token));
@@ -45,10 +62,12 @@ export class AuthService {
 
   private decodeToken(token: string): CurrentUser | null {
     try {
-      const decoded: any = jwtDecode(token);
+      const decoded = jwtDecode<DecodedToken>(token);
       return {
         email: decoded.sub,
-        role: decoded.role ?? 'DESENVOLVEDOR' // fallback seguro enquanto o backend não é corrigido
+        role: decoded.role ?? 'DESENVOLVEDOR', // fallback seguro enquanto o backend não é corrigido
+        nome: decoded.nome ?? decoded.sub.split('@')[0],
+        empresa: decoded.empresa ?? 'DevFlow Solutions'
       };
     } catch {
       return null;

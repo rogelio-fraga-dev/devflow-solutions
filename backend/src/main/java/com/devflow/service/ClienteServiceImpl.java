@@ -16,9 +16,25 @@ import java.util.stream.Collectors;
 public class ClienteServiceImpl implements ClienteService {
 
     private final ClienteRepository clienteRepository;
+    private final com.devflow.repository.UsuarioRepository usuarioRepository;
 
-    public ClienteServiceImpl(ClienteRepository clienteRepository) {
+    public ClienteServiceImpl(ClienteRepository clienteRepository, com.devflow.repository.UsuarioRepository usuarioRepository) {
         this.clienteRepository = clienteRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    private Long getEmpresaLogadaId() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.devflow.model.Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+        return usuario.getEmpresa().getId();
+    }
+
+    private com.devflow.model.Empresa getEmpresaLogada() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        com.devflow.model.Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+        return usuario.getEmpresa();
     }
 
     @Override
@@ -35,6 +51,7 @@ public class ClienteServiceImpl implements ClienteService {
         cliente.setCnpj(request.getCnpj());
         cliente.setPessoaContato(request.getPessoaContato());
         cliente.setEndereco(request.getEndereco());
+        cliente.setEmpresa(getEmpresaLogada());
 
         cliente = clienteRepository.save(cliente);
         return mapToResponse(cliente);
@@ -72,7 +89,9 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public List<ClienteResponseDto> listarClientes() {
+        Long empresaId = getEmpresaLogadaId();
         return clienteRepository.findAll().stream()
+                .filter(c -> c.getEmpresa() != null && c.getEmpresa().getId().equals(empresaId))
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }

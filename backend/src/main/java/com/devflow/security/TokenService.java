@@ -25,6 +25,8 @@ public class TokenService {
                     .withIssuer("devflow-auth-api")
                     .withSubject(usuario.getEmail())
                     .withClaim("role", usuario.getRole().name())
+                    .withClaim("nome", usuario.getNome())
+                    .withClaim("empresa", usuario.getEmpresa() != null ? usuario.getEmpresa().getNomeFantasia() : "DevFlow Solutions")
                     .withExpiresAt(gerarDataExpiracao())
                     .sign(algorithm);
         } catch (JWTCreationException exception) {

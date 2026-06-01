@@ -12,4 +12,5 @@ public interface DesenvolvedorService {
     DesenvolvedorResponseDto atualizarDesenvolvedor(Long id, DesenvolvedorRequestDto request);
     void deletarDesenvolvedor(Long id);
     List<ProdutividadeDevDto> gerarRankingProdutividade();
+    ProdutividadeDevDto getMinhaProdutividade();
 }

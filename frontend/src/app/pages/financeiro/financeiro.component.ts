@@ -158,7 +158,7 @@ import Chart from 'chart.js/auto';
 
         <!-- Gráfico 2: Evolução de Custos Gerais -->
         <div class="card card-premium glow-indigo" style="display: flex; flex-direction: column; flex: 2 1 500px; min-height: 380px;">
-          <h3 style="margin-bottom:12px; font-size:16px; letter-spacing:-0.5px;">Evolução de Custos Gerais</h3>
+          <h3 style="margin-bottom:12px; font-size:16px; letter-spacing:-0.5px;">Evolução de Custos Gerais <span style="font-size: 11px; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: normal; color: var(--text-muted)">Projeção Simulada</span></h3>
           <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Acompanhamento histórico mensal consolidado de todas as despesas da empresa.</p>
           <div style="position: relative; flex: 1; min-height: 220px;">
             <canvas #trendCanvasRef style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; display: block;"></canvas>
@@ -484,10 +484,10 @@ export class FinanceiroComponent implements OnInit, OnDestroy {
     if (!this.compositionCanvasRef) return;
     if (this.compositionChart) this.compositionChart.destroy();
 
-    const dev = this.totalDevCosts() || 24000;
-    const cloud = this.cloudCostsSum() || 8500;
-    const api = this.apiCostsSum() || 3200;
-    const adicional = this.adicionalCostsSum() || 1500;
+    const dev = this.totalDevCosts() || 0;
+    const cloud = this.cloudCostsSum() || 0;
+    const api = this.apiCostsSum() || 0;
+    const adicional = this.adicionalCostsSum() || 0;
 
     this.zone.runOutsideAngular(() => {
       this.compositionChart = new Chart(this.compositionCanvasRef.nativeElement, {
@@ -526,10 +526,10 @@ export class FinanceiroComponent implements OnInit, OnDestroy {
     if (!this.trendCanvasRef) return;
     if (this.trendChart) this.trendChart.destroy();
 
-    const devTotal = this.totalDevCosts() || 24000;
-    const cloudTotal = this.cloudCostsSum() || 8500;
-    const apiTotal = this.apiCostsSum() || 3200;
-    const adicionalTotal = this.adicionalCostsSum() || 1500;
+    const devTotal = this.totalDevCosts() || 0;
+    const cloudTotal = this.cloudCostsSum() || 0;
+    const apiTotal = this.apiCostsSum() || 0;
+    const adicionalTotal = this.adicionalCostsSum() || 0;
 
     const ctx = this.trendCanvasRef.nativeElement.getContext('2d');
 
