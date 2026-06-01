@@ -172,13 +172,13 @@ import { extractErrorMessage } from '../../core/utils/error.util';
     <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
       <div class="modal-overlay" (click)="drawerOpen.set(false)">
-        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw; max-height: 90vh; overflow-y: auto;">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 700px; max-width: 95vw; max-height: 90vh; overflow-y: auto;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
             <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Registro' : 'Registrar Horas' }}</h3>
             <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
           
-          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom: 24px;">
             <div class="form-group">
               <label class="label">Desenvolvedor *</label>
               <select class="select" [(ngModel)]="form.desenvolvedorId">
@@ -199,20 +199,18 @@ import { extractErrorMessage } from '../../core/utils/error.util';
               <label class="label">Data do Registro *</label>
               <input class="input" type="date" [(ngModel)]="form.dataRegistro" />
             </div>
-            
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-              <div class="form-group">
-                <label class="label">Horas Trabalhadas</label>
-                <input class="input" type="number" step="0.5" placeholder="8" [(ngModel)]="form.horasTrabalhadas" />
-              </div>
-              
-              <div class="form-group">
-                <label class="label">Horas Extras</label>
-                <input class="input" type="number" step="0.5" placeholder="0" [(ngModel)]="form.horasExtras" />
-              </div>
-            </div>
+            <div class="form-group" style="grid-column: 2; grid-row: 2;"></div>
             
             <div class="form-group">
+              <label class="label">Horas Trabalhadas</label>
+              <input class="input" type="number" step="0.5" placeholder="8" [(ngModel)]="form.horasTrabalhadas" />
+            </div>
+            <div class="form-group">
+              <label class="label">Horas Extras</label>
+              <input class="input" type="number" step="0.5" placeholder="0" [(ngModel)]="form.horasExtras" />
+            </div>
+            
+            <div class="form-group" style="grid-column: 1 / -1;">
               <label class="label">Descrição da Tarefa</label>
               <textarea class="textarea" rows="3" placeholder="O que foi feito..." [(ngModel)]="form.descricaoTarefa"></textarea>
             </div>

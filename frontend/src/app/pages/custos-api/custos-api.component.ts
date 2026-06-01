@@ -130,14 +130,14 @@ import { extractErrorMessage } from '../../core/utils/error.util';
     <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
       <div class="modal-overlay" (click)="drawerOpen.set(false)">
-        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw;">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 700px; max-width: 95vw;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
             <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Custo API' : 'Registrar Custo API' }}</h3>
             <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
           
-          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
-            <div class="form-group">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom: 24px;">
+            <div class="form-group" style="grid-column: 1 / -1;">
               <label class="label">Projeto *</label>
               <select class="select" [(ngModel)]="form.projetoId">
                 <option [ngValue]="0">Selecione...</option>

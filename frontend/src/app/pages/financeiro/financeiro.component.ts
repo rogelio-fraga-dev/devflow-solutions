@@ -273,7 +273,7 @@ import Chart from 'chart.js/auto';
     <!-- Modal DRE -->
     @if (modalDreOpen()) {
       <div class="modal-overlay" (click)="fecharModal()">
-        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.3);">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.3); width: 700px; max-width: 95vw;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <h3 style="font-size: 18px;">DRE Consolidado de Projeto</h3>
             <button class="btn btn-ghost" style="padding:4px; border:none;" (click)="fecharModal()">✕</button>

@@ -104,14 +104,14 @@ import { extractErrorMessage } from '../../core/utils/error.util';
     <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
       <div class="modal-overlay" (click)="drawerOpen.set(false)">
-        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 460px; max-width: 95vw;">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 700px; max-width: 95vw;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
             <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Usuário' : 'Novo Usuário' }}</h3>
             <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
           
-          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px;">
-            <div class="form-group">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom: 24px;">
+            <div class="form-group" style="grid-column: 1 / -1;">
               <label class="label">Nome *</label>
               <input class="input" placeholder="Nome completo" [(ngModel)]="form.nome" />
             </div>
@@ -121,21 +121,21 @@ import { extractErrorMessage } from '../../core/utils/error.util';
               <input class="input" type="email" placeholder="email@empresa.com" [(ngModel)]="form.email" />
             </div>
             
-            @if (!editingId()) {
-              <div class="form-group">
-                <label class="label">Senha *</label>
-                <input class="input" type="password" placeholder="Mínimo 6 caracteres" [(ngModel)]="form.senha" />
-              </div>
-            }
-            
             <div class="form-group">
               <label class="label">Perfil</label>
               <select class="select" [(ngModel)]="form.role">
                 @for (r of roles; track r) { <option [value]="r">{{ r }}</option> }
               </select>
             </div>
+
+            @if (!editingId()) {
+              <div class="form-group" style="grid-column: 1 / -1;">
+                <label class="label">Senha *</label>
+                <input class="input" type="password" placeholder="Mínimo 6 caracteres" [(ngModel)]="form.senha" />
+              </div>
+            }
             
-            <div style="display:flex;align-items:center;gap:8px;">
+            <div style="display:flex;align-items:center;gap:8px; grid-column: 1 / -1;">
               <input type="checkbox" id="u-ativo" [(ngModel)]="form.ativo" />
               <label for="u-ativo" style="font-size:13px;cursor:pointer">Usuário ativo</label>
             </div>
