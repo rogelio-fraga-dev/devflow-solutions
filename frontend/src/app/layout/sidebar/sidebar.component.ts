@@ -18,7 +18,7 @@ export interface NavItem {
     <aside class="sidebar" [class.collapsed]="collapsed()">
       <!-- Logo (always visible) -->
       <div class="sidebar-logo">
-        <img src="logo.png" alt="DevFlow" class="logo-mark" onerror="this.onerror=null; this.src='assets/logo.png';"/>
+        <img src="assets/logo3.png" alt="DevFlow" class="logo-mark" onerror="this.onerror=null; this.src='assets/logo.png';"/>
         <span class="sidebar-logo-text">DevFlow</span>
       </div>
 

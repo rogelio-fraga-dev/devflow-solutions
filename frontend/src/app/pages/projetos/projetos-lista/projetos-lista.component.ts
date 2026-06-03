@@ -29,6 +29,7 @@ import { extractErrorMessage } from '../../../core/utils/error.util';
           <div>
             <h1 class="page-title" style="margin:0;font-size:32px;letter-spacing:-1px;">Projetos</h1>
             <p class="page-subtitle" style="font-size:15px;margin:0">{{ projetos().length }} projeto(s) cadastrado(s)</p>
+          </div>
         </div>
         <div style="display:flex;gap:12px;">
           @if (auth.currentUser()?.role !== 'DESENVOLVEDOR') {

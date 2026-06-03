@@ -65,7 +65,7 @@ export class AuthService {
       const decoded = jwtDecode<DecodedToken>(token);
       return {
         email: decoded.sub,
-        role: decoded.role ?? 'DESENVOLVEDOR', // fallback seguro enquanto o backend não é corrigido
+        role: (decoded.role as any) ?? 'DESENVOLVEDOR', // fallback seguro enquanto o backend não é corrigido
         nome: decoded.nome ?? decoded.sub.split('@')[0],
         empresa: decoded.empresa ?? 'DevFlow Solutions'
       };

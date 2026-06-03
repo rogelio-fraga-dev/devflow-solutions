@@ -71,15 +71,23 @@ $uDev2 = ($usuarios | Where-Object email -eq 'dev2_final@devflow.com').id
 # CLIENTES
 # =====================================================
 Write-Host '=== CLIENTES ===' -ForegroundColor Cyan
-$cli1 = ApiPost "$base/clientes" @{ razaoSocial="Vale S.A."; cnpj="33.592.510/0001-54"; pessoaContato="Eduardo Martins" } $token
-$cli2 = ApiPost "$base/clientes" @{ razaoSocial="Banco Bradesco"; cnpj="60.746.948/0001-12"; pessoaContato="Roberto Alves" } $token
+$end1 = @{ rua="Av. das Nações Unidas"; numero="1000"; bairro="Itaim Bibi"; cidade="São Paulo"; estado="SP"; cep="04533-000" }
+$cli1 = ApiPost "$base/clientes" @{ razaoSocial="Vale S.A."; cnpj="33.592.510/0001-54"; pessoaContato="Eduardo Martins"; endereco=$end1 } $token
+
+$end2 = @{ rua="Cidade de Deus"; numero="S/N"; bairro="Vila Yara"; cidade="Osasco"; estado="SP"; cep="06029-900" }
+$cli2 = ApiPost "$base/clientes" @{ razaoSocial="Banco Bradesco"; cnpj="60.746.948/0001-12"; pessoaContato="Roberto Alves"; endereco=$end2 } $token
+
+$end3 = @{ rua="Praça Mauá"; numero="1"; bairro="Centro"; cidade="Rio de Janeiro"; estado="RJ"; cep="20081-240" }
+$cli3 = ApiPost "$base/clientes" @{ razaoSocial="Porto Rio Logística"; cnpj="44.555.666/0001-77"; pessoaContato="Amanda Silveira"; endereco=$end3 } $token
 
 # Recuperando ids reais dos clientes se ja existirem
 $clientesList = Invoke-RestMethod -Method GET -Uri "$base/clientes" -Headers @{ "Authorization" = "Bearer $token" }
 $cli1Id = ($clientesList | Where-Object cnpj -eq '33.592.510/0001-54').id
 $cli2Id = ($clientesList | Where-Object cnpj -eq '60.746.948/0001-12').id
+$cli3Id = ($clientesList | Where-Object cnpj -eq '44.555.666/0001-77').id
 $cli1 = @{ id = $cli1Id }
 $cli2 = @{ id = $cli2Id }
+$cli3 = @{ id = $cli3Id }
 
 # =====================================================
 # DESENVOLVEDORES (2 devs)

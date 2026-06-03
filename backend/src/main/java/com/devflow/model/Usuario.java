@@ -37,7 +37,7 @@ public class Usuario implements UserDetails {
     @Column(nullable = false)
     private Boolean ativo = true;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
