@@ -233,6 +233,7 @@ import { CommonModule } from '@angular/common';
         <a href="#features" style="margin-right: 30px; text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Funcionalidades</a>
         <a href="#planos" style="margin-right: 30px; text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Planos</a>
         <button class="btn btn-ghost" (click)="goLogin()">Acesso Plataforma</button>
+        <button class="btn btn-ghost" style="margin-left: 12px;" (click)="goSobreNos()">Sobre Nós</button>
         <button class="btn btn-primary" style="margin-left: 16px;" (click)="goRegister()">Iniciar Grátis</button>
       </nav>
 
@@ -378,8 +379,9 @@ import { CommonModule } from '@angular/common';
 export class LandingComponent {
   constructor(private router: Router) {}
 
-  goLogin() { this.router.navigate(['/login']); }
-  goRegister() { this.router.navigate(['/registro']); }
+  goLogin()     { this.router.navigate(['/login']); }
+  goRegister()  { this.router.navigate(['/registro']); }
+  goSobreNos()  { this.router.navigate(['/sobre-nos']); }
 
   features = [
     { icon: '🛡️', title: 'Fim dos Projetos no Vermelho', desc: 'O Budget Guard bloqueia automaticamente novos lançamentos de horas e gastos quando o orçamento estoura. Um verdadeiro bloqueio anti-prejuízo.' },
