@@ -18,53 +18,86 @@ import { Timesheet } from '../../core/models/timesheet.model';
 import { CustoCloud } from '../../core/models/custo-cloud.model';
 import { CustoApi } from '../../core/models/custo-api.model';
 import { AuthService } from '../../core/services/auth.service';
+import { TiltDirective } from '../../shared/directives/tilt.directive';
+import { RevealDirective } from '../../shared/directives/reveal.directive';
 import Chart from 'chart.js/auto';
 
 @Component({
   selector: 'app-financeiro',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TiltDirective, RevealDirective],
   template: `
     <div class="page">
-      <div class="page-header" style="align-items: center; border-bottom: 1px solid var(--border); padding-bottom: 24px; margin-bottom: 32px;">
-        <div style="display: flex; gap: 20px; align-items: center;">
-          <div style="width: 64px; height: 64px; border-radius: 16px; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: white; box-shadow: 0 8px 24px rgba(79,70,229,0.4);">
-            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
-          </div>
+      <!-- Cabeçalho -->
+      <header class="df-page-head">
+        <div class="df-page-head-left">
+          <span class="df-icon-chip lg">
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+          </span>
           <div>
-            <h1 class="page-title" style="margin:0;font-size:32px;letter-spacing:-1px;">Dashboard Executivo</h1>
-            <p class="page-subtitle" style="font-size:15px;margin:0">Central de comando consolidada do portfólio e custos</p>
+            <h1 class="df-page-title">Dashboard Executivo</h1>
+            <p class="df-page-sub">Central de comando consolidada do portfólio e custos</p>
           </div>
         </div>
-      </div>
+        <span class="chip-premium purple"><span class="dot-ping"></span> Tempo real</span>
+      </header>
 
-      <!-- LINHA 1 — KPI Cards Globais -->
+      <!-- LINHA 1 — KPI Cards Globais (bento) -->
       @if (dashboard()) {
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px;">
-          <div class="stat-card card-premium">
-            <div class="stat-label">Investimento Total Alocado</div>
-            <div class="stat-value" style="font-size: 22px;">{{ dashboard()?.budgetGlobal | currency:'BRL':'symbol':'1.0-0' }}</div>
-            <div class="stat-sub">{{ dashboard()?.totalProjetos }} projetos cadastrados</div>
+        <div class="df-kpi-grid">
+          <div class="df-card df-kpi" appTilt appReveal>
+            <div class="df-kpi-top">
+              <span class="df-kpi-label">Investimento Total Alocado</span>
+              <span class="df-icon-chip">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="14" rx="3"/><path d="M16 13h4"/><path d="M2 10h20"/></svg>
+              </span>
+            </div>
+            <div class="df-kpi-value" style="font-size: 22px;">{{ dashboard()?.budgetGlobal | currency:'BRL':'symbol':'1.0-0' }}</div>
+            <div class="df-kpi-sub">{{ dashboard()?.totalProjetos }} projetos cadastrados</div>
           </div>
-          <div class="stat-card card-premium">
-            <div class="stat-label">Projetos Ativos</div>
-            <div class="stat-value" style="color: #A5B4FC">{{ dashboard()?.emAndamento }}</div>
-            <div class="stat-sub">Ciclo de desenvolvimento ativo</div>
+
+          <div class="df-card df-kpi" appTilt appReveal [revealDelay]="60">
+            <div class="df-kpi-top">
+              <span class="df-kpi-label">Projetos Ativos</span>
+              <span class="df-icon-chip sky">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              </span>
+            </div>
+            <div class="df-kpi-value" style="color: #A5B4FC">{{ dashboard()?.emAndamento }}</div>
+            <div class="df-kpi-sub">Ciclo de desenvolvimento ativo</div>
           </div>
-          <div class="stat-card card-premium">
-            <div class="stat-label">Alertas Financeiros</div>
-            <div class="stat-value" [style.color]="(dashboard()?.emAlerta ?? 0) > 0 ? 'var(--status-warning)' : 'inherit'">{{ dashboard()?.emAlerta }}</div>
-            <div class="stat-sub">Projetos em nível de atenção</div>
+
+          <div class="df-card df-kpi" appTilt appReveal [revealDelay]="120" [class.premium-glow-w]="(dashboard()?.emAlerta ?? 0) > 0">
+            <div class="df-kpi-top">
+              <span class="df-kpi-label">Alertas Financeiros</span>
+              <span class="df-icon-chip amber">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+              </span>
+            </div>
+            <div class="df-kpi-value" [style.color]="(dashboard()?.emAlerta ?? 0) > 0 ? 'var(--status-warning)' : 'inherit'">{{ dashboard()?.emAlerta }}</div>
+            <div class="df-kpi-sub">Projetos em nível de atenção</div>
           </div>
-          <div class="stat-card card-premium">
-            <div class="stat-label">Projetos Estourados</div>
-            <div class="stat-value" [style.color]="(dashboard()?.estourados ?? 0) > 0 ? 'var(--status-danger)' : 'inherit'">{{ dashboard()?.estourados }}</div>
-            <div class="stat-sub">Bloqueio Budget Guard ativo</div>
+
+          <div class="df-card df-kpi" appTilt appReveal [revealDelay]="180" [class.premium-glow-d]="(dashboard()?.estourados ?? 0) > 0">
+            <div class="df-kpi-top">
+              <span class="df-kpi-label">Projetos Estourados</span>
+              <span class="df-icon-chip red">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+              </span>
+            </div>
+            <div class="df-kpi-value" [style.color]="(dashboard()?.estourados ?? 0) > 0 ? 'var(--status-danger)' : 'inherit'">{{ dashboard()?.estourados }}</div>
+            <div class="df-kpi-sub">Bloqueio Budget Guard ativo</div>
           </div>
-          <div class="stat-card card-premium">
-            <div class="stat-label">Consumo Global (Burn Rate)</div>
-            <div class="stat-value" [style.color]="(dashboard()?.burnRatePercentual ?? 0) > 85 ? 'var(--status-danger)' : '#10B981'">{{ dashboard()?.burnRatePercentual | number:'1.1-1' }}%</div>
-            <div class="stat-sub">Média consumida do budget</div>
+
+          <div class="df-card df-kpi" appTilt appReveal [revealDelay]="240">
+            <div class="df-kpi-top">
+              <span class="df-kpi-label">Consumo Global (Burn Rate)</span>
+              <span class="df-icon-chip green">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+              </span>
+            </div>
+            <div class="df-kpi-value" [style.color]="(dashboard()?.burnRatePercentual ?? 0) > 85 ? 'var(--status-danger)' : 'var(--status-success)'">{{ dashboard()?.burnRatePercentual | number:'1.1-1' }}%</div>
+            <div class="df-kpi-sub">Média consumida do budget</div>
           </div>
         </div>
       }
@@ -72,33 +105,33 @@ import Chart from 'chart.js/auto';
       <!-- LINHA 2 — Widgets Operacionais Consolidados -->
       <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px; margin-bottom: 32px;">
         <!-- Card: Ciclos e Sprints -->
-        <div class="card card-premium" style="padding: 20px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="df-card df-kpi" appReveal>
+          <div class="df-kpi-top">
             <div>
-              <div class="stat-label" style="text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted);">Sprints em Andamento</div>
-              <div class="stat-value" style="font-size: 32px; font-weight: 800; margin-top: 4px;">{{ sprintsCount() }}</div>
+              <span class="df-kpi-label">Sprints em Andamento</span>
+              <div class="df-kpi-value" style="margin-top: 6px;">{{ sprintsCount() }}</div>
             </div>
-            <div style="background: rgba(139, 92, 246, 0.1); padding: 8px; border-radius: 8px; color: var(--purple-dark);">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-            </div>
+            <span class="df-icon-chip">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </span>
           </div>
-          <div style="margin-top: 12px; font-size: 12px; color: var(--text-secondary);">
+          <div class="df-kpi-sub">
             Esforço Estimado: <strong style="color: #fff">{{ sprintsHours() }}h planejadas</strong>
           </div>
         </div>
 
         <!-- Card: Mudanças de Escopo (Change Requests) -->
-        <div class="card card-premium" style="padding: 20px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="df-card df-kpi" appReveal [revealDelay]="60">
+          <div class="df-kpi-top">
             <div>
-              <div class="stat-label" style="text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted);">Change Requests Aprovados</div>
-              <div class="stat-value" style="font-size: 32px; font-weight: 800; margin-top: 4px; color: #10B981;">{{ crsApprovedCount() }}</div>
+              <span class="df-kpi-label">Change Requests Aprovados</span>
+              <div class="df-kpi-value" style="margin-top: 6px; color: var(--status-success);">{{ crsApprovedCount() }}</div>
             </div>
-            <div style="background: rgba(16, 185, 129, 0.1); padding: 8px; border-radius: 8px; color: #10B981;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-            </div>
+            <span class="df-icon-chip green">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            </span>
           </div>
-          <div style="margin-top: 12px; font-size: 12px; color: var(--text-secondary); display: flex; justify-content: space-between; width: 100%;">
+          <div class="df-kpi-sub" style="display: flex; justify-content: space-between; gap: 8px;">
             <span>Adicional Aprovado: <strong style="color: #fff">{{ crsApprovedValue() | currency:'BRL':'symbol':'1.0-0' }}</strong></span>
             @if (crsPendingCount() > 0) {
               <span class="chip warning" style="font-size: 9px; padding: 1px 6px;">{{ crsPendingCount() }} pendentes</span>
@@ -107,33 +140,33 @@ import Chart from 'chart.js/auto';
         </div>
 
         <!-- Card: Controle Operacional de Horas -->
-        <div class="card card-premium" style="padding: 20px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="df-card df-kpi" appReveal [revealDelay]="120">
+          <div class="df-kpi-top">
             <div>
-              <div class="stat-label" style="text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted);">Total de Horas Trabalhadas</div>
-              <div class="stat-value" style="font-size: 32px; font-weight: 800; margin-top: 4px;">{{ timesheetHours() }}h</div>
+              <span class="df-kpi-label">Total de Horas Trabalhadas</span>
+              <div class="df-kpi-value" style="margin-top: 6px;">{{ timesheetHours() }}h</div>
             </div>
-            <div style="background: rgba(14, 165, 233, 0.1); padding: 8px; border-radius: 8px; color: #0EA5E9;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-            </div>
+            <span class="df-icon-chip sky">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
           </div>
-          <div style="margin-top: 12px; font-size: 12px; color: var(--text-secondary);">
+          <div class="df-kpi-sub">
             Horas Extras Lançadas: <strong style="color: var(--color_accent_purple)">{{ timesheetExtras() }}h extras</strong>
           </div>
         </div>
 
         <!-- Card: Custos de Infraestrutura e Licenças -->
-        <div class="card card-premium" style="padding: 20px; min-height: 140px; display: flex; flex-direction: column; justify-content: space-between;">
-          <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+        <div class="df-card df-kpi" appReveal [revealDelay]="180">
+          <div class="df-kpi-top">
             <div>
-              <div class="stat-label" style="text-transform: uppercase; font-size: 11px; font-weight: 700; letter-spacing: 0.05em; color: var(--text-muted);">Gastos Não-Operacionais</div>
-              <div class="stat-value" style="font-size: 32px; font-weight: 800; margin-top: 4px; color: #F59E0B;">{{ nonOperationalCosts() | currency:'BRL':'symbol':'1.0-0' }}</div>
+              <span class="df-kpi-label">Gastos Não-Operacionais</span>
+              <div class="df-kpi-value" style="margin-top: 6px; color: var(--status-warning);">{{ nonOperationalCosts() | currency:'BRL':'symbol':'1.0-0' }}</div>
             </div>
-            <div style="background: rgba(245, 158, 11, 0.1); padding: 8px; border-radius: 8px; color: #F59E0B;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
-            </div>
+            <span class="df-icon-chip amber">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+            </span>
           </div>
-          <div style="margin-top: 12px; font-size: 11px; color: var(--text-secondary); display: flex; justify-content: space-between; gap: 8px;">
+          <div class="df-kpi-sub" style="display: flex; justify-content: space-between; gap: 8px; font-size: 11px;">
             <span>Cloud: <strong>{{ cloudCostsSum() | currency:'BRL':'symbol':'1.0-0' }}</strong></span>
             <span>APIs/Licenças: <strong>{{ apiCostsSum() | currency:'BRL':'symbol':'1.0-0' }}</strong></span>
             <span>Adicionais: <strong>{{ adicionalCostsSum() | currency:'BRL':'symbol':'1.0-0' }}</strong></span>
@@ -144,20 +177,20 @@ import Chart from 'chart.js/auto';
       <!-- LINHA 3 — Gráficos Analíticos de Custo -->
       <div style="display: flex; flex-wrap: wrap; gap: 24px; margin-bottom: 32px;">
         <!-- Gráfico 1: Composição Consolidada de Gastos -->
-        <div class="card card-premium glow-indigo" style="display: flex; flex-direction: column; flex: 1 1 350px; min-height: 380px;">
+        <div class="df-card glow-indigo" appReveal style="display: flex; flex-direction: column; flex: 1 1 350px; min-height: 380px;">
           <h3 style="margin-bottom:12px; font-size:16px; letter-spacing:-0.5px;">Composição de Custo Consolidada</h3>
           <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Divisão financeira entre horas trabalhadas, servidores de nuvem e licenciamento de IA.</p>
           <div style="position: relative; flex: 1; display: flex; align-items: center; justify-content: center;">
             <canvas #compositionCanvasRef style="max-height: 240px; max-width: 240px; display: block; z-index: 1;"></canvas>
             <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 0; pointer-events: none;">
               <span style="font-size: 24px; font-weight: 800; color: #fff;">{{ totalConsolidatedCosts() | currency:'BRL':'symbol':'1.0-0' }}</span>
-              <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase;">Custo Total</span>
+              <span style="font-size: 10px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.14em;">Custo Total</span>
             </div>
           </div>
         </div>
 
         <!-- Gráfico 2: Evolução de Custos Gerais -->
-        <div class="card card-premium glow-indigo" style="display: flex; flex-direction: column; flex: 2 1 500px; min-height: 380px;">
+        <div class="df-card glow-indigo" appReveal [revealDelay]="80" style="display: flex; flex-direction: column; flex: 2 1 500px; min-height: 380px;">
           <h3 style="margin-bottom:12px; font-size:16px; letter-spacing:-0.5px;">Evolução de Custos Gerais <span style="font-size: 11px; background: rgba(255,255,255,0.1); padding: 2px 6px; border-radius: 4px; margin-left: 8px; font-weight: normal; color: var(--text-muted)">Projeção Simulada</span></h3>
           <p style="font-size:12px; color:var(--text-muted); margin-bottom: 20px;">Acompanhamento histórico mensal consolidado de todas as despesas da empresa.</p>
           <div style="position: relative; flex: 1; min-height: 220px;">
@@ -167,7 +200,7 @@ import Chart from 'chart.js/auto';
       </div>
 
       <!-- LINHA 4 — Tabela de Projetos & Margem Bruta -->
-      <div class="card card-premium" style="margin-bottom: 24px;">
+      <div class="df-card" appReveal style="margin-bottom: 24px;">
         <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap: wrap; gap: 16px; margin-bottom: 16px;">
           <div>
             <h3 style="margin: 0; font-size:18px;">Análise Consolidada de Projetos</h3>
@@ -227,45 +260,53 @@ import Chart from 'chart.js/auto';
             </tbody>
           </table>
         </div>
-        
+
         <!-- Pagination Controls -->
         @if (totalProjetosPages() > 1) {
           <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 20px;">
-            <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 12px;" 
+            <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 12px;"
                     [disabled]="currentPage() === 1" (click)="prevProjetosPage()">Anterior</button>
             <span style="font-size: 12px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalProjetosPages() }}</span>
-            <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 12px;" 
+            <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 12px;"
                     [disabled]="currentPage() === totalProjetosPages()" (click)="nextProjetosPage()">Próximo</button>
           </div>
         }
       </div>
 
-      <!-- LINHA 5 — Ranking de Desenvolvedores e Produtividade -->
+      <!-- LINHA 5 — Ranking de Desenvolvedores (divulgação progressiva) -->
       @if (auth.currentUser()?.role !== 'DESENVOLVEDOR') {
-        <div class="card card-premium">
-          <h3 style="margin-bottom: 16px; font-size: 18px;">Ranking de Desenvolvedores e Produtividade</h3>
-          <div class="table-wrapper">
-            <table class="table">
-              <thead>
-                <tr>
-                  <th>Desenvolvedor</th>
-                  <th>Senioridade</th>
-                  <th style="text-align:right">Horas Dedicadas</th>
-                  <th style="text-align:right">Custo Gerado</th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (d of produtividade(); track d.nomeDesenvolvedor) {
+        <div class="df-card" appReveal>
+          <button class="df-disclose" [attr.aria-expanded]="rankingOpen()" (click)="rankingOpen.set(!rankingOpen())">
+            <div>
+              <h3 style="font-size: 18px;">Ranking de Desenvolvedores e Produtividade</h3>
+              <span style="font-size:12px; color:var(--text-muted)">{{ rankingOpen() ? 'Ocultar detalhes' : 'Expandir para ver horas e custo por desenvolvedor' }}</span>
+            </div>
+            <svg class="df-disclose-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 12 15 18 9"/></svg>
+          </button>
+          @if (rankingOpen()) {
+            <div class="df-disclose-body table-wrapper" style="margin-top: 16px;">
+              <table class="table">
+                <thead>
                   <tr>
-                    <td style="font-weight:600">{{ d.nomeDesenvolvedor }}</td>
-                    <td>{{ d.senioridade }}</td>
-                    <td style="text-align:right">{{ d.totalHorasLancadas + d.totalHorasExtras }}h</td>
-                    <td style="text-align:right; font-weight:700; color: var(--purple-dark)">{{ d.custoTotalGerado | currency:'BRL':'symbol':'1.0-0' }}</td>
+                    <th>Desenvolvedor</th>
+                    <th>Senioridade</th>
+                    <th style="text-align:right">Horas Dedicadas</th>
+                    <th style="text-align:right">Custo Gerado</th>
                   </tr>
-                }
-              </tbody>
-            </table>
-          </div>
+                </thead>
+                <tbody>
+                  @for (d of produtividade(); track d.nomeDesenvolvedor) {
+                    <tr>
+                      <td style="font-weight:600">{{ d.nomeDesenvolvedor }}</td>
+                      <td>{{ d.senioridade }}</td>
+                      <td style="text-align:right">{{ d.totalHorasLancadas + d.totalHorasExtras }}h</td>
+                      <td style="text-align:right; font-weight:700; color: var(--purple-dark)">{{ d.custoTotalGerado | currency:'BRL':'symbol':'1.0-0' }}</td>
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          }
         </div>
       }
     </div>
@@ -273,12 +314,12 @@ import Chart from 'chart.js/auto';
     <!-- Modal DRE -->
     @if (modalDreOpen()) {
       <div class="modal-overlay" (click)="fecharModal()">
-        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.3); width: 700px; max-width: 95vw;">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.3); border-radius: var(--radius-xl); width: 700px; max-width: 95vw;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 16px;">
             <h3 style="font-size: 18px;">DRE Consolidado de Projeto</h3>
             <button class="btn btn-ghost" style="padding:4px; border:none;" (click)="fecharModal()">✕</button>
           </div>
-          
+
           @if (dreIndividual()) {
             <div style="display:flex; flex-direction:column; gap:12px; margin-bottom: 24px;">
               <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px;">
@@ -291,7 +332,7 @@ import Chart from 'chart.js/auto';
               </div>
               <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px;">
                 <span style="color:var(--text-muted)">Margem de Lucro Bruto</span>
-                <span style="font-weight:600; color:#10B981">{{ dreIndividual()?.margemLucro | currency:'BRL':'symbol':'1.2-2' }}</span>
+                <span style="font-weight:600; color:var(--status-success)">{{ dreIndividual()?.margemLucro | currency:'BRL':'symbol':'1.2-2' }}</span>
               </div>
               <div style="display:flex; justify-content:space-between; border-bottom:1px solid var(--border); padding-bottom:8px;">
                 <span style="color:var(--text-muted)">Burn Rate</span>
@@ -299,10 +340,10 @@ import Chart from 'chart.js/auto';
               </div>
               <div style="display:flex; justify-content:space-between; padding-bottom:8px;">
                 <span style="color:var(--text-muted)">Previsão de Esgotamento</span>
-                <span style="font-weight:600; color:#F59E0B">{{ dreIndividual()?.dataPrevisaoEsgotamento ? (dreIndividual()?.dataPrevisaoEsgotamento | date:'dd/MM/yyyy') : 'Dentro do Orçamento' }}</span>
+                <span style="font-weight:600; color:var(--status-warning)">{{ dreIndividual()?.dataPrevisaoEsgotamento ? (dreIndividual()?.dataPrevisaoEsgotamento | date:'dd/MM/yyyy') : 'Dentro do Orçamento' }}</span>
               </div>
             </div>
-            
+
             <div class="modal-actions">
               <button class="btn btn-primary" style="width:100%; justify-content:center;" (click)="exportarPdf(projetoDreId())">Exportar PDF</button>
             </div>
@@ -334,10 +375,13 @@ export class FinanceiroComponent implements OnInit, OnDestroy {
 
   dashboard = signal<DashboardExecutivo | null>(null);
   produtividade = signal<any[]>([]);
-  
+
   modalDreOpen = signal(false);
   dreIndividual = signal<DreIndividual | null>(null);
   projetoDreId = signal<number>(0);
+
+  // Divulgação progressiva
+  rankingOpen = signal(false);
 
   // Consolidated Metrics
   sprintsCount = signal<number>(0);
@@ -736,11 +780,11 @@ export class FinanceiroComponent implements OnInit, OnDestroy {
     return Math.max(1, Math.ceil(list.length / 10));
   }
 
-  nextProjetosPage() { 
-    if (this.currentPage() < this.totalProjetosPages()) this.currentPage.update(v => v + 1); 
+  nextProjetosPage() {
+    if (this.currentPage() < this.totalProjetosPages()) this.currentPage.update(v => v + 1);
   }
-  
-  prevProjetosPage() { 
-    if (this.currentPage() > 1) this.currentPage.update(v => v - 1); 
+
+  prevProjetosPage() {
+    if (this.currentPage() > 1) this.currentPage.update(v => v - 1);
   }
 }
