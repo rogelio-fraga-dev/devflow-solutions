@@ -3,11 +3,12 @@ import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { DevflowLogoComponent } from '../../shared/components/logo/devflow-logo.component';
 import { RevealDirective } from '../../shared/directives/reveal.directive';
+import { HeroWaveComponent } from '../../shared/components/hero-wave/hero-wave.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule, DevflowLogoComponent, RevealDirective],
+  imports: [CommonModule, DevflowLogoComponent, RevealDirective, HeroWaveComponent],
   template: `
     <!-- Animated Aurora Background -->
     <style>
@@ -222,6 +223,8 @@ import { RevealDirective } from '../../shared/directives/reveal.directive';
       <div class="aurora-orb aurora-orb-4"></div>
       <div class="aurora-ring"></div>
       <div class="aurora-grid"></div>
+      <!-- Malha 3D interativa: flui rumo à câmera, reage ao cursor e ao clique -->
+      <df-hero-wave />
     </div>
 
     <div class="hero-clone">
