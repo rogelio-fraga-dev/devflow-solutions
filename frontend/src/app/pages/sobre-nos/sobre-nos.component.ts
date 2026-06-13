@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { DevflowLogoComponent } from '../../shared/components/logo/devflow-logo.component';
 
 @Component({
   selector: 'app-sobre-nos',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DevflowLogoComponent],
   template: `
     <!-- Animated Aurora Background (same as landing) -->
     <style>
@@ -384,7 +385,7 @@ import { CommonModule } from '@angular/common';
     <!-- Nav -->
     <nav class="sn-nav">
       <div class="sn-nav-logo" (click)="goHome()">
-        <div class="sn-logo-mark">D</div>
+        <df-logo [size]="34" />
         DevFlow Solutions
       </div>
       <a href="/#features">Funcionalidades</a>
@@ -472,15 +473,21 @@ import { CommonModule } from '@angular/common';
               @for (membro of membros; track membro.nome) {
                 <div class="sn-member-card">
                   <div class="sn-avatar-wrap">
-                    <div class="sn-avatar-placeholder-icon">👤</div>
+                    @if (membro.foto) {
+                      <img [src]="membro.foto" [alt]="membro.nome" loading="lazy" [style.object-position]="membro.objPos || 'center'" (error)="membro.foto = ''" />
+                    } @else {
+                      <div class="sn-avatar-placeholder-icon">{{ inicial(membro.nome) }}</div>
+                    }
                     <div class="sn-avatar-overlay"></div>
                   </div>
                   <div class="sn-member-name">{{ membro.nome }}</div>
                   <div class="sn-member-role">{{ membro.cargo }}</div>
                   <div class="sn-member-desc">{{ membro.desc }}</div>
-                  <div class="sn-add-photo-badge">
-                    <span>📷</span> Adicionar foto
-                  </div>
+                  @if (!membro.foto) {
+                    <div class="sn-add-photo-badge">
+                      <span>📷</span> Adicionar foto
+                    </div>
+                  }
                 </div>
               }
             </div>
@@ -514,26 +521,38 @@ export class SobreNosComponent {
   goHome()     { this.router.navigate(['/']); }
   goRegister() { this.router.navigate(['/registro']); }
 
+  inicial(nome: string): string {
+    return nome.charAt(0).toUpperCase();
+  }
+
   membros = [
     {
-      nome: 'Criador 1',
-      cargo: 'Full Stack Developer',
-      desc: 'Responsável pela arquitetura do sistema e integrações de backend com Spring Boot.'
+      nome: 'Rogélio Claro',
+      cargo: 'Engenharia Backend',
+      desc: 'Responsável pela arquitetura do sistema e integrações de backend com Spring Boot.',
+      foto: 'assets/team/Pessoa1.jpeg',
+      objPos: ''
     },
     {
-      nome: 'Criador 2',
-      cargo: 'Frontend Engineer',
-      desc: 'Criou toda a experiência visual da plataforma com Angular e o design system exclusivo.'
+      nome: 'João Gabriel',
+      cargo: 'Infraestrutura',
+      desc: 'Construiu a infraestrutura, os módulos de custos de Cloud e a lógica de Budget Guard em tempo real.',
+      foto: 'assets/team/Pessoa2.jpeg',
+      objPos: ''
     },
     {
-      nome: 'Criador 3',
-      cargo: 'Product & Business',
-      desc: 'Definiu a proposta de valor e o modelo de negócio voltado para Software Houses.'
+      nome: 'Elias Fernandes',
+      cargo: 'Engenharia Frontend',
+      desc: 'Desenvolveu toda a experiência da plataforma com Angular e o design system exclusivo.',
+      foto: 'assets/team/Pessoa3.jpeg',
+      objPos: ''
     },
     {
-      nome: 'Criador 4',
-      cargo: 'Data & Infrastructure',
-      desc: 'Construiu os módulos de custos de Cloud e a lógica de Budget Guard em tempo real.'
+      nome: 'Alexandre Farias',
+      cargo: 'UX/UI Design',
+      desc: 'Concebeu a identidade visual, a interface premium e a jornada de uso do produto.',
+      foto: 'assets/team/Pessoa4.jpeg',
+      objPos: 'center 30%'
     }
   ];
 }
