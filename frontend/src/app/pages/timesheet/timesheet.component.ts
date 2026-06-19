@@ -1,6 +1,8 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { TimesheetService } from '../../core/services/timesheet.service';
 import { DesenvolvedorService } from '../../core/services/desenvolvedor.service';
 import { ProjetoService } from '../../core/services/projeto.service';
@@ -284,7 +286,8 @@ export class TimesheetComponent implements OnInit {
     this.devSvc.getAll().subscribe(d => this.devs.set(d));
     this.projSvc.getAll().subscribe(async p => {
       this.projetos.set(p);
-      const all = await Promise.all(p.map(proj => this.spSvc.getByProjeto(proj.id).toPromise()));
+      const all = await Promise.all(p.map(proj =>
+        firstValueFrom(this.spSvc.getByProjeto(proj.id).pipe(catchError(() => of([] as Sprint[]))))));
       this.sprints.set((all.flat() as Sprint[]).filter(Boolean));
       this.loadTimesheets();
     });

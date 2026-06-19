@@ -150,7 +150,20 @@ import { extractErrorMessage } from '../../core/utils/error.util';
               <label class="label">Pessoa de Contato</label>
               <input class="input" placeholder="Nome do contato" [(ngModel)]="form.pessoaContato" />
             </div>
-            
+
+            <div class="form-group">
+              <label class="label">Rua</label>
+              <input class="input" placeholder="Av. Brasil" [(ngModel)]="form.endereco!.rua" />
+            </div>
+            <div class="form-group">
+              <label class="label">Número</label>
+              <input class="input" placeholder="1000" [(ngModel)]="form.endereco!.numero" />
+            </div>
+            <div class="form-group">
+              <label class="label">Bairro</label>
+              <input class="input" placeholder="Centro" [(ngModel)]="form.endereco!.bairro" />
+            </div>
+
             <div class="form-group">
               <label class="label">Cidade</label>
               <input class="input" placeholder="São Paulo" [(ngModel)]="form.endereco!.cidade" />
@@ -158,6 +171,10 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             <div class="form-group">
               <label class="label">Estado</label>
               <input class="input" placeholder="SP" [(ngModel)]="form.endereco!.estado" />
+            </div>
+            <div class="form-group">
+              <label class="label">CEP</label>
+              <input class="input" placeholder="00000-000" [(ngModel)]="form.endereco!.cep" />
             </div>
           </div>
           
@@ -278,6 +295,6 @@ export class ClientesComponent implements OnInit {
     reader.readAsDataURL(file);
   }
 
-  emptyForm(): ClienteRequest { return { razaoSocial: '', cnpj: '', pessoaContato: '', endereco: { logradouro:'', cidade:'', estado:'', cep:'' }, foto: '' }; }
+  emptyForm(): ClienteRequest { return { razaoSocial: '', cnpj: '', pessoaContato: '', endereco: { rua:'', numero:'', bairro:'', cidade:'', estado:'', cep:'' }, foto: '' }; }
 }
 

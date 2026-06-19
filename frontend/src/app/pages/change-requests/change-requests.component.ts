@@ -317,7 +317,7 @@ export class ChangeRequestsComponent implements OnInit {
     this.editingId.set(cr?.id ?? null);
     this.form = cr ? { 
       descricaoMudanca: cr.descricaoMudanca, valorAdicional: cr.valorAdicional, dataAprovacao: cr.dataAprovacao, projetoId: cr.projetoId,
-      status: cr.status, impactoHoras: cr.impactoHoras, solicitante: cr.solicitante, justificativa: cr.justificativa
+      status: cr.status ?? 'PENDENTE', impactoHoras: cr.impactoHoras, solicitante: cr.solicitante, justificativa: cr.justificativa
     } : this.emptyForm();
     this.drawerOpen.set(true);
   }

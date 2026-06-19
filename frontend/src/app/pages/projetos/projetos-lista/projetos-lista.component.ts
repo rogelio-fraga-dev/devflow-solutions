@@ -203,7 +203,7 @@ import { extractErrorMessage } from '../../../core/utils/error.util';
               <div class="form-group">
                 <label class="label">Cliente</label>
                 <select class="select" [(ngModel)]="form.clienteId">
-                  <option [ngValue]="null">— Sem cliente —</option>
+                  <option [ngValue]="undefined">— Sem cliente —</option>
                   @for (c of clientes(); track c.id) {
                     <option [ngValue]="c.id">{{ c.razaoSocial }}</option>
                   }

@@ -1,6 +1,8 @@
 import { Component, OnInit, signal, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { firstValueFrom, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import { SprintService } from '../../core/services/sprint.service';
 import { ProjetoService } from '../../core/services/projeto.service';
 import { ToastService } from '../../core/services/toast.service';
@@ -282,8 +284,11 @@ export class SprintsComponent implements OnInit {
     if (this.filterProjeto) {
       this.svc.getByProjeto(Number(this.filterProjeto)).subscribe(s => this.sprints.set(s));
     } else {
-      const reqs = this.projetos().map(p => this.svc.getByProjeto(p.id).toPromise());
-      Promise.all(reqs).then(results => this.sprints.set((results.flat() as Sprint[]).filter(Boolean)));
+      const reqs = this.projetos().map(p =>
+        firstValueFrom(this.svc.getByProjeto(p.id).pipe(catchError(() => of([] as Sprint[])))));
+      Promise.all(reqs)
+        .then(results => this.sprints.set((results.flat() as Sprint[]).filter(Boolean)))
+        .catch(() => this.toast.error('Não foi possível carregar as sprints.'));
     }
   }
 
