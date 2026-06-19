@@ -45,7 +45,13 @@ export interface NavItem {
 
       <!-- User Profile (clickable → profile page) -->
       <div class="sidebar-user" (click)="goToProfile()" title="Meu Perfil">
-        <div class="sidebar-avatar">{{ initials(auth.currentUser()?.email) }}</div>
+        <div class="sidebar-avatar" style="overflow: hidden; display: flex; align-items: center; justify-content: center;">
+          @if (auth.userPhoto()) {
+            <img [src]="auth.userPhoto()" style="width: 100%; height: 100%; object-fit: cover;" />
+          } @else {
+            {{ initials(auth.currentUser()?.email) }}
+          }
+        </div>
         <div class="sidebar-user-info">
           <div class="user-name">{{ auth.currentUser()?.nome || (auth.currentUser()?.email?.split('@')[0] | titlecase) }}</div>
           <div class="user-role">{{ auth.currentUser()?.role }}</div>

@@ -1,10 +1,13 @@
 package com.devflow.model;
 
 import jakarta.persistence.*;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import java.math.BigDecimal;
+import java.util.Objects;
 
-@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "tb_desenvolvedor")
 public class Desenvolvedor {
@@ -32,4 +35,17 @@ public class Desenvolvedor {
     @ManyToMany(mappedBy = "desenvolvedores")
     private java.util.List<Projeto> projetos = new java.util.ArrayList<>();
 
+    // equals/hashCode baseados apenas no id (chave substituta).
+    // Evita travessia da coleção lazy 'projetos' e LazyInitializationException.
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Desenvolvedor that)) return false;
+        return id != null && id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

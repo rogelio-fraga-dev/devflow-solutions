@@ -1,22 +1,51 @@
 <p align="center">
   <img src="https://img.shields.io/badge/Angular_21-DD0031?style=for-the-badge&logo=angular&logoColor=white" alt="Angular"/>
   <img src="https://img.shields.io/badge/Java_21-ED8B00?style=for-the-badge&logo=java&logoColor=white" alt="Java"/>
-  <img src="https://img.shields.io/badge/Spring_Boot-F2F4F9?style=for-the-badge&logo=spring-boot" alt="Spring Boot"/>
-  <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
-  <img src="https://img.shields.io/badge/MySQL-005C84?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
+  <img src="https://img.shields.io/badge/Spring_Boot_4-F2F4F9?style=for-the-badge&logo=spring-boot" alt="Spring Boot"/>
+  <img src="https://img.shields.io/badge/TypeScript_5.9-3178C6?style=for-the-badge&logo=typescript&logoColor=white" alt="TypeScript"/>
+  <img src="https://img.shields.io/badge/MySQL_8.0-005C84?style=for-the-badge&logo=mysql&logoColor=white" alt="MySQL"/>
   <img src="https://img.shields.io/badge/Docker-2CA5E0?style=for-the-badge&logo=docker&logoColor=white" alt="Docker"/>
   <img src="https://img.shields.io/badge/JWT-black?style=for-the-badge&logo=JSON%20web%20tokens" alt="JWT"/>
 </p>
 
-# 🚀 DevFlow Solutions — FullStack Project Management
+# 🚀 DevFlow Solutions
+
+> **Subdomínio de Produção:** [`devflow.adsimepac.com.br`](http://devflow.adsimepac.com.br)
 
 > **Plataforma de Gestão de Projetos e Dashboards C-Level** focada em motor financeiro, alocação de timesheets e acompanhamento corporativo em tempo real. Uma solução completa que une uma API robusta em Spring Boot 4 a uma interface moderna e reativa em Angular 21.
 
 ---
 
-## 👨‍💻 Equipe de Desenvolvimento (Autores)
+## 📋 Informações do Projeto Integrador
 
-O projeto é fruto da integração entre as frentes de Engenharia de Software e Design de Interface:
+| Item                     | Detalhe                                                     |
+| ------------------------ | ----------------------------------------------------------- |
+| **Nome do Projeto**      | DevFlow Solutions                                           |
+| **Subdomínio**           | `devflow.adsimepac.com.br`                                  |
+| **Banco de Dados**       | **MySQL 8.0** — nome do banco: `devflow_db`                 |
+| **Arquitetura**          | **Monolito com Frontend Separado** (API REST + SPA)         |
+| **Java**                 | **Java 21 LTS** (Eclipse Temurin)                           |
+| **Framework Backend**    | Spring Boot 4.0.3                                           |
+| **Frontend Separado?**   | ✅ Sim — **Angular 21** (TypeScript 5.9)                    |
+| **Porta do Backend**     | `8080`                                                      |
+| **Porta do Frontend**    | `80` (Nginx/produção) · `4200` (dev local)                  |
+| **Porta do MySQL**       | `3307` (host) → `3306` (container)                          |
+| **Dockerfile**           | ✅ Sim — `backend/Dockerfile` + `frontend/Dockerfile`       |
+| **Docker Compose**       | ✅ Sim — `docker-compose.yml` (3 serviços)                  |
+
+---
+
+## 📞 Contato
+
+Em caso de dúvida ou erro no deploy, entre em contato:
+
+| Nome             | Telefone/WhatsApp        | Papel              |
+| ---------------- | ------------------------ | ------------------- |
+| **Rogélio Claro** | **(34) 98414-1504**     | Responsável Técnico |
+
+---
+
+## 👨‍💻 Equipe de Desenvolvimento
 
 ### ⚙️ Engenharia Backend e Infraestrutura
 - **Rogélio Claro Fraga**
@@ -28,83 +57,261 @@ O projeto é fruto da integração entre as frentes de Engenharia de Software e 
 
 ---
 
-## 🎯 Objetivo e Escopo
-O **DevFlow Solutions** funciona como a espinha dorsal de um sistema SaaS B2B. Ele processa, em tempo real, a viabilidade financeira e o consumo de orçamento de múltiplos contratos de tecnologia, oferecendo:
-- **Dashboard Executivo:** Visualização rápida de KPIs financeiros e Burn Rate.
-- **Gestão de Timesheets:** Lançamento de horas e conversão em custos reais de alocação.
-- **Controle de Custos:** Extração de faturas de Nuvem (AWS/Azure/GCP) e Licenciamento de APIs.
-- **Budget Guard:** Sistema inteligente de alertas visuais e travas financeiras (80% / 100%).
-- **Project Closeout:** Geração automatizada de relatórios gerenciais em PDF.
+## 🏗️ Arquitetura
 
----
+A aplicação segue a arquitetura **Monolito com Frontend Separado**:
 
-## 🧱 Arquitetura e Diferenciais Técnicos
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    devflow.adsimepac.com.br                   │
+├────────────────────────┬─────────────────────────────────────┤
+│    Frontend (SPA)      │          Backend (API REST)         │
+│    Angular 21          │          Spring Boot 4              │
+│    Nginx (:80)         │  ──→     Tomcat (:8080)             │
+│    TypeScript 5.9      │          Java 21                    │
+├────────────────────────┴─────────────────────────────────────┤
+│                     MySQL 8.0 (:3306)                        │
+│                     Banco: devflow_db                        │
+└──────────────────────────────────────────────────────────────┘
+```
 
-### 1. ⚛️ Frontend Reativo (Angular 21 + Signals)
-A interface foi construída utilizando as tecnologias mais recentes do ecossistema Angular:
-- **Angular Signals:** Gestão de estado moderna para atualizações granulares de UI sem sobrecarga de Change Detection.
-- **Custom Design System:** UI premium desenvolvida com CSS nativo (Vanilla), focada em performance e estética industrial.
-- **Security Guards & Interceptors:** Proteção de rotas e injeção automática de tokens JWT em todas as requisições para a API.
-- **Responsive Dashboard:** Layout adaptável para dispositivos móveis e desktops.
-
-### 2. ⚡ Backend Metrológico (Spring Boot 4)
-O motor financeiro foi arquitetado para precisão extrema e segurança:
-- **Budget Guard Sentinel:** Uso de `@PreUpdate` e `@PrePersist` para monitoramento de budget no nível de domínio.
-- **Zero N+1 Queries:** Modelagem JPA otimizada com `FetchType.LAZY` e gerenciamento de transações estável.
-- **Security JWT (Stateless):** Autenticação robusta baseada em tokens, sem estado no servidor.
-- **API Versionada:** Endpoints estruturados sob o padrão `/api/v1/`.
+- **Frontend** → SPA Angular servida por **Nginx**, que também faz **proxy reverso** para a API.
+- **Backend** → API REST stateless com autenticação **JWT**. Endpoints sob `/api/v1/`.
+- **Banco** → MySQL 8.0 com Hibernate 6 e `ddl-auto=update`.
 
 ---
 
 ## 🛠️ Stack Tecnológica
 
 ### Frontend
-* **Framework:** Angular 21 (Standalone Components)
-* **Linguagem:** TypeScript
-* **Estado:** Signals & RxJS
-* **Estilização:** CSS3 Custom Properties (Design System)
+| Tecnologia       | Versão         |
+| ---------------- | -------------- |
+| Angular          | 21.2.x         |
+| TypeScript       | 5.9.2          |
+| RxJS             | 7.8.x          |
+| PrimeNG          | 21.1.1         |
+| Chart.js         | 4.5.1          |
+| SCSS / CSS3      | —              |
 
 ### Backend
-* **Linguagem:** Java 21 LTS
-* **Framework:** Spring Boot 4 (ou 3.3+)
-* **Banco de Dados:** MySQL 8.0 + Hibernate 6
-* **Relatórios:** iTextPDF (Geração de documentos On-the-Fly)
-* **Containerização:** Docker & Docker Compose
+| Tecnologia         | Versão         |
+| ------------------ | -------------- |
+| Java               | 21 LTS         |
+| Spring Boot        | 4.0.3          |
+| Spring Security    | JWT (Auth0 4.4)|
+| Hibernate / JPA    | 6.x            |
+| Lombok             | —              |
+| iTextPDF           | 5.5.13.3       |
+| MySQL Connector    | runtime        |
+
+### Infraestrutura
+| Tecnologia       | Versão / Detalhe      |
+| ---------------- | --------------------- |
+| Docker           | Docker Compose v2     |
+| MySQL            | 8.0                   |
+| Nginx            | Alpine                |
+| Node.js (build)  | 20.x                  |
 
 ---
 
-## ⚙️ Como Executar a Aplicação
+## 🐳 Docker — Deploy Completo
 
-### 1. Requisitos
-- Node.js (v20+)
-- Java JDK 21
-- Docker Desktop
+### Pré-requisitos
+- **Docker Desktop** instalado e rodando.
 
-### 2. Backend e Banco de Dados
-No diretório raiz do projeto:
+### Subir toda a aplicação
+
 ```bash
-# Sobe o MySQL via Docker
-docker-compose up -d
+# Clone o repositório
+git clone https://github.com/rogelio-fraga-dev/devflow-solutions.git
+cd devflow-solutions
 
-# Inicia a API
-cd backend
-./mvnw spring-boot:run
+# Sobe tudo (MySQL + Backend + Frontend)
+docker compose up -d --build
 ```
 
-### 3. Frontend
-Em um novo terminal no diretório `frontend`:
+Isso irá:
+1. Subir o **MySQL 8.0** (porta `3307` no host)
+2. Buildar e subir o **Backend Spring Boot** (porta `8080`)
+3. Buildar e subir o **Frontend Angular via Nginx** (porta `80`)
+
+### Acessar a aplicação
+- **Frontend:** [http://localhost](http://localhost) (ou `http://devflow.adsimepac.com.br` em produção)
+- **API REST:** [http://localhost:8080/api/v1/](http://localhost:8080/api/v1/)
+
+### Parar tudo
+
 ```bash
+docker compose down
+```
+
+### Arquivos Docker
+
+| Arquivo                      | Descrição                                          |
+| ---------------------------- | -------------------------------------------------- |
+| `docker-compose.yml`         | Orquestra os 3 serviços (MySQL, Backend, Frontend)  |
+| `backend/Dockerfile`         | Build multi-stage: JDK 21 (build) → JRE 21 (run)  |
+| `frontend/Dockerfile`        | Build multi-stage: Node 20 (build) → Nginx (run)  |
+| `frontend/nginx.conf`        | Config do Nginx com proxy reverso para a API       |
+
+---
+
+## ⚙️ Execução Local (Desenvolvimento)
+
+### 1. Requisitos
+- **Node.js** v20+
+- **Java JDK** 21
+- **Docker Desktop**
+
+### 2. Banco de Dados
+
+```bash
+# Sobe apenas o MySQL via Docker
+docker compose up devflow-mysql -d
+```
+
+### 3. Backend
+
+```bash
+cd backend
+
+# Windows
+.\mvnw.cmd spring-boot:run
+
+# Linux/Mac
+./mvnw spring-boot:run
+```
+API disponível em: `http://localhost:8080`
+
+### 4. Frontend
+
+```bash
+cd frontend
 npm install
 npm start
 ```
-Acesse: `http://localhost:4200`
+Frontend disponível em: `http://localhost:4200`
 
-### 4. Carga de Dados Inicial (Seed)
-Para popular o sistema com dados de teste (Projetos, Sprints, Desenvolvedores e Custos):
+---
+
+## 🗃️ Banco de Dados
+
+| Item             | Valor                 |
+| ---------------- | --------------------- |
+| **SGBD**         | MySQL 8.0             |
+| **Nome do Banco**| `devflow_db`          |
+| **Usuário**      | `devflow_user`        |
+| **Senha**        | `devflow_senha123`    |
+| **Porta (host)** | `3307`                |
+| **Porta (container)** | `3306`           |
+
+> ⚠️ O esquema é gerenciado automaticamente pelo Hibernate (`ddl-auto=update`). Ao iniciar o backend, todas as tabelas são criadas/atualizadas automaticamente.
+
+---
+
+## 🔑 Dados de Acesso para Teste
+
+O sistema possui uma **carga inicial de dados (seed)** com dados massivos e diversificados (4 projetos, incluindo cenários de **ALERTA** e **ESTOURADO** do Budget Guard).
+
+### Opção A — Importar o dump SQL (recomendado, portável)
+
+Arquivo: **`docs/devflow_seed.sql`** (schema + dados + credenciais já com hash BCrypt). Funciona em qualquer ambiente (Linux/Windows), sem precisar do backend no ar:
+
+```bash
+# O banco devflow_db é criado automaticamente se não existir
+mysql -u root -p < docs/devflow_seed.sql
+
+# Via container Docker:
+docker exec -i devflow_db mysql -u root -pdevflow_root_secret < docs/devflow_seed.sql
+```
+
+### Opção B — Executar o seed via API (PowerShell)
+
 ```powershell
-# No Windows
-powershell -File .\docs\seed.ps1
+# No Windows (PowerShell) — requer o backend rodando em http://localhost:8080
+powershell -ExecutionPolicy Bypass -File .\docs\seed-completo.ps1
+```
+
+> ⚠️ A Opção B exige o backend rodando em `http://localhost:8080`. A Opção A não exige.
+
+### Credenciais Padrão
+
+| Perfil                  | E-mail                        | Senha         | Role           |
+| ----------------------- | ----------------------------- | ------------- | -------------- |
+| ⚙️ Admin (Acesso Total) | `admin_final@devflow.com`     | `Admin@2026`  | `ADMIN`        |
+| 🎨 Gestor de Projetos   | `gestor_final@devflow.com`    | `Dev@2026`    | `GESTOR`       |
+| 👨‍💻 Desenvolvedor 1      | `dev1_final@devflow.com`      | `Dev@2026`    | `DESENVOLVEDOR`|
+| 👨‍💻 Desenvolvedor 2      | `dev2_final@devflow.com`      | `Dev@2026`    | `DESENVOLVEDOR`|
+
+### Fluxo de Teste Recomendado
+
+1. Acesse `http://localhost:4200` (ou `http://localhost` via Docker)
+2. Faça login com as credenciais de **Admin** acima
+3. Navegue pelo **Dashboard**, **Projetos**, **Timesheets** e **Financeiro**
+4. Teste diferentes perfis logando com Gestor e Desenvolvedores
+
+---
+
+## 🎯 Funcionalidades Principais
+
+- **Dashboard Executivo:** Visualização rápida de KPIs financeiros e Burn Rate.
+- **Gestão de Projetos:** CRUD completo de projetos com sprints e alocação de desenvolvedores.
+- **Gestão de Timesheets:** Lançamento de horas e conversão em custos reais de alocação.
+- **Controle Financeiro:** Análise de custos, receitas e margens por projeto.
+- **Budget Guard:** Sistema inteligente de alertas visuais e travas financeiras (80% / 100%).
+- **Geração de Relatórios PDF:** Relatórios gerenciais automáticos com iTextPDF.
+- **Gestão de Perfil:** Upload de foto e edição de dados do usuário.
+- **Landing Page:** Página institucional com efeitos visuais e animações 3D.
+
+---
+
+## 🔒 Segurança
+
+- **Autenticação JWT** (Stateless) — Token gerado no login e enviado automaticamente via interceptor Angular.
+- **Role-Based Access Control (RBAC)** — 3 perfis: ADMIN, GESTOR, DESENVOLVEDOR.
+- **Route Guards** no frontend para proteção de rotas.
+- **CORS** configurado para aceitar requisições do frontend.
+
+---
+
+## 📁 Estrutura do Projeto
+
+```
+devflow-solutions/
+├── backend/                    # API REST (Spring Boot 4 + Java 21)
+│   ├── Dockerfile              # Dockerfile do backend
+│   ├── pom.xml                 # Dependências Maven
+│   ├── mvnw / mvnw.cmd         # Maven Wrapper
+│   └── src/
+│       └── main/
+│           ├── java/com/devflow/
+│           │   ├── controller/  # REST Controllers
+│           │   ├── model/       # Entidades JPA
+│           │   ├── repository/  # Repositories
+│           │   ├── service/     # Regras de negócio
+│           │   ├── security/    # JWT + Spring Security
+│           │   └── config/      # Configurações (CORS, etc.)
+│           └── resources/
+│               └── application.properties
+├── frontend/                   # SPA (Angular 21 + TypeScript)
+│   ├── Dockerfile              # Dockerfile do frontend
+│   ├── nginx.conf              # Configuração Nginx (produção)
+│   ├── package.json            # Dependências npm
+│   ├── angular.json            # Configuração Angular CLI
+│   ├── proxy.conf.json         # Proxy para dev local
+│   └── src/
+│       └── app/
+│           ├── core/           # Services, Guards, Interceptors
+│           ├── pages/          # Componentes de página
+│           └── shared/         # Componentes reutilizáveis
+├── docs/                       # Documentação e scripts
+│   ├── devflow_seed.sql        # Dump SQL portável (schema + dados de teste)
+│   ├── seed-completo.ps1       # Script de carga de dados via API
+│   └── credenciaispadrao.txt   # Credenciais de teste
+├── docker-compose.yml          # Orquestração de todos os serviços
+└── README.md                   # Este arquivo
 ```
 
 ---
-> 💡 *Projeto Integrador Universitário - Finalizado com excelência técnica pela equipe DevFlow (Maio de 2026).*
+
+> 💡 *Projeto Integrador Universitário — IMEPAC 2026 | Equipe DevFlow Solutions*

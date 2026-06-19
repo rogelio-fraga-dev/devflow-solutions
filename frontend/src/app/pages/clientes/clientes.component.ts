@@ -57,12 +57,17 @@ import { extractErrorMessage } from '../../core/utils/error.util';
               <tr>
                 <td>
                   <div style="display:flex;align-items:center;gap:10px">
-                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#6366F1);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0">
-                      {{ initials(c.razaoSocial) }}
+                    <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#0EA5E9,#6366F1);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0;overflow:hidden">
+                      @if (c.foto) {
+                        <img [src]="c.foto" style="width:100%;height:100%;object-fit:cover" />
+                      } @else {
+                        {{ initials(c.razaoSocial) }}
+                      }
                     </div>
                     <span style="font-weight:600">{{ c.razaoSocial }}</span>
                   </div>
                 </td>
+
                 <td style="color:var(--text-muted)">{{ c.cnpj || '—' }}</td>
                 <td style="color:var(--text-muted)">{{ c.pessoaContato || '—' }}</td>
                 <td style="color:var(--text-muted)">{{ c.endereco?.cidade || '—' }}</td>
@@ -106,11 +111,35 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
           
+          <div style="display:flex; justify-content:center; margin-bottom: 24px;">
+            <div 
+              (click)="clientFileInput.click()"
+              (dragover)="onDragOver($event)"
+              (dragleave)="onDragLeave($event)"
+              (drop)="onDrop($event)"
+              style="width: 90px; height: 90px; border-radius: 20px; border: 2px dashed rgba(255, 255, 255, 0.15); background: rgba(255, 255, 255, 0.02); display: flex; flex-direction: column; align-items: center; justify-content: center; color: var(--text-muted); cursor: pointer; position: relative; overflow: hidden; transition: all 0.3s ease;"
+              [style.transform]="isDragging ? 'scale(1.05)' : 'none'"
+              [style.borderColor]="isDragging ? 'var(--purple)' : 'rgba(255, 255, 255, 0.15)'"
+            >
+              @if (form.foto) {
+                <img [src]="form.foto" style="width: 100%; height: 100%; object-fit: cover;" />
+                <div style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.6); color: #fff; font-size: 9px; text-align: center; padding: 2px 0;">Alterar</div>
+              } @else {
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-bottom: 4px;">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                </svg>
+                <span style="font-size: 10px; text-align: center;">Logo / Foto</span>
+              }
+            </div>
+            <input #clientFileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)" />
+          </div>
+
           <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px; margin-bottom: 24px;">
             <div class="form-group" style="grid-column: 1 / -1;">
               <label class="label">Razão Social *</label>
               <input class="input" placeholder="Nome ou Razão Social" [(ngModel)]="form.razaoSocial" />
             </div>
+
             
             <div class="form-group">
               <label class="label">CNPJ</label>
@@ -178,9 +207,10 @@ export class ClientesComponent implements OnInit {
 
   openDrawer(c: Cliente | null) {
     this.editingId.set(c?.id ?? null);
-    this.form = c ? { razaoSocial: c.razaoSocial, cnpj: c.cnpj, pessoaContato: c.pessoaContato, endereco: { ...c.endereco } } : this.emptyForm();
+    this.form = c ? { razaoSocial: c.razaoSocial, cnpj: c.cnpj, pessoaContato: c.pessoaContato, endereco: { ...c.endereco }, foto: c.foto } : this.emptyForm();
     this.drawerOpen.set(true);
   }
+
 
   save() {
     if (!this.form.razaoSocial.trim()) { this.toast.error('Razão social é obrigatória.'); return; }
@@ -205,5 +235,49 @@ export class ClientesComponent implements OnInit {
     this.confirmDel = null;
   }
 
-  emptyForm(): ClienteRequest { return { razaoSocial: '', cnpj: '', pessoaContato: '', endereco: { logradouro:'', cidade:'', estado:'', cep:'' } }; }
+  isDragging = false;
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+    
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      if (file.type.startsWith('image/')) {
+        this.readClientPhoto(file);
+      } else {
+        this.toast.error('Por favor, envie apenas arquivos de imagem.');
+      }
+    }
+  }
+
+  onFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.readClientPhoto(event.target.files[0]);
+    }
+  }
+
+  readClientPhoto(file: File) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      this.form.foto = reader.result as string;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  emptyForm(): ClienteRequest { return { razaoSocial: '', cnpj: '', pessoaContato: '', endereco: { logradouro:'', cidade:'', estado:'', cep:'' }, foto: '' }; }
 }
+

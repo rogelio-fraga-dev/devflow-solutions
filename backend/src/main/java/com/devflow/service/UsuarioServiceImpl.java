@@ -33,20 +33,19 @@ public class UsuarioServiceImpl implements UsuarioService {
             throw new IllegalArgumentException("Este e-mail já está em uso no sistema!");
         }
 
+        Usuario logado = getUsuarioLogado();
+        assertPodeAtribuirRole(request.getRole(), logado);
+
         Usuario usuario = new Usuario();
         usuario.setNome(request.getNome());
         usuario.setEmail(request.getEmail());
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(request.getRole());
         usuario.setAtivo(request.getAtivo() != null ? request.getAtivo() : Boolean.TRUE);
+        usuario.setFoto(request.getFoto());
 
-        // Atribuir a mesma empresa do usuário logado
-        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
-        if (emailLogado != null && !emailLogado.equals("anonymousUser")) {
-            final Usuario userToUpdate = usuario;
-            usuarioRepository.findByEmailIgnoreCase(emailLogado)
-                .ifPresent(admin -> userToUpdate.setEmpresa(admin.getEmpresa()));
-        }
+        // Novo usuário sempre herda a empresa de quem o criou (isolamento multi-tenant)
+        usuario.setEmpresa(logado.getEmpresa());
 
         usuario = usuarioRepository.save(usuario);
 
@@ -55,7 +54,8 @@ public class UsuarioServiceImpl implements UsuarioService {
 
     @Override
     public List<UsuarioResponseDto> listarUsuarios() {
-        return usuarioRepository.findAll().stream()
+        Long empresaId = getUsuarioLogado().getEmpresa().getId();
+        return usuarioRepository.findByEmpresaId(empresaId).stream()
                 .map(this::converterParaDto)
                 .collect(Collectors.toList());
     }
@@ -63,6 +63,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Override
     public UsuarioResponseDto buscarUsuario(Long id) {
         Usuario usuario = buscarPorId(id);
+        assertMesmaEmpresa(usuario);
         return converterParaDto(usuario);
     }
 
@@ -70,6 +71,8 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public UsuarioResponseDto atualizarUsuario(Long id, UsuarioRequestDto request) {
         Usuario usuario = buscarPorId(id);
+        assertMesmaEmpresa(usuario);
+        assertPodeAtribuirRole(request.getRole(), getUsuarioLogado());
 
         // Regra de Negócio: Verificar se o novo email já existe e se NÃO pertence ao próprio usuário que estamos editando
         Optional<Usuario> usuarioExistente = usuarioRepository.findByEmailIgnoreCase(request.getEmail());
@@ -82,6 +85,8 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuario.setSenha(passwordEncoder.encode(request.getSenha()));
         usuario.setRole(request.getRole());
         usuario.setAtivo(request.getAtivo() != null ? request.getAtivo() : Boolean.TRUE);
+        usuario.setFoto(request.getFoto());
+
 
         usuario = usuarioRepository.save(usuario);
 
@@ -92,6 +97,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     @Transactional
     public void deletarUsuario(Long id) {
         Usuario usuario = buscarPorId(id);
+        assertMesmaEmpresa(usuario);
         usuarioRepository.delete(usuario);
     }
 
@@ -109,11 +115,50 @@ public class UsuarioServiceImpl implements UsuarioService {
         usuarioRepository.save(usuario);
     }
 
+    @Override
+    public UsuarioResponseDto obterUsuarioLogado(String email) {
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + email));
+        return converterParaDto(usuario);
+    }
+
+    @Override
+    @Transactional
+    public UsuarioResponseDto atualizarFotoUsuarioLogado(String email, String fotoBase64) {
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado: " + email));
+        usuario.setFoto(fotoBase64);
+        usuario = usuarioRepository.save(usuario);
+        return converterParaDto(usuario);
+    }
+
+
     // MÉTODOS AUXILIARES (Deixam o código mais limpo e evitam repetição)
 
     private Usuario buscarPorId(Long id) {
         return usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + id));
+    }
+
+    private Usuario getUsuarioLogado() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
+    }
+
+    // Isolamento multi-tenant: usuário de outra empresa é tratado como inexistente (404).
+    private void assertMesmaEmpresa(Usuario alvo) {
+        Long empresaLogada = getUsuarioLogado().getEmpresa().getId();
+        if (alvo.getEmpresa() == null || !alvo.getEmpresa().getId().equals(empresaLogada)) {
+            throw new ResourceNotFoundException("Usuário não encontrado com ID: " + alvo.getId());
+        }
+    }
+
+    // Anti-escalonamento: apenas ADMIN pode criar/atribuir o papel ADMIN.
+    private void assertPodeAtribuirRole(com.devflow.model.Role roleAlvo, Usuario logado) {
+        if (roleAlvo == com.devflow.model.Role.ADMIN && logado.getRole() != com.devflow.model.Role.ADMIN) {
+            throw new com.devflow.exception.BusinessRuleException("Apenas administradores podem atribuir o papel ADMIN.");
+        }
     }
 
     private UsuarioResponseDto converterParaDto(Usuario usuario) {
@@ -123,7 +168,9 @@ public class UsuarioServiceImpl implements UsuarioService {
         response.setEmail(usuario.getEmail());
         response.setRole(usuario.getRole());
         response.setAtivo(usuario.getAtivo());
+        response.setFoto(usuario.getFoto());
         // A senha NUNCA é colocada aqui.
         return response;
+
     }
 }

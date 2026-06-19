@@ -15,4 +15,7 @@ public class ClienteRequestDto {
     private String pessoaContato;
 
     private Endereco endereco;
+
+    private String foto;
 }
+

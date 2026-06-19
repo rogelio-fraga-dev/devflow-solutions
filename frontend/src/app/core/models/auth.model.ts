@@ -12,4 +12,6 @@ export interface CurrentUser {
   role: 'ADMIN' | 'GESTOR' | 'DESENVOLVEDOR' | 'CLIENTE';
   nome?: string;
   empresa?: string;
+  foto?: string;
 }
+

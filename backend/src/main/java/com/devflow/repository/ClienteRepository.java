@@ -9,7 +9,12 @@ public interface ClienteRepository extends JpaRepository<Cliente, Long> {
     Optional<Cliente> findByCnpj(
         String cnpj
     );
-    
+
+    // Escopo multi-tenant
+    List<Cliente> findByEmpresaId(Long empresaId);
+
+    Optional<Cliente> findByCnpjAndEmpresaId(String cnpj, Long empresaId);
+
     List<Cliente> findByRazaoSocialContainingIgnoreCase(
         String razaoSocial
     );

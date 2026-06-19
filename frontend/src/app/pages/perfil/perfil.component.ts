@@ -46,9 +46,29 @@ import { extractErrorMessage } from '../../core/utils/error.util';
               
               <div style="display: flex; gap: 20px; margin-bottom: 32px; align-items: center;">
                 <!-- Avatar Circular Premium com Aura Neon -->
-                <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; font-weight: 800; box-shadow: 0 0 20px rgba(139, 92, 246, 0.45); border: 2.5px solid rgba(255, 255, 255, 0.15); transition: transform 0.3s ease;" onmouseover="this.style.transform='scale(1.06)'" onmouseout="this.style.transform='scale(1)'">
-                  {{ initials() }}
+                <div 
+                  (click)="fileInput.click()"
+                  (dragover)="onDragOver($event)"
+                  (dragleave)="onDragLeave($event)"
+                  (drop)="onDrop($event)"
+                  style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; font-weight: 800; box-shadow: 0 0 20px rgba(139, 92, 246, 0.45); border: 2.5px solid rgba(255, 255, 255, 0.15); transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;"
+                  [style.transform]="isDragging ? 'scale(1.1)' : 'none'"
+                >
+                  @if (auth.userPhoto()) {
+                    <img [src]="auth.userPhoto()" style="width: 100%; height: 100%; object-fit: cover;" />
+                  } @else {
+                    {{ initials() }}
+                  }
+                  
+                  <!-- Hover overlay for uploading -->
+                  <div class="avatar-hover-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                  </div>
                 </div>
+                <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)" />
+
                 <div>
                   <div style="font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.4px;">
                     {{ auth.currentUser()?.nome || (auth.currentUser()?.email?.split('@')?.[0] | titlecase) }}
@@ -171,6 +191,58 @@ export class PerfilComponent implements OnInit {
   confirmarSenha = '';
   loading = false;
   devStats: any = null;
+  isDragging = false;
+
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragging = false;
+    
+    if (event.dataTransfer?.files && event.dataTransfer.files.length > 0) {
+      const file = event.dataTransfer.files[0];
+      if (file.type.startsWith('image/')) {
+        this.uploadPhoto(file);
+      } else {
+        this.toast.error('Por favor, envie apenas arquivos de imagem.');
+      }
+    }
+  }
+
+  onFileSelected(event: any) {
+    if (event.target.files && event.target.files.length > 0) {
+      this.uploadPhoto(event.target.files[0]);
+    }
+  }
+
+  uploadPhoto(file: File) {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const base64 = reader.result as string;
+      this.usuarioService.updateMyFoto(base64).subscribe({
+        next: () => {
+          this.auth.userPhoto.set(base64);
+          this.toast.success('Foto de perfil atualizada com sucesso!');
+        },
+        error: (err) => {
+          this.toast.error(extractErrorMessage(err) || 'Erro ao carregar a foto.');
+        }
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
 
   ngOnInit() {
     if (this.auth.currentUser()?.role === 'DESENVOLVEDOR') {

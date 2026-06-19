@@ -6,6 +6,7 @@ export interface Usuario {
   email: string;
   role: Role;
   ativo: boolean;
+  foto?: string;
 }
 
 export interface UsuarioRequest {
@@ -14,4 +15,6 @@ export interface UsuarioRequest {
   senha?: string;
   role: Role;
   ativo: boolean;
+  foto?: string;
 }
+

@@ -44,6 +44,10 @@ public class AnaliseFinanceiraService {
     public AnaliseFinanceiraDto gerarDreProjeto(Long projetoId) {
         Projeto projeto = projetoRepository.findById(projetoId)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + projetoId));
+        // Isolamento multi-tenant: DRE só para projeto da empresa do usuário logado.
+        if (projeto.getEmpresa() == null || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Projeto não encontrado com ID: " + projetoId);
+        }
 
         AnaliseFinanceiraDto dre = new AnaliseFinanceiraDto();
         dre.setProjetoId(projeto.getId());

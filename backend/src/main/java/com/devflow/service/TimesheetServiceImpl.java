@@ -79,8 +79,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     @Transactional
     public TimesheetResponseDto atualizarTimesheet(Long id, TimesheetRequestDto request) {
-        Timesheet timesheetExistente = timesheetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Timesheet não encontrado com ID: " + id));
+        Timesheet timesheetExistente = buscarTimesheetDaEmpresa(id);
 
         // 1. REVERTER o custo antigo se estava APROVADO
         if (timesheetExistente.getStatusAprovacao() == StatusTimesheet.APROVADO) {
@@ -116,8 +115,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     @Transactional
     public void deletarTimesheet(Long id) {
-        Timesheet timesheet = timesheetRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Timesheet não encontrado com ID: " + id));
+        Timesheet timesheet = buscarTimesheetDaEmpresa(id);
 
         // 1. REVERTER o custo se estava APROVADO
         if (timesheet.getStatusAprovacao() == StatusTimesheet.APROVADO) {
@@ -163,7 +161,12 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     public List<TimesheetResponseDto> buscarTimesheetPorDesenvolvedor(Long desenvolvedorId) {
         buscarDesenvolvedor(desenvolvedorId);
+        Long empresaId = getEmpresaLogadaId();
+        // Isolamento multi-tenant: só timesheets cujo projeto pertence à empresa do usuário.
         return timesheetRepository.findByDesenvolvedorId(desenvolvedorId).stream()
+                .filter(t -> t.getSprint() != null && t.getSprint().getProjeto() != null
+                        && t.getSprint().getProjeto().getEmpresa() != null
+                        && t.getSprint().getProjeto().getEmpresa().getId().equals(empresaId))
                 .map(this::converterParaDto).collect(Collectors.toList());
     }
 
@@ -193,16 +196,40 @@ public class TimesheetServiceImpl implements TimesheetService {
                 .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado: " + id));
     }
 
+    private Long getEmpresaLogadaId() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"))
+                .getEmpresa().getId();
+    }
+
     private Sprint buscarSprint(Long id) {
-        return sprintRepository.findById(id)
+        Sprint sprint = sprintRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada: " + id));
+        // Isolamento multi-tenant via projeto da sprint.
+        Projeto projeto = sprint.getProjeto();
+        if (projeto == null || projeto.getEmpresa() == null
+                || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Sprint não encontrada: " + id);
+        }
+        return sprint;
+    }
+
+    private Timesheet buscarTimesheetDaEmpresa(Long id) {
+        Timesheet ts = timesheetRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Timesheet não encontrado com ID: " + id));
+        Projeto projeto = ts.getSprint() != null ? ts.getSprint().getProjeto() : null;
+        if (projeto == null || projeto.getEmpresa() == null
+                || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Timesheet não encontrado com ID: " + id);
+        }
+        return ts;
     }
 
     @Override
     @Transactional
     public void aprovarTimesheet(Long timesheetId) {
-        Timesheet ts = timesheetRepository.findById(timesheetId)
-            .orElseThrow(() -> new ResourceNotFoundException("Timesheet não encontrado"));
+        Timesheet ts = buscarTimesheetDaEmpresa(timesheetId);
 
         if (ts.getStatusAprovacao() != StatusTimesheet.PENDENTE) {
             throw new BusinessRuleException("Timesheet já foi processado.");
@@ -225,8 +252,7 @@ public class TimesheetServiceImpl implements TimesheetService {
     @Override
     @Transactional
     public void rejeitarTimesheet(Long timesheetId) {
-        Timesheet ts = timesheetRepository.findById(timesheetId)
-            .orElseThrow(() -> new ResourceNotFoundException("Timesheet não encontrado"));
+        Timesheet ts = buscarTimesheetDaEmpresa(timesheetId);
 
         if (ts.getStatusAprovacao() != StatusTimesheet.PENDENTE) {
             throw new BusinessRuleException("Timesheet já foi processado.");
