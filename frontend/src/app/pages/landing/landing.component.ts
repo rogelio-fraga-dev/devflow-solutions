@@ -1,11 +1,14 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
+import { DevflowLogoComponent } from '../../shared/components/logo/devflow-logo.component';
+import { RevealDirective } from '../../shared/directives/reveal.directive';
+import { HeroWaveComponent } from '../../shared/components/hero-wave/hero-wave.component';
 
 @Component({
   selector: 'app-landing',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, DevflowLogoComponent, RevealDirective, HeroWaveComponent],
   template: `
     <!-- Animated Aurora Background -->
     <style>
@@ -220,6 +223,8 @@ import { CommonModule } from '@angular/common';
       <div class="aurora-orb aurora-orb-4"></div>
       <div class="aurora-ring"></div>
       <div class="aurora-grid"></div>
+      <!-- Malha 3D interativa: flui rumo à câmera, reage ao cursor e ao clique -->
+      <df-hero-wave />
     </div>
 
     <div class="hero-clone">
@@ -227,12 +232,13 @@ import { CommonModule } from '@angular/common';
       <!-- Nav -->
       <nav class="ds-nav" style="position: fixed; top: 0; left: 0; right: 0; height: 80px; background: rgba(0,0,0,0.4); backdrop-filter: blur(20px); z-index: 1000; display: flex; align-items: center; padding: 0 40px; border-bottom: 1px solid rgba(255,255,255,0.1);">
         <div class="nav-logo" style="display: flex; align-items: center; gap: 10px; font-family: var(--font_display); font-weight: 700; font-size: 18px; margin-right: auto; color: #fff;">
-          <div class="logo-mark" style="width: 32px; height: 32px; border-radius: 8px; background: linear-gradient(135deg, var(--color_accent_deep_purple), var(--color_accent_purple)); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; color: #000;">D</div>
+          <df-logo [size]="34" />
           DevFlow Solutions
         </div>
         <a href="#features" style="margin-right: 30px; text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Funcionalidades</a>
         <a href="#planos" style="margin-right: 30px; text-decoration: none; color: #fff; font-size: 14px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">Planos</a>
         <button class="btn btn-ghost" (click)="goLogin()">Acesso Plataforma</button>
+        <button class="btn btn-ghost" style="margin-left: 12px;" (click)="goSobreNos()">Sobre Nós</button>
         <button class="btn btn-primary" style="margin-left: 16px;" (click)="goRegister()">Iniciar Grátis</button>
       </nav>
 
@@ -279,7 +285,7 @@ import { CommonModule } from '@angular/common';
     <div style="background-color: var(--color_main_bg); padding-bottom: 100px;">
       
       <!-- Introdução da Dor -->
-      <section style="padding:100px 40px 0; text-align: center; max-width: 900px; margin: 0 auto;">
+      <section appReveal style="padding:100px 40px 0; text-align: center; max-width: 900px; margin: 0 auto;">
         <h2 style="font-family: var(--font_display); font-size: clamp(32px, 5vw, 48px); line-height: 1.2; margin-bottom: 24px; color: #fff;">
           Pare de financiar os projetos dos seus clientes. <br><span style="color: var(--color_accent_purple);">Blinde o lucro da sua Software House.</span>
         </h2>
@@ -292,8 +298,8 @@ import { CommonModule } from '@angular/common';
       <section id="features" style="padding:100px 40px; border-bottom: 1px solid rgba(255,255,255,0.1); max-width: 1200px; margin: 0 auto;">
         <span style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 60px; display: block;">01 / Features</span>
         <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 60px;">
-          @for (f of features; track f.title) {
-            <div class="card" style="display: flex; flex-direction: column;">
+          @for (f of features; track f.title; let i = $index) {
+            <div class="card" appReveal [revealDelay]="(i % 3) * 90" style="display: flex; flex-direction: column;">
               <div style="font-size:32px;margin-bottom:16px">{{f.icon}}</div>
               <h3 style="color:#fff;font-size:24px;margin-bottom:12px; font-family: var(--font_display);">{{f.title}}</h3>
               <p style="color:rgba(255,255,255,.6);font-size:16px;line-height:1.6; font-family: var(--font_text);">{{f.desc}}</p>
@@ -304,7 +310,7 @@ import { CommonModule } from '@angular/common';
 
       <!-- Custo da Inação -->
       <section id="dor" style="padding:100px 40px; background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05);">
-        <div style="max-width: 800px; margin: 0 auto; text-align: center;">
+        <div appReveal style="max-width: 800px; margin: 0 auto; text-align: center;">
           <h2 style="color:#fff; font-size:36px; margin-bottom:24px; font-family: var(--font_display);">Quanto custa não controlar o escopo?</h2>
           <p style="color:rgba(255,255,255,.7); font-size:18px; line-height:1.6; margin-bottom:40px; font-family: var(--font_text);">Agências e Software Houses perdem em média <b>20% da sua margem de lucro</b> todos os meses com features não cobradas, infraestrutura mal calculada e horas extras não mapeadas. Você está pagando para trabalhar?</p>
           <div style="display: flex; justify-content: center; gap: 32px; flex-wrap: wrap;">
@@ -325,7 +331,7 @@ import { CommonModule } from '@angular/common';
         <span style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 60px; display: block; text-align: center;">02 / Histórias de Sucesso</span>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
           <!-- Depoimento 1 -->
-          <div class="card" style="position: relative;">
+          <div class="card" appReveal style="position: relative;">
             <div style="font-size:48px; color:var(--color_accent_purple); opacity:0.2; position:absolute; top:10px; left:20px;">"</div>
             <p style="color:#fff; font-size:16px; line-height:1.6; font-style:italic; margin-bottom:24px; position:relative; z-index:2; padding-top:20px;">Paramos de perder dinheiro com infraestrutura mal calculada. O DevFlow nos deu a clareza que precisávamos para cobrar exatamente o que entregamos, aumentando nossa margem em 30% no primeiro semestre.</p>
             <div style="display:flex; align-items:center; gap:16px;">
@@ -337,7 +343,7 @@ import { CommonModule } from '@angular/common';
             </div>
           </div>
           <!-- Depoimento 2 -->
-          <div class="card" style="position: relative;">
+          <div class="card" appReveal [revealDelay]="120" style="position: relative;">
             <div style="font-size:48px; color:var(--color_accent_purple); opacity:0.2; position:absolute; top:10px; left:20px;">"</div>
             <p style="color:#fff; font-size:16px; line-height:1.6; font-style:italic; margin-bottom:24px; position:relative; z-index:2; padding-top:20px;">A união entre Sprints e controle financeiro mudou o jogo para nós. Agora, nenhum time trabalha de graça em change requests infinitos. O cliente vê o dashboard e entende o valor.</p>
             <div style="display:flex; align-items:center; gap:16px;">
@@ -355,8 +361,8 @@ import { CommonModule } from '@angular/common';
       <section id="planos" style="padding:100px 40px; border-bottom: 1px solid rgba(255,255,255,0.1); max-width: 1200px; margin: 0 auto;">
         <span style="font-size: 14px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 60px; display: block;">03 / Pricing</span>
         <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px;">
-          @for (p of planos; track p.nome) {
-            <div class="card" [style.border]="p.destaque ? '1px solid var(--color_accent_purple)' : '1px solid rgba(255,255,255,.08)'" style="display:flex;flex-direction:column;">
+          @for (p of planos; track p.nome; let i = $index) {
+            <div class="card" appReveal [revealDelay]="i * 100" [style.border]="p.destaque ? '1px solid var(--color_accent_purple)' : '1px solid rgba(255,255,255,.08)'" style="display:flex;flex-direction:column;">
               <span style="font-size:12px;color:var(--color_accent_purple);margin-bottom:12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em;">{{p.badge}}</span>
               <h3 style="color:#fff;font-size:24px;margin-bottom:8px; font-family: var(--font_display);">{{p.nome}}</h3>
               <div style="font-size:32px;font-weight:700;margin-bottom:24px; font-family: var(--font_display);">{{p.preco}}</div>
@@ -378,8 +384,9 @@ import { CommonModule } from '@angular/common';
 export class LandingComponent {
   constructor(private router: Router) {}
 
-  goLogin() { this.router.navigate(['/login']); }
-  goRegister() { this.router.navigate(['/registro']); }
+  goLogin()     { this.router.navigate(['/login']); }
+  goRegister()  { this.router.navigate(['/registro']); }
+  goSobreNos()  { this.router.navigate(['/sobre-nos']); }
 
   features = [
     { icon: '🛡️', title: 'Fim dos Projetos no Vermelho', desc: 'O Budget Guard bloqueia automaticamente novos lançamentos de horas e gastos quando o orçamento estoura. Um verdadeiro bloqueio anti-prejuízo.' },

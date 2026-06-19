@@ -5,11 +5,12 @@ import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { ToastService } from '../../core/services/toast.service';
 import { extractErrorMessage } from '../../core/utils/error.util';
+import { DevflowLogoComponent } from '../../shared/components/logo/devflow-logo.component';
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, DevflowLogoComponent],
   template: `
     <div class="login-page" style="display: flex; height: 100vh; overflow: hidden; background-color: var(--color_main_bg);">
       <div class="login-left" style="flex: 1; background: var(--color_main_bg); padding: 40px; display: flex; align-items: center; justify-content: center; position: relative;">
@@ -22,7 +23,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
 
         <div class="card login-form-container" style="width: 100%; max-width: 480px; padding: 40px;">
           <div style="text-align: center; margin-bottom: 32px;">
-            <div class="logo-mark" style="width: 48px; height: 48px; border-radius: 12px; background: linear-gradient(135deg, var(--color_accent_deep_purple), var(--color_accent_purple)); display: inline-flex; align-items: center; justify-content: center; color: #000; font-size: 24px; font-weight: 800; margin-bottom: 16px;">D</div>
+            <div style="display: inline-flex; margin-bottom: 16px;"><df-logo [size]="48" /></div>
             <h1 style="font-family: var(--font_display); font-size: 28px; color: #fff; margin-bottom: 8px;">Criar sua conta</h1>
             <p style="font-family: var(--font_text); font-size: 14px; color: var(--text-secondary);">Comece a gerenciar seus projetos B2B agora.</p>
           </div>

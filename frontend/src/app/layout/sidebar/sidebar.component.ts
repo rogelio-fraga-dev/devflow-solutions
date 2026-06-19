@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import { DevflowLogoComponent } from '../../shared/components/logo/devflow-logo.component';
 
 export interface NavItem {
   label: string;
@@ -13,12 +14,12 @@ export interface NavItem {
 @Component({
   selector: 'app-sidebar',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, RouterLink, RouterLinkActive, DevflowLogoComponent],
   template: `
     <aside class="sidebar" [class.collapsed]="collapsed()">
       <!-- Logo (always visible) -->
       <div class="sidebar-logo">
-        <img src="assets/logo3.png" alt="DevFlow" class="logo-mark" onerror="this.onerror=null; this.src='assets/logo.png';"/>
+        <df-logo [size]="collapsed() ? 28 : 32" />
         <span class="sidebar-logo-text">DevFlow</span>
       </div>
 

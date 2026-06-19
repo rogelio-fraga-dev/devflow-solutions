@@ -83,5 +83,9 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'sobre-nos',
+    loadComponent: () => import('./pages/sobre-nos/sobre-nos.component').then(m => m.SobreNosComponent)
+  },
   { path: '**', redirectTo: '' }
 ];

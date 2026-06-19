@@ -3,11 +3,12 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { DevflowLogoComponent } from '../../shared/components/logo/devflow-logo.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, DevflowLogoComponent],
   template: `
     <div class="login-page" style="display: flex; height: 100vh; overflow: hidden; background-color: var(--color_main_bg);">
       <!-- Left: form -->
@@ -21,10 +22,7 @@ import { AuthService } from '../../core/services/auth.service';
 
         <div class="login-form-container card" style="width: 100%; max-width: 400px; padding: 40px; border-color: rgba(79,70,229,0.3); box-shadow: 0 0 60px -20px rgba(79,70,229,0.3), inset 0 1px 0 rgba(255,255,255,0.06);">
           <div style="margin-bottom:32px">
-            <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px">
-              <div style="width:32px;height:32px;border-radius:8px;background:linear-gradient(135deg,var(--color_accent_deep_purple),var(--color_accent_purple));display:flex;align-items:center;justify-content:center;color:#000;font-weight:800;font-size:14px">D</div>
-              <span style="font-weight:800;font-size:15px; color:#fff;">DevFlow</span>
-            </div>
+            <df-logo [size]="36" [withText]="true" />
           </div>
 
           <h1 class="login-greeting" style="font-family: var(--font_display); font-size: 32px; font-weight: 700; color: #fff; margin-bottom: 8px;">Acesse a Plataforma</h1>
