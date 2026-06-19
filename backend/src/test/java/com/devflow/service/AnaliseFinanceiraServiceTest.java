@@ -92,4 +92,57 @@ class AnaliseFinanceiraServiceTest {
         // Verify se foi ao banco exatamente 1x
         verify(projetoRepository, times(1)).findById(1L);
     }
+
+    @Test
+    void naoGeraDre_quandoProjetoEhDeOutraEmpresa_lanca404() {
+        // Isolamento multi-tenant: DRE de projeto de outra empresa não pode vazar
+        stubUsuarioLogado(EMPRESA_ID);
+
+        Empresa outraEmpresa = new Empresa();
+        outraEmpresa.setId(999L);
+        Projeto projetoAlheio = new Projeto();
+        projetoAlheio.setId(7L);
+        projetoAlheio.setBudgetTotal(new BigDecimal("100000.00"));
+        projetoAlheio.setEmpresa(outraEmpresa);
+
+        when(projetoRepository.findById(7L)).thenReturn(Optional.of(projetoAlheio));
+
+        assertThrows(com.devflow.exception.ResourceNotFoundException.class,
+                () -> analiseService.gerarDreProjeto(7L));
+        verify(timesheetRepository, never()).findBySprintProjetoId(anyLong());
+    }
+
+    @Test
+    void geraDre_comBudgetZero_naoDividePorZero() {
+        stubUsuarioLogado(EMPRESA_ID);
+
+        Empresa empresa = new Empresa();
+        empresa.setId(EMPRESA_ID);
+        Projeto projeto = new Projeto();
+        projeto.setId(8L);
+        projeto.setNome("Projeto sem budget");
+        projeto.setStatus(StatusProjeto.PLANEJADO);
+        projeto.setBudgetTotal(BigDecimal.ZERO);
+        projeto.setCustoAtualAcumulado(BigDecimal.ZERO);
+        projeto.setDataInicio(LocalDate.now());
+        projeto.setEmpresa(empresa);
+
+        when(projetoRepository.findById(8L)).thenReturn(Optional.of(projeto));
+        when(timesheetRepository.findBySprintProjetoId(8L)).thenReturn(Collections.emptyList());
+
+        AnaliseFinanceiraDto dre = analiseService.gerarDreProjeto(8L);
+
+        assertEquals(0.0, dre.getBurnRatePercentual(), "Budget zero não pode dividir por zero");
+        assertEquals(0.0, dre.getMargemLucroPercentual());
+        assertFalse(dre.getAlertaRiscoImediato());
+    }
+
+    private void stubUsuarioLogado(Long empresaId) {
+        Empresa empresa = new Empresa();
+        empresa.setId(empresaId);
+        Usuario usuarioLogado = new Usuario();
+        usuarioLogado.setEmail(EMAIL_LOGADO);
+        usuarioLogado.setEmpresa(empresa);
+        when(usuarioRepository.findByEmailIgnoreCase(EMAIL_LOGADO)).thenReturn(Optional.of(usuarioLogado));
+    }
 }
