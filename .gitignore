@@ -1,0 +1,21 @@
+# ===== DevFlow Solutions — gitignore raiz =====
+
+# Logs e saídas de build acidentais
+*.log
+**/erro*.txt
+**/out*.txt
+
+# Build outputs
+backend/target/
+frontend/dist/
+frontend/.angular/cache/
+frontend/node_modules/
+
+# IDEs / editores
+.idea/
+.vscode/
+*.iml
+
+# Sistema
+.DS_Store
+Thumbs.db
