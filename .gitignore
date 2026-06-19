@@ -11,6 +11,9 @@ frontend/dist/
 frontend/.angular/cache/
 frontend/node_modules/
 
+# Variáveis de ambiente (o .env.example é versionado como modelo)
+.env
+
 # IDEs / editores
 .idea/
 .vscode/

@@ -66,5 +66,11 @@ public class UsuarioController {
         String fotoBase64 = body.get("foto");
         return ResponseEntity.ok(usuarioService.atualizarFotoUsuarioLogado(emailLogado, fotoBase64));
     }
+
+    @PutMapping("/me")
+    public ResponseEntity<UsuarioResponseDto> atualizarPerfilUsuarioLogado(@Valid @RequestBody com.devflow.dto.UsuarioPerfilDto request) {
+        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(usuarioService.atualizarPerfilUsuarioLogado(emailLogado, request));
+    }
 }
 

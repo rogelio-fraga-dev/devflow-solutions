@@ -3,26 +3,28 @@
 # ========================================================
 # Uso:  docker compose up -d --build
 # URL:  http://localhost (Frontend) | http://localhost:8080 (API)
+#
+# Variáveis sensíveis aceitam override via arquivo .env (ver .env.example).
+# Sem .env, sobem com defaults de desenvolvimento — funciona de primeira.
 # ========================================================
 
 services:
 
-  # --- Banco de Dados MySQL 8.0 ---
-  devflow-mysql:
-    image: mysql:8.0
+  # --- Banco de Dados PostgreSQL 16 ---
+  devflow-postgres:
+    image: postgres:16
     container_name: devflow_db
     restart: unless-stopped
     environment:
-      MYSQL_ROOT_PASSWORD: devflow_root_secret
-      MYSQL_DATABASE: devflow_db
-      MYSQL_USER: devflow_user
-      MYSQL_PASSWORD: devflow_senha123
+      POSTGRES_DB: ${POSTGRES_DB:-devflow_db}
+      POSTGRES_USER: ${POSTGRES_USER:-devflow_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devflow_senha123}
     ports:
-      - "3307:3306"
+      - "5432:5432"
     volumes:
-      - devflow_mysqldata:/var/lib/mysql
+      - devflow_pgdata:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devflow_user} -d ${POSTGRES_DB:-devflow_db}"]
       interval: 10s
       timeout: 5s
       retries: 5
@@ -37,13 +39,19 @@ services:
     ports:
       - "8080:8080"
     environment:
-      SPRING_DATASOURCE_URL: jdbc:mysql://devflow-mysql:3306/devflow_db?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=America/Sao_Paulo
-      SPRING_DATASOURCE_USERNAME: devflow_user
-      SPRING_DATASOURCE_PASSWORD: devflow_senha123
-      API_SECURITY_TOKEN_SECRET: devflow-2026-chave-secreta-pi
+      SPRING_DATASOURCE_URL: jdbc:postgresql://devflow-postgres:5432/${POSTGRES_DB:-devflow_db}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-devflow_user}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-devflow_senha123}
+      API_SECURITY_TOKEN_SECRET: ${API_SECURITY_TOKEN_SECRET:-devflow-2026-chave-secreta-pi}
     depends_on:
-      devflow-mysql:
+      devflow-postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/actuator/health | grep -q UP || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 40s
 
   # --- Frontend Angular 21 (Nginx) ---
   devflow-frontend:
@@ -55,7 +63,8 @@ services:
     ports:
       - "80:80"
     depends_on:
-      - devflow-backend
+      devflow-backend:
+        condition: service_healthy
 
 volumes:
-  devflow_mysqldata:
+  devflow_pgdata:

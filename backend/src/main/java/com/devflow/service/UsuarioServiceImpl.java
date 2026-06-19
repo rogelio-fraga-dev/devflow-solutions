@@ -146,6 +146,27 @@ public class UsuarioServiceImpl implements UsuarioService {
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"));
     }
 
+    @Override
+    @Transactional
+    public UsuarioResponseDto atualizarPerfilUsuarioLogado(String email, com.devflow.dto.UsuarioPerfilDto dto) {
+        Usuario usuario = usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado!"));
+
+        // Check if new email is already in use by someone else
+        Optional<Usuario> existente = usuarioRepository.findByEmailIgnoreCase(dto.getEmail());
+        if (existente.isPresent() && !existente.get().getId().equals(usuario.getId())) {
+            throw new IllegalArgumentException("Este e-mail já está em uso por outro usuário!");
+        }
+
+        usuario.setNome(dto.getNome());
+        usuario.setEmail(dto.getEmail());
+        usuario = usuarioRepository.save(usuario);
+        
+        // If email changed, Spring Security context will be outdated, but for JWT it relies on the token.
+        // We just return the updated user.
+        return converterParaDto(usuario);
+    }
+
     // Isolamento multi-tenant: usuário de outra empresa é tratado como inexistente (404).
     private void assertMesmaEmpresa(Usuario alvo) {
         Long empresaLogada = getUsuarioLogado().getEmpresa().getId();

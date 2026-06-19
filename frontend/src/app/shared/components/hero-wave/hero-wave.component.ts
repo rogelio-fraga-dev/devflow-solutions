@@ -58,7 +58,7 @@ export class HeroWaveComponent implements AfterViewInit, OnDestroy {
     if (typeof window === 'undefined') return;
 
     this.reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    this.pointerFine = !window.matchMedia('(pointer: coarse)').matches;
+    this.pointerFine = window.matchMedia('(any-pointer: fine)').matches || !window.matchMedia('(pointer: coarse)').matches;
 
     const canvas = this.cvRef.nativeElement;
     this.ctx = canvas.getContext('2d');

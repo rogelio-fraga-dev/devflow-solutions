@@ -34,7 +34,14 @@ import { extractErrorMessage } from '../../core/utils/error.util';
 
         <div class="grid-2" style="margin-bottom: 32px;">
           <!-- Informações do Usuário (Glassmorphism Premium) -->
-          <div class="card card-premium glow-indigo" style="margin: 0; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;">
+          <div class="card card-premium glow-indigo" style="margin: 0; display: flex; flex-direction: column; justify-content: space-between; position: relative; overflow: hidden;"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+            [style.transform]="isDragging ? 'scale(1.02)' : 'none'"
+            [style.borderColor]="isDragging ? 'var(--purple)' : 'rgba(255,255,255,0.08)'"
+            [style.transition]="'all 0.3s ease'"
+          >
             <div>
               <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px;">
                 <h3 style="margin: 0; font-size: 18px; letter-spacing: -0.5px; font-family: var(--font_display);">Credenciais e Acesso</h3>
@@ -48,11 +55,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                 <!-- Avatar Circular Premium com Aura Neon -->
                 <div 
                   (click)="fileInput.click()"
-                  (dragover)="onDragOver($event)"
-                  (dragleave)="onDragLeave($event)"
-                  (drop)="onDrop($event)"
-                  style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; font-weight: 800; box-shadow: 0 0 20px rgba(139, 92, 246, 0.45); border: 2.5px solid rgba(255, 255, 255, 0.15); transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden;"
-                  [style.transform]="isDragging ? 'scale(1.1)' : 'none'"
+                  style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--purple), #7C3AED); display: flex; align-items: center; justify-content: center; color: #fff; font-size: 28px; font-weight: 800; box-shadow: 0 0 20px rgba(139, 92, 246, 0.45); border: 2.5px solid rgba(255, 255, 255, 0.15); transition: all 0.3s ease; cursor: pointer; position: relative; overflow: hidden; transform: translateZ(0); isolation: isolate;"
                 >
                   @if (auth.userPhoto()) {
                     <img [src]="auth.userPhoto()" style="width: 100%; height: 100%; object-fit: cover;" />
@@ -61,24 +64,31 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                   }
                   
                   <!-- Hover overlay for uploading -->
-                  <div class="avatar-hover-overlay" style="position: absolute; inset: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; opacity: 0; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0'">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2">
-                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                    </svg>
-                  </div>
+                  <div class="avatar-overlay" style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.75); padding: 3px 0 4px 0; font-size: 8.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; text-align: center; border-radius: 0 0 40px 40px;">Trocar</div>
                 </div>
                 <input #fileInput type="file" accept="image/*" style="display: none" (change)="onFileSelected($event)" />
-
-                <div>
-                  <div style="font-size: 22px; font-weight: 800; color: #fff; letter-spacing: -0.4px;">
-                    {{ auth.currentUser()?.nome || (auth.currentUser()?.email?.split('@')?.[0] | titlecase) }}
-                  </div>
-                  <div style="color: var(--text-secondary); font-size: 13px; margin-top: 2px;">{{ auth.currentUser()?.email }}</div>
-                  <div style="margin-top: 8px; display: flex; gap: 6px;">
-                    <span style="font-size: 10px; font-weight: 800; text-transform: uppercase; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.08); padding: 2px 8px; border-radius: 4px; color: var(--text-muted);">
-                      Conta Ativa
-                    </span>
-                  </div>
+                <div style="flex: 1;">
+                  @if (isEditingProfile) {
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <input class="input input-premium" [(ngModel)]="editNome" placeholder="Nome" style="font-size: 16px; padding: 6px 12px; border-radius: 6px;" />
+                      <input class="input input-premium" [(ngModel)]="editEmail" placeholder="Email" style="font-size: 13px; padding: 6px 12px; border-radius: 6px;" />
+                      <div style="display: flex; gap: 8px; margin-top: 4px;">
+                        <button class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;" (click)="saveProfile()">Salvar</button>
+                        <button class="btn btn-ghost" style="padding: 4px 12px; font-size: 12px;" (click)="isEditingProfile = false">Cancelar</button>
+                      </div>
+                    </div>
+                  } @else {
+                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                      <h2 style="margin: 0; font-size: 22px; font-family: var(--font_display);">{{ auth.currentUser()?.nome || (auth.currentUser()?.email?.split('@')?.[0] | titlecase) }}</h2>
+                      <button class="btn btn-ghost" style="padding: 4px; border: none; color: var(--text-muted);" (click)="startEditProfile()" title="Editar Perfil">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                      </button>
+                    </div>
+                    <p style="margin: 0; color: var(--text-muted); font-size: 13px;">{{ auth.currentUser()?.email }}</p>
+                    <div style="margin-top: 8px;">
+                      <span class="chip-premium">CONTA ATIVA</span>
+                    </div>
+                  }
                 </div>
               </div>
 
@@ -192,6 +202,39 @@ export class PerfilComponent implements OnInit {
   loading = false;
   devStats: any = null;
   isDragging = false;
+  isEditingProfile = false;
+  editNome = '';
+  editEmail = '';
+
+  startEditProfile() {
+    this.isEditingProfile = true;
+    this.editNome = this.auth.currentUser()?.nome || '';
+    this.editEmail = this.auth.currentUser()?.email || '';
+  }
+
+  saveProfile() {
+    if (!this.editNome || !this.editEmail) {
+      this.toast.error('Nome e E-mail são obrigatórios.');
+      return;
+    }
+    this.loading = true;
+    this.usuarioService.updateProfile({ nome: this.editNome, email: this.editEmail }).subscribe({
+      next: (user) => {
+        this.loading = false;
+        this.isEditingProfile = false;
+        const current = this.auth.currentUser();
+        if (current) {
+          const updated = { ...current, nome: user.nome, email: user.email };
+          this.auth.currentUser.set(updated);
+        }
+        this.toast.success('Perfil atualizado com sucesso!');
+      },
+      error: (err) => {
+        this.loading = false;
+        this.toast.error(extractErrorMessage(err) || 'Erro ao atualizar perfil.');
+      }
+    });
+  }
 
   onDragOver(event: DragEvent) {
     event.preventDefault();

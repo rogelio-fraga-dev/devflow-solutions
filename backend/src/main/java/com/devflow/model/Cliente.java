@@ -29,7 +29,6 @@ public class Cliente {
     @Embedded
     private Endereco endereco;
 
-    @Lob
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String foto;
 }
