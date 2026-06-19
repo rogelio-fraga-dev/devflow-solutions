@@ -41,8 +41,7 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
-    @Lob
-    @Column(columnDefinition = "LONGTEXT")
+    @Column(columnDefinition = "TEXT")
     private String foto;
 
 
