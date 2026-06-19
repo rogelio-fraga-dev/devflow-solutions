@@ -159,16 +159,13 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             </tbody>
           </table>
         </div>
-
-        @if (totalPages() > 1) {
-          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-top: 1px solid var(--border)">
-            <button class="btn btn-ghost" style="padding: 8px 16px"
-                    [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
-            <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
-            <button class="btn btn-ghost" style="padding: 8px 16px"
-                    [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
-          </div>
-        }
+      <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px; margin-top: 16px;">
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+        <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
+      </div>
       </div>
     </div>
 
