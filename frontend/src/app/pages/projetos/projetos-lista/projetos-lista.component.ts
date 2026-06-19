@@ -119,26 +119,27 @@ import { extractErrorMessage } from '../../../core/utils/error.util';
       <!-- Pagination Controls -->
       @if (totalPages() > 1) {
         <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;">
-          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
                   [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
-          <span style="font-size: 13px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
-          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+          <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
                   [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
         </div>
       }
     </div>
 
-    <!-- Drawer -->
     <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
       <div class="modal-overlay" (click)="drawerOpen.set(false)">
-        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 800px; max-width: 95vw;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
+        <div class="modal" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 800px; max-width: 95vw; display: flex; flex-direction: column;">
+          <!-- Header (fixo) -->
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px; flex-shrink: 0;">
             <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Projeto' : 'Novo Projeto' }}</h3>
             <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
           </div>
           
-          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px; max-height: 62vh; overflow-y: auto; padding-right: 4px;">
+          <!-- Body (scrollável) -->
+          <div style="display:flex; flex-direction:column; gap:16px; margin-bottom: 24px; overflow-y: auto; padding-right: 8px; flex: 1; min-height: 0;">
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
               <div class="form-group">
                 <label class="label">Nome *</label>
@@ -231,7 +232,8 @@ import { extractErrorMessage } from '../../../core/utils/error.util';
             </div>
           </div>
           
-          <div style="display:flex; gap:12px; justify-content:flex-end;">
+          <!-- Footer (fixo) -->
+          <div style="display:flex; gap:12px; justify-content:flex-end; flex-shrink: 0; border-top: 1px solid var(--border); padding-top: 16px;">
             <button class="btn btn-ghost" style="padding: 10px 20px;" (click)="drawerOpen.set(false)">Cancelar</button>
             <button class="btn btn-primary" style="padding: 10px 24px;" [disabled]="saving()" (click)="save()">
               {{ saving() ? 'Salvando...' : 'Salvar' }}

@@ -167,7 +167,7 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
 /* ── Inputs ── */
 .input, .select, .textarea {
   width: 100%;
-  padding: 9px 12px;
+  padding: 11px 14px;
   border: 1.5px solid var(--border);
   border-radius: var(--radius-sm);
   font-size: 16px;
@@ -190,7 +190,7 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
 
 .label {
   display: block;
-  font-size: 14.5px;
+  font-size: 15px;
   font-weight: 600;
   color: var(--text-secondary);
   margin-bottom: 6px;
@@ -204,9 +204,9 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
   border-collapse: collapse;
 
   th {
-    padding: 10px 14px;
+    padding: 12px 14px;
     text-align: left;
-    font-size: 13.5px;
+    font-size: 15px;
     font-weight: 700;
     color: var(--text-muted);
     text-transform: uppercase;
@@ -215,7 +215,7 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
   }
 
   td {
-    padding: 12px 14px;
+    padding: 14px 14px;
     font-size: 16px;
     border-bottom: 1px solid var(--border);
     color: var(--text-primary);
@@ -678,12 +678,13 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
 .modal-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,.4);
+  background: rgba(0,0,0,.65);
   z-index: 200;
   display: flex;
   align-items: center;
   justify-content: center;
   animation: fadeIn .15s ease;
+  padding: 24px;
 }
 
 .modal {
@@ -693,9 +694,12 @@ p  { font-family: var(--font_text); color: var(--text-secondary); line-height: 1
   padding: 28px;
   width: 420px;
   max-width: 95vw;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 8px 40px rgba(0,0,0,.7);
   animation: scaleIn .15s ease;
   color: var(--text-primary);
+  margin: auto;
 
   h3 { margin-bottom: 10px; color: #fff; }
   p  { color: var(--text-secondary); margin-bottom: 20px; }

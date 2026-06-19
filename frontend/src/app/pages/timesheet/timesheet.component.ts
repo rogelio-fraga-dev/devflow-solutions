@@ -43,7 +43,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
       <div class="card card-premium" style="margin-bottom: 24px; padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--purple-light)"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Filtrar Timesheet:</span>
+          <span style="font-size: 15px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Filtrar Timesheet:</span>
         </div>
         <select class="select" style="max-width: 240px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: #fff;" [(ngModel)]="filterDev" (ngModelChange)="loadTimesheets()">
           <option value="">Todos os devs</option>
@@ -53,6 +53,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
           <option value="">Todas as sprints</option>
           @for (s of sprints(); track s.id) { <option [value]="s.id">{{ projetoNome(s.projetoId) }} – {{ s.nomeFase }}</option> }
         </select>
+        <input class="input" type="text" placeholder="Buscar por nome, sprint ou tarefa..." style="max-width: 280px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: #fff;" [(ngModel)]="busca" (ngModelChange)="currentPage.set(1)" />
       </div>
 
       <!-- Summary in Premium Glass Cards -->
@@ -130,21 +131,21 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                     <td colspan="7" style="padding: 16px 24px; border-bottom: 1px solid rgba(139, 92, 246, 0.15);">
                       <div style="display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--purple); padding-left: 16px;">
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Descrição Detalhada da Tarefa:</strong>
-                          <div style="color: var(--text-secondary); margin-top: 4px; font-size: 13px; line-height: 1.5;">{{ t.descricaoTarefa || 'Nenhuma descrição fornecida.' }}</div>
+                          <strong style="color: #fff; font-size: 15px;">Descrição Detalhada da Tarefa:</strong>
+                          <div style="color: var(--text-secondary); margin-top: 4px; font-size: 15px; line-height: 1.5;">{{ t.descricaoTarefa || 'Nenhuma descrição fornecida.' }}</div>
                         </div>
                         <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 4px;">
                           <div>
-                            <strong style="color: #fff; font-size: 13px;">Colaborador:</strong>
-                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ devNome(t.desenvolvedorId) }}</span>
+                            <strong style="color: #fff; font-size: 15px;">Colaborador:</strong>
+                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ devNome(t.desenvolvedorId) }}</span>
                           </div>
                           <div>
-                            <strong style="color: #fff; font-size: 13px;">Sprint Associada:</strong>
-                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ sprintLabel(t.sprintId) }}</span>
+                            <strong style="color: #fff; font-size: 15px;">Sprint Associada:</strong>
+                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ sprintLabel(t.sprintId) }}</span>
                           </div>
                           <div>
-                            <strong style="color: #fff; font-size: 13px;">Data Lançamento:</strong>
-                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ t.dataRegistro | date:'dd/MM/yyyy' }}</span>
+                            <strong style="color: #fff; font-size: 15px;">Data Lançamento:</strong>
+                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ t.dataRegistro | date:'dd/MM/yyyy' }}</span>
                           </div>
                         </div>
                       </div>
@@ -163,7 +164,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
           <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 24px; border-top: 1px solid var(--border)">
             <button class="btn btn-ghost" style="padding: 8px 16px"
                     [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
-            <span style="font-size: 13px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+            <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
             <button class="btn btn-ghost" style="padding: 8px 16px"
                     [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
           </div>
@@ -174,7 +175,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
     <!-- Centered Premium Modal -->
     @if (drawerOpen()) {
       <div class="modal-overlay" (click)="drawerOpen.set(false)">
-        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 700px; max-width: 95vw; max-height: 90vh; overflow-y: auto;">
+        <div class="modal modal-content" (click)="$event.stopPropagation()" style="border: 1px solid rgba(139, 92, 246, 0.35); width: 700px; max-width: 95vw;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom: 20px; border-bottom: 1px solid var(--border); padding-bottom: 12px;">
             <h3 style="font-size: 18px; margin: 0; font-family: var(--font_display);">{{ editingId() ? 'Editar Registro' : 'Registrar Horas' }}</h3>
             <button class="btn btn-ghost" style="padding: 6px; border: none; font-size: 16px;" (click)="drawerOpen.set(false)">✕</button>
@@ -256,19 +257,31 @@ export class TimesheetComponent implements OnInit {
 
   filterDev    = '';
   filterSprint = '';
+  busca        = '';
   form: TimesheetRequest = this.emptyForm();
 
   currentPage = signal(1); // Mapeado no seeder
   pageSize = 10;
   expandedTsId = signal<number | null>(null);
 
+  filtered() {
+    const q = this.busca.trim().toLowerCase();
+    const base = this.timesheets();
+    if (!q) return base;
+    return base.filter(t =>
+      this.devNome(t.desenvolvedorId).toLowerCase().includes(q) ||
+      this.sprintLabel(t.sprintId).toLowerCase().includes(q) ||
+      (t.descricaoTarefa || '').toLowerCase().includes(q)
+    );
+  }
+
   paginatedTimesheets() {
     const start = (this.currentPage() - 1) * this.pageSize;
-    return this.timesheets().slice(start, start + this.pageSize);
+    return this.filtered().slice(start, start + this.pageSize);
   }
 
   totalPages() {
-    return Math.max(1, Math.ceil(this.timesheets().length / this.pageSize));
+    return Math.max(1, Math.ceil(this.filtered().length / this.pageSize));
   }
 
   prevPage() { if (this.currentPage() > 1) this.currentPage.update(v => v - 1); }

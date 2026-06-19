@@ -60,12 +60,13 @@ import { extractErrorMessage } from '../../core/utils/error.util';
       <div class="card card-premium" style="margin-bottom: 24px; padding: 16px 20px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
         <div style="display: flex; align-items: center; gap: 8px;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--purple-light)"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-          <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Filtrar por Projeto:</span>
+          <span style="font-size: 15px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">Filtrar por Projeto:</span>
         </div>
         <select class="select" style="max-width: 280px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: #fff;" [(ngModel)]="filterProjeto">
           <option value="">Todos os projetos</option>
           @for (p of projetos(); track p.id) { <option [value]="p.id">{{ p.nome }}</option> }
         </select>
+        <input class="input" type="text" placeholder="Buscar por descrição, projeto ou solicitante..." style="max-width: 280px; background: rgba(255, 255, 255, 0.05); border: 1px solid var(--border); color: #fff;" [(ngModel)]="busca" (ngModelChange)="currentPage.set(1)" />
       </div>
 
       <!-- Table in Premium Glass Card -->
@@ -132,28 +133,28 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                     <td colspan="7" style="padding: 16px 24px; border-bottom: 1px solid rgba(139, 92, 246, 0.15);">
                       <div style="display: flex; flex-direction: column; gap: 12px; border-left: 3px solid var(--purple); padding-left: 16px;">
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Descrição Detalhada do Escopo:</strong>
-                          <div style="color: var(--text-secondary); margin-top: 4px; font-size: 13px; line-height: 1.5;">{{ cr.descricaoMudanca }}</div>
+                          <strong style="color: #fff; font-size: 15px;">Descrição Detalhada do Escopo:</strong>
+                          <div style="color: var(--text-secondary); margin-top: 4px; font-size: 15px; line-height: 1.5;">{{ cr.descricaoMudanca }}</div>
                         </div>
                         @if (cr.justificativa) {
                           <div>
-                            <strong style="color: #fff; font-size: 13px;">Justificativa de Negócio:</strong>
-                            <div style="color: var(--text-muted); margin-top: 4px; font-size: 13px; line-height: 1.5;">{{ cr.justificativa }}</div>
+                            <strong style="color: #fff; font-size: 15px;">Justificativa de Negócio:</strong>
+                            <div style="color: var(--text-muted); margin-top: 4px; font-size: 15px; line-height: 1.5;">{{ cr.justificativa }}</div>
                           </div>
                         }
                         <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 4px;">
                           <div>
-                            <strong style="color: #fff; font-size: 13px;">Solicitante:</strong>
-                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ cr.solicitante || 'Não especificado' }}</span>
+                            <strong style="color: #fff; font-size: 15px;">Solicitante:</strong>
+                            <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ cr.solicitante || 'Não especificado' }}</span>
                           </div>
                           <div>
-                            <strong style="color: #fff; font-size: 13px;">Impacto em Horas:</strong>
+                            <strong style="color: #fff; font-size: 15px;">Impacto em Horas:</strong>
                             <span class="chip purple" style="margin-left: 8px;">{{ cr.impactoHoras ? cr.impactoHoras + 'h de esforço' : 'Sem impacto estimado' }}</span>
                           </div>
                           @if (cr.dataAprovacao) {
                             <div>
-                              <strong style="color: #fff; font-size: 13px;">Data de Aprovação:</strong>
-                              <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ cr.dataAprovacao | date:'dd/MM/yyyy' }}</span>
+                              <strong style="color: #fff; font-size: 15px;">Data de Aprovação:</strong>
+                              <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ cr.dataAprovacao | date:'dd/MM/yyyy' }}</span>
                             </div>
                           }
                         </div>
@@ -173,10 +174,10 @@ import { extractErrorMessage } from '../../core/utils/error.util';
       <!-- Pagination Controls -->
       @if (totalPages() > 1) {
         <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-top: 16px;">
-          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
                   [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
-          <span style="font-size: 13px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
-          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 13px;" 
+          <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
                   [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
         </div>
       }
@@ -263,6 +264,7 @@ export class ChangeRequestsComponent implements OnInit {
   editingId  = signal<number|null>(null);
   confirmDel: ChangeRequest | null = null;
   filterProjeto = '';
+  busca = '';
   
   currentPage = signal(1);
   pageSize = 10;
@@ -296,7 +298,17 @@ export class ChangeRequestsComponent implements OnInit {
     this.svc.getAll().subscribe(c => this.crs.set(c));
   }
 
-  filtered() { return this.crs().filter(c => !this.filterProjeto || c.projetoId === Number(this.filterProjeto)); }
+  filtered() {
+    const q = this.busca.trim().toLowerCase();
+    return this.crs().filter(c =>
+      (!this.filterProjeto || c.projetoId === Number(this.filterProjeto)) &&
+      (!q ||
+        c.descricaoMudanca.toLowerCase().includes(q) ||
+        this.projetoNome(c.projetoId).toLowerCase().includes(q) ||
+        (c.solicitante || '').toLowerCase().includes(q) ||
+        (c.justificativa || '').toLowerCase().includes(q))
+    );
+  }
   
   paginated() {
     const start = (this.currentPage() - 1) * this.pageSize;
