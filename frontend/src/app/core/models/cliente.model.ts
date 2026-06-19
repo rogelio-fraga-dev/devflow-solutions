@@ -11,6 +11,7 @@ export interface Cliente {
   cnpj: string;
   pessoaContato: string;
   endereco?: Endereco;
+  foto?: string;
 }
 
 export interface ClienteRequest {
@@ -18,4 +19,6 @@ export interface ClienteRequest {
   cnpj: string;
   pessoaContato: string;
   endereco?: Endereco;
+  foto?: string;
 }
+

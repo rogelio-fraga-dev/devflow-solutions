@@ -40,8 +40,12 @@ export interface Breadcrumb {
         <div style="width:1px;height:20px;background:var(--border)"></div>
         
         <div class="header-user">
-          <div class="sidebar-avatar" style="width:30px;height:30px;font-size:11px">
-            {{ initials(auth.currentUser()?.email) }}
+          <div class="sidebar-avatar" style="width:30px;height:30px;font-size:11px; overflow: hidden; display: flex; align-items: center; justify-content: center;">
+            @if (auth.userPhoto()) {
+              <img [src]="auth.userPhoto()" style="width: 100%; height: 100%; object-fit: cover;" />
+            } @else {
+              {{ initials(auth.currentUser()?.email) }}
+            }
           </div>
           <div>
             <div class="user-name">{{ getUserName() | titlecase }}</div>

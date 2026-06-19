@@ -18,32 +18,53 @@ export interface DecodedToken {
 export class AuthService {
   private readonly TOKEN_KEY = 'devflow_token';
   currentUser = signal<CurrentUser | null>(this.loadUser());
+  userPhoto = signal<string | null>(null);
 
-  constructor(private http: HttpClient, private router: Router) {}
+  constructor(private http: HttpClient, private router: Router) {
+    if (this.isAuthenticated()) {
+      this.carregarFotoUsuario();
+    }
+  }
+
+  carregarFotoUsuario() {
+    this.http.get<any>(`${environment.apiUrl}/usuarios/me`).subscribe({
+      next: (user) => {
+        this.userPhoto.set(user.foto || null);
+      },
+      error: (err) => console.error('Erro ao carregar foto do usuario', err)
+    });
+  }
+
 
   login(credentials: LoginRequest) {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/login`, credentials).pipe(
       tap(res => {
         localStorage.setItem(this.TOKEN_KEY, res.token);
         this.currentUser.set(this.decodeToken(res.token));
+        this.carregarFotoUsuario();
       })
     );
   }
+
 
   registrar(payload: any) {
     return this.http.post<LoginResponse>(`${environment.apiUrl}/auth/registrar`, payload).pipe(
       tap(res => {
         localStorage.setItem(this.TOKEN_KEY, res.token);
         this.currentUser.set(this.decodeToken(res.token));
+        this.carregarFotoUsuario();
       })
     );
   }
 
+
   logout() {
     localStorage.removeItem(this.TOKEN_KEY);
     this.currentUser.set(null);
+    this.userPhoto.set(null);
     this.router.navigate(['/login']);
   }
+
 
   getToken(): string | null {
     return localStorage.getItem(this.TOKEN_KEY);

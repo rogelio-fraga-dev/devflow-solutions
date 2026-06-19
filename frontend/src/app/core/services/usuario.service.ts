@@ -15,4 +15,7 @@ export class UsuarioService {
   update(id: number, data: UsuarioRequest) { return this.http.put<Usuario>(`${this.url}/${id}`, data); }
   delete(id: number) { return this.http.delete<void>(`${this.url}/${id}`); }
   alterarSenha(payload: any) { return this.http.put<void>(`${this.url}/alterar-senha`, payload); }
+  getMe() { return this.http.get<Usuario>(`${this.url}/me`); }
+  updateMyFoto(foto: string) { return this.http.put<Usuario>(`${this.url}/me/foto`, { foto }); }
 }
+

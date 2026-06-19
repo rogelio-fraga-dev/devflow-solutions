@@ -1,4 +1,5 @@
 import { Component, OnInit, OnDestroy, signal, inject, ViewChild, ElementRef, NgZone } from '@angular/core';
+import { firstValueFrom } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -459,12 +460,14 @@ export class FinanceiroComponent implements OnInit, OnDestroy {
 
     // Sprints
     if (projetosList.length > 0) {
-      const spReqs = projetosList.map(p => this.sprintSvc.getByProjeto(p.id).toPromise());
-      Promise.all(spReqs).then(res => {
-        const flatSprints = (res.flat() as Sprint[]).filter(Boolean);
-        this.sprintsCount.set(flatSprints.filter(s => s.status === 'EM_ANDAMENTO').length);
-        this.sprintsHours.set(flatSprints.reduce((acc, s) => acc + (s.horasEstimadas || 0), 0));
-      });
+      const spReqs = projetosList.map(p => firstValueFrom(this.sprintSvc.getByProjeto(p.id)));
+      Promise.all(spReqs)
+        .then(res => {
+          const flatSprints = (res.flat() as Sprint[]).filter(Boolean);
+          this.sprintsCount.set(flatSprints.filter(s => s.status === 'EM_ANDAMENTO').length);
+          this.sprintsHours.set(flatSprints.reduce((acc, s) => acc + (s.horasEstimadas || 0), 0));
+        })
+        .catch(() => this.toast.warning('Não foi possível carregar os dados de sprints.'));
     }
 
     // Change Requests
