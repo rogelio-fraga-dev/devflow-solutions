@@ -79,7 +79,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             </tr>
           </thead>
           <tbody>
-            @for (c of filtered(); track c.id) {
+            @for (c of paginated(); track c.id) {
               <tr style="cursor: pointer;" (click)="toggleCloudDetail(c.id)">
                 <td style="width: 40px; text-align: center; vertical-align: middle;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -136,6 +136,15 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             }
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px; margin-top: 16px;">
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+        <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
       </div>
     </div>
 
@@ -223,6 +232,21 @@ export class CustosCloudComponent implements OnInit {
       (!this.filterProvedor || c.provedor === this.filterProvedor)
     );
   }
+
+  currentPage = signal(1);
+  pageSize = 10;
+
+  paginated() {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filtered().slice(start, start + this.pageSize);
+  }
+
+  totalPages() {
+    return Math.max(1, Math.ceil(this.filtered().length / this.pageSize));
+  }
+
+  nextPage() { if (this.currentPage() < this.totalPages()) this.currentPage.update(v => v + 1); }
+  prevPage() { if (this.currentPage() > 1) this.currentPage.update(v => v - 1); }
 
   totalCloud() { return this.filtered().reduce((s, c) => s + (c.valorFatura || 0), 0); }
   countByProv(p: string) { return this.clouds().filter(c => c.provedor === p).length; }

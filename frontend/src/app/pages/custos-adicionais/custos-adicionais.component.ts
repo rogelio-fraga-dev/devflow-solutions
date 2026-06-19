@@ -70,7 +70,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             </tr>
           </thead>
           <tbody>
-            @for (a of filtered(); track a.id) {
+            @for (a of paginated(); track a.id) {
               <tr style="cursor: pointer;" (click)="toggleDetail(a.id)">
                 <td style="width: 40px; text-align: center; vertical-align: middle;">
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -124,6 +124,15 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             }
           </tbody>
         </table>
+      </div>
+
+      <!-- Pagination Controls -->
+      <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px; margin-top: 16px;">
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+        <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
       </div>
     </div>
 
@@ -197,6 +206,22 @@ export class CustosAdicionaisComponent implements OnInit {
   }
 
   filtered() { return this.adicionais().filter(a => !this.filterProjeto || a.projetoId === Number(this.filterProjeto)); }
+
+  currentPage = signal(1);
+  pageSize = 10;
+
+  paginated() {
+    const start = (this.currentPage() - 1) * this.pageSize;
+    return this.filtered().slice(start, start + this.pageSize);
+  }
+
+  totalPages() {
+    return Math.max(1, Math.ceil(this.filtered().length / this.pageSize));
+  }
+
+  nextPage() { if (this.currentPage() < this.totalPages()) this.currentPage.update(v => v + 1); }
+  prevPage() { if (this.currentPage() > 1) this.currentPage.update(v => v - 1); }
+
   totalAdicionais() { return this.filtered().reduce((s, a) => s + (a.valorAdicional || 0), 0); }
   descricoesUnicas() { return new Set(this.filtered().map(a => a.descricao)).size; }
   projetoNome(id: number) { return this.projetos().find(p => p.id === id)?.nome || '—'; }

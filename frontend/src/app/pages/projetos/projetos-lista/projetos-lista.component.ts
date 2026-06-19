@@ -117,15 +117,13 @@ import { extractErrorMessage } from '../../../core/utils/error.util';
       </div>
 
       <!-- Pagination Controls -->
-      @if (totalPages() > 1) {
-        <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;">
-          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
-                  [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
-          <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
-          <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
-                  [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
-        </div>
-      }
+      <div style="display: flex; justify-content: center; align-items: center; gap: 12px; margin-bottom: 32px;">
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === 1" (click)="prevPage()">Anterior</button>
+        <span style="font-size: 15px; color: var(--text-muted)">Página {{ currentPage() }} de {{ totalPages() }}</span>
+        <button class="btn btn-ghost" style="padding: 6px 12px; font-size: 15px;" 
+                [disabled]="currentPage() === totalPages()" (click)="nextPage()">Próximo</button>
+      </div>
     </div>
 
     <!-- Centered Premium Modal -->
