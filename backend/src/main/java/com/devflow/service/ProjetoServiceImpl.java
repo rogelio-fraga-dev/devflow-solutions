@@ -81,6 +81,7 @@ public class ProjetoServiceImpl implements ProjetoService {
         // 1. REGRA DE OURO: Buscar o projeto existente (Merge)
         Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + id));
+        assertMesmaEmpresa(projeto);
 
         // 2. Aplicar alterações permitidas
         projeto.setNome(request.getNome());
@@ -131,7 +132,22 @@ public class ProjetoServiceImpl implements ProjetoService {
     public ProjetoResponseDto buscarProjeto(Long id) {
         Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + id));
+        assertMesmaEmpresa(projeto);
         return mapToResponse(projeto);
+    }
+
+    private Long getEmpresaLogadaId() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"))
+                .getEmpresa().getId();
+    }
+
+    // Isolamento multi-tenant: trata recurso de outra empresa como inexistente (404, sem vazar existência).
+    private void assertMesmaEmpresa(Projeto projeto) {
+        if (projeto.getEmpresa() == null || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Projeto não encontrado com ID: " + projeto.getId());
+        }
     }
 
     @Override
@@ -158,6 +174,7 @@ public class ProjetoServiceImpl implements ProjetoService {
     public void deletarProjeto(Long id) {
         Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + id));
+        assertMesmaEmpresa(projeto);
         projetoRepository.delete(projeto);
     }
 

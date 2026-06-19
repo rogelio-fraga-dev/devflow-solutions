@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+import java.time.ZoneId;
 
 @Service
 public class TokenService {
 
-    @Value("${api.security.token.secret:devflow-secret}")
+    // Fonte única do segredo: definido em application.properties
+    // (que por sua vez aceita override via env API_SECURITY_TOKEN_SECRET).
+    @Value("${api.security.token.secret}")
     private String secret;
 
     public String gerarToken(Usuario usuario) {
@@ -48,6 +50,9 @@ public class TokenService {
     }
 
     private Instant gerarDataExpiracao() {
-        return LocalDateTime.now().plusHours(24).toInstant(ZoneOffset.of("-03:00"));
+        return LocalDateTime.now(ZoneId.systemDefault())
+                .plusHours(24)
+                .atZone(ZoneId.systemDefault())
+                .toInstant();
     }
 }

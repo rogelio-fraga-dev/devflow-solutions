@@ -47,8 +47,34 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, Object>> handleValidationExceptions(MethodArgumentNotValidException ex, HttpServletRequest request) {
-        String message = ex.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
-        return buildErrorResponse(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", message, request.getRequestURI());
+        Map<String, String> fieldErrors = new HashMap<>();
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error -> fieldErrors.putIfAbsent(error.getField(), error.getDefaultMessage()));
+
+        String message = fieldErrors.values().stream().findFirst().orElse("Dados inválidos");
+        ResponseEntity<Map<String, Object>> response =
+                buildErrorResponse(HttpStatus.BAD_REQUEST, "VALIDATION_ERROR", message, request.getRequestURI());
+        response.getBody().put("fieldErrors", fieldErrors);
+        return response;
+    }
+
+    /**
+     * Regras de negócio lançadas em callbacks JPA (@PrePersist/@PreUpdate, ex.: Budget Guard)
+     * chegam aqui embrulhadas por Hibernate/Spring. Desembrulhamos a causa para devolver 400
+     * com a mensagem de negócio, em vez de um 500 genérico.
+     */
+    @ExceptionHandler({org.springframework.transaction.TransactionSystemException.class,
+            jakarta.persistence.PersistenceException.class})
+    public ResponseEntity<Map<String, Object>> handleWrappedBusinessRule(RuntimeException ex, HttpServletRequest request) {
+        Throwable causa = ex;
+        while (causa != null) {
+            if (causa instanceof BusinessRuleException) {
+                return buildErrorResponse(HttpStatus.BAD_REQUEST, "BUSINESS_RULE", causa.getMessage(), request.getRequestURI());
+            }
+            causa = causa.getCause();
+        }
+        return buildErrorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR",
+                "Erro ao processar a operação.", request.getRequestURI());
     }
 
     private ResponseEntity<Map<String, Object>> buildErrorResponse(HttpStatus status, String error, String message, String path) {

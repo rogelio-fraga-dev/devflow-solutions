@@ -13,4 +13,7 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
     Optional<Usuario> findByEmailIgnoreCase (
         String email
     );
+
+    // Escopo multi-tenant
+    List<Usuario> findByEmpresaId(Long empresaId);
 }

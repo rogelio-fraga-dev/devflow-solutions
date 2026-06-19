@@ -59,6 +59,7 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
     public DesenvolvedorResponseDto atualizarDesenvolvedor(Long id, DesenvolvedorRequestDto request) {
         Desenvolvedor desenvolvedor = desenvolvedorRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado com ID: " + id));
+        assertMesmaEmpresa(desenvolvedor);
 
         desenvolvedor.setNome(request.getNome());
         desenvolvedor.setSenioridade(request.getSenioridade());
@@ -81,8 +82,18 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
 
     @Override
     public DesenvolvedorResponseDto buscarDesenvolvedor(Long id) {
-        return mapEntityToResponse(desenvolvedorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado")));
+        Desenvolvedor dev = desenvolvedorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado"));
+        assertMesmaEmpresa(dev);
+        return mapEntityToResponse(dev);
+    }
+
+    // Isolamento multi-tenant via usuário vinculado ao desenvolvedor (consistente com listarDesenvolvedores).
+    private void assertMesmaEmpresa(Desenvolvedor dev) {
+        if (dev.getUsuario() != null && dev.getUsuario().getEmpresa() != null
+                && !dev.getUsuario().getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Desenvolvedor não encontrado");
+        }
     }
 
     @Override
@@ -97,8 +108,10 @@ public class DesenvolvedorServiceImpl implements DesenvolvedorService {
     @Override
     @Transactional
     public void deletarDesenvolvedor(Long id) {
-        desenvolvedorRepository.delete(desenvolvedorRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado")));
+        Desenvolvedor dev = desenvolvedorRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Desenvolvedor não encontrado"));
+        assertMesmaEmpresa(dev);
+        desenvolvedorRepository.delete(dev);
     }
 
     private DesenvolvedorResponseDto mapEntityToResponse(Desenvolvedor desenvolvedor) {

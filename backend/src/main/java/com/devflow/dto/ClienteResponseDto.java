@@ -10,4 +10,6 @@ public class ClienteResponseDto {
     private String cnpj;
     private String pessoaContato;
     private Endereco endereco;
+    private String foto;
 }
+

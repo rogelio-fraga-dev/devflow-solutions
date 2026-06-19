@@ -37,7 +37,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/auth/registrar").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/api/v1/usuarios").permitAll() // Para criar o primeiro Admin
+                        // Criação de usuários exige autenticação (o primeiro admin é criado via /auth/registrar)
                         .requestMatchers("/error").permitAll()
                         .anyRequest().authenticated()
                 )

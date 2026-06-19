@@ -10,4 +10,6 @@ public class UsuarioResponseDto {
     private String email;
     private Role role;
     private Boolean ativo;
+    private String foto;
 }
+

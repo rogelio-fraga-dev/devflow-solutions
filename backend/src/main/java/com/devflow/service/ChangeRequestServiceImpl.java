@@ -142,14 +142,32 @@ public class ChangeRequestServiceImpl implements ChangeRequestService {
 
     // MÉTODOS AUXILIARES (Padrão Clean Code)
 
+    private Long getEmpresaLogadaId() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"))
+                .getEmpresa().getId();
+    }
+
     private ChangeRequest buscarPorId(Long id) {
-        return changeRequestRepository.findById(id)
+        ChangeRequest cr = changeRequestRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Change Request não encontrado com ID: " + id));
+        // Isolamento multi-tenant via projeto do change request.
+        Projeto projeto = cr.getProjeto();
+        if (projeto == null || projeto.getEmpresa() == null
+                || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Change Request não encontrado com ID: " + id);
+        }
+        return cr;
     }
 
     private Projeto buscarProjeto(Long id) {
-        return projetoRepository.findById(id)
+        Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + id));
+        if (projeto.getEmpresa() == null || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Projeto não encontrado com ID: " + id);
+        }
+        return projeto;
     }
 
     private ChangeRequestResponseDto converterParaDto(ChangeRequest cr) {

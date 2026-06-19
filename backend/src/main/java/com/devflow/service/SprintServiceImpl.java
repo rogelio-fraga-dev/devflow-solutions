@@ -21,10 +21,31 @@ public class SprintServiceImpl implements SprintService {
 
     private final SprintRepository sprintRepository;
     private final ProjetoRepository projetoRepository;
+    private final com.devflow.repository.UsuarioRepository usuarioRepository;
 
-    public SprintServiceImpl(SprintRepository sprintRepository, ProjetoRepository projetoRepository) {
+    public SprintServiceImpl(SprintRepository sprintRepository, ProjetoRepository projetoRepository,
+                             com.devflow.repository.UsuarioRepository usuarioRepository) {
         this.sprintRepository = sprintRepository;
         this.projetoRepository = projetoRepository;
+        this.usuarioRepository = usuarioRepository;
+    }
+
+    private Long getEmpresaLogadaId() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"))
+                .getEmpresa().getId();
+    }
+
+    // Isolamento multi-tenant via projeto da sprint.
+    private void assertProjetoDaEmpresa(Projeto projeto) {
+        if (projeto.getEmpresa() == null || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Projeto não encontrado com ID: " + projeto.getId());
+        }
+    }
+
+    private void assertMesmaEmpresa(Sprint sprint) {
+        assertProjetoDaEmpresa(sprint.getProjeto());
     }
 
     @Override
@@ -32,6 +53,7 @@ public class SprintServiceImpl implements SprintService {
     public SprintResponseDto criarSprint(SprintRequestDto request) {
         Projeto projeto = projetoRepository.findById(request.getProjetoId())
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + request.getProjetoId()));
+        assertProjetoDaEmpresa(projeto);
 
         if (projeto.getStatus() == StatusProjeto.CONCLUIDO || projeto.getStatus() == StatusProjeto.CANCELADO) {
             throw new BusinessRuleException("Não é possível adicionar uma Sprint a um projeto encerrado ou cancelado.");
@@ -52,6 +74,9 @@ public class SprintServiceImpl implements SprintService {
 
     @Override
     public List<SprintResponseDto> listarSprintsPorProjeto(Long projetoId) {
+        Projeto projeto = projetoRepository.findById(projetoId)
+                .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + projetoId));
+        assertProjetoDaEmpresa(projeto);
         return sprintRepository.findByProjetoId(projetoId).stream()
                 .map(this::mapToResponse)
                 .toList();
@@ -59,8 +84,10 @@ public class SprintServiceImpl implements SprintService {
 
     @Override
     public SprintResponseDto buscarSprint(Long id) {
-        return mapToResponse(sprintRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id)));
+        Sprint sprint = sprintRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id));
+        assertMesmaEmpresa(sprint);
+        return mapToResponse(sprint);
     }
 
     @Override
@@ -68,10 +95,12 @@ public class SprintServiceImpl implements SprintService {
     public SprintResponseDto atualizarSprint(Long id, SprintRequestDto request) {
         Sprint sprint = sprintRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id));
+        assertMesmaEmpresa(sprint);
 
         if (!sprint.getProjeto().getId().equals(request.getProjetoId())) {
             Projeto novoProjeto = projetoRepository.findById(request.getProjetoId())
                     .orElseThrow(() -> new ResourceNotFoundException("Novo Projeto não encontrado com ID: " + request.getProjetoId()));
+            assertProjetoDaEmpresa(novoProjeto);
 
             if (novoProjeto.getStatus() == StatusProjeto.CONCLUIDO || novoProjeto.getStatus() == StatusProjeto.CANCELADO) {
                 throw new BusinessRuleException("Não é possível mover a Sprint para um projeto encerrado ou cancelado.");
@@ -96,8 +125,10 @@ public class SprintServiceImpl implements SprintService {
     @Override
     @Transactional
     public void deletarSprint(Long id) {
-        sprintRepository.delete(sprintRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id)));
+        Sprint sprint = sprintRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Sprint não encontrada com ID: " + id));
+        assertMesmaEmpresa(sprint);
+        sprintRepository.delete(sprint);
     }
 
     private SprintResponseDto mapToResponse(Sprint sprint) {

@@ -37,11 +37,18 @@ public class ClienteServiceImpl implements ClienteService {
         return usuario.getEmpresa();
     }
 
+    // Isolamento multi-tenant: cliente de outra empresa é tratado como inexistente (404).
+    private void assertMesmaEmpresa(Cliente cliente) {
+        if (cliente.getEmpresa() == null || !cliente.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Cliente não encontrado com o ID: " + cliente.getId());
+        }
+    }
+
     @Override
     @Transactional
     public ClienteResponseDto criarCliente(ClienteRequestDto request) {
         if (request.getCnpj() != null && !request.getCnpj().isBlank()) {
-            if (clienteRepository.findByCnpj(request.getCnpj()).isPresent()) {
+            if (clienteRepository.findByCnpjAndEmpresaId(request.getCnpj(), getEmpresaLogadaId()).isPresent()) {
                 throw new ConflictException("Já existe um cliente cadastrado com este CNPJ.");
             }
         }
@@ -52,6 +59,8 @@ public class ClienteServiceImpl implements ClienteService {
         cliente.setPessoaContato(request.getPessoaContato());
         cliente.setEndereco(request.getEndereco());
         cliente.setEmpresa(getEmpresaLogada());
+        cliente.setFoto(request.getFoto());
+
 
         cliente = clienteRepository.save(cliente);
         return mapToResponse(cliente);
@@ -62,11 +71,13 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDto atualizarCliente(Long id, ClienteRequestDto request) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
+        assertMesmaEmpresa(cliente);
 
         String novoCnpj = request.getCnpj();
         if (novoCnpj != null && !novoCnpj.isBlank()) {
             String cnpjAtual = cliente.getCnpj();
-            if (!novoCnpj.equals(cnpjAtual) && clienteRepository.findByCnpj(novoCnpj).isPresent()) {
+            if (!novoCnpj.equals(cnpjAtual)
+                    && clienteRepository.findByCnpjAndEmpresaId(novoCnpj, getEmpresaLogadaId()).isPresent()) {
                 throw new ConflictException("Já existe outro cliente cadastrado com este CNPJ.");
             }
         }
@@ -75,6 +86,8 @@ public class ClienteServiceImpl implements ClienteService {
         cliente.setCnpj(request.getCnpj());
         cliente.setPessoaContato(request.getPessoaContato());
         cliente.setEndereco(request.getEndereco());
+        cliente.setFoto(request.getFoto());
+
 
         cliente = clienteRepository.save(cliente);
         return mapToResponse(cliente);
@@ -84,14 +97,13 @@ public class ClienteServiceImpl implements ClienteService {
     public ClienteResponseDto buscarCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
+        assertMesmaEmpresa(cliente);
         return mapToResponse(cliente);
     }
 
     @Override
     public List<ClienteResponseDto> listarClientes() {
-        Long empresaId = getEmpresaLogadaId();
-        return clienteRepository.findAll().stream()
-                .filter(c -> c.getEmpresa() != null && c.getEmpresa().getId().equals(empresaId))
+        return clienteRepository.findByEmpresaId(getEmpresaLogadaId()).stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -101,6 +113,7 @@ public class ClienteServiceImpl implements ClienteService {
     public void deletarCliente(Long id) {
         Cliente cliente = clienteRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Cliente não encontrado com o ID: " + id));
+        assertMesmaEmpresa(cliente);
         clienteRepository.delete(cliente);
     }
 
@@ -111,6 +124,8 @@ public class ClienteServiceImpl implements ClienteService {
         response.setCnpj(cliente.getCnpj());
         response.setPessoaContato(cliente.getPessoaContato());
         response.setEndereco(cliente.getEndereco());
+        response.setFoto(cliente.getFoto());
         return response;
+
     }
 }

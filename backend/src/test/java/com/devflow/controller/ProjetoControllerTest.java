@@ -45,7 +45,8 @@ class ProjetoControllerTest {
                    "stackTecnologica": "Angular 20 e Java 21",
                    "budgetTotal": 150000.00,
                    "dataInicio": "2026-03-24",
-                   "clienteId": 1
+                   "clienteId": 1,
+                   "gestorId": 1
                 }
                 """;
 

@@ -132,14 +132,32 @@ public class CustoCloudServiceImpl implements CustoCloudService {
 
     // MÉTODOS AUXILIARES (Padrão Clean Code)
 
+    private Long getEmpresaLogadaId() {
+        String email = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return usuarioRepository.findByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário logado não encontrado"))
+                .getEmpresa().getId();
+    }
+
     private CustoCloud buscarPorId(Long id) {
-        return custoCloudRepository.findById(id)
+        CustoCloud custo = custoCloudRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Fatura de Nuvem não encontrada com ID: " + id));
+        // Isolamento multi-tenant via projeto do custo.
+        Projeto projeto = custo.getProjeto();
+        if (projeto == null || projeto.getEmpresa() == null
+                || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Fatura de Nuvem não encontrada com ID: " + id);
+        }
+        return custo;
     }
 
     private Projeto buscarProjeto(Long id) {
-        return projetoRepository.findById(id)
+        Projeto projeto = projetoRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Projeto não encontrado com ID: " + id));
+        if (projeto.getEmpresa() == null || !projeto.getEmpresa().getId().equals(getEmpresaLogadaId())) {
+            throw new ResourceNotFoundException("Projeto não encontrado com ID: " + id);
+        }
+        return projeto;
     }
 
     private CustoCloudResponseDto converterParaDto(CustoCloud custoCloud) {

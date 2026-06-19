@@ -41,6 +41,11 @@ public class Usuario implements UserDetails {
     @JoinColumn(name = "empresa_id")
     private Empresa empresa;
 
+    @Lob
+    @Column(columnDefinition = "LONGTEXT")
+    private String foto;
+
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return List.of(new SimpleGrantedAuthority("ROLE_" + this.role.name()));
@@ -73,6 +78,6 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return Boolean.TRUE.equals(this.ativo);
     }
 }

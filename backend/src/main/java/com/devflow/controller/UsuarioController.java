@@ -53,4 +53,18 @@ public class UsuarioController {
         usuarioService.alterarSenha(emailLogado, dto);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UsuarioResponseDto> obterUsuarioLogado() {
+        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        return ResponseEntity.ok(usuarioService.obterUsuarioLogado(emailLogado));
+    }
+
+    @PutMapping("/me/foto")
+    public ResponseEntity<UsuarioResponseDto> atualizarFotoUsuarioLogado(@RequestBody java.util.Map<String, String> body) {
+        String emailLogado = org.springframework.security.core.context.SecurityContextHolder.getContext().getAuthentication().getName();
+        String fotoBase64 = body.get("foto");
+        return ResponseEntity.ok(usuarioService.atualizarFotoUsuarioLogado(emailLogado, fotoBase64));
+    }
 }
+

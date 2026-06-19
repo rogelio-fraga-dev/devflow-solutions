@@ -24,4 +24,6 @@ public class UsuarioRequestDto {
 
     private Boolean ativo = true;
 
+    private String foto;
 }
+
