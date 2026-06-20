@@ -50,11 +50,12 @@ import { extractErrorMessage } from '../../core/utils/error.util';
       </div>
 
       <!-- Filter -->
-      <div class="card" style="margin-bottom:20px">
+      <div class="card" style="margin-bottom:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <select class="select" style="max-width:240px" [(ngModel)]="filterProjeto">
           <option value="">Todos os projetos</option>
           @for (p of projetos(); track p.id) { <option [value]="p.id">{{ p.nome }}</option> }
         </select>
+        <input class="input" type="text" placeholder="Buscar por descrição ou projeto..." style="max-width:280px" [(ngModel)]="busca" (ngModelChange)="currentPage.set(1)" />
       </div>
 
       <!-- Table -->
@@ -97,21 +98,21 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                   <td colspan="5" style="padding: 16px 24px; border-bottom: 1px solid rgba(16, 185, 129, 0.15);">
                     <div style="display: flex; flex-direction: column; gap: 10px; border-left: 3px solid #10B981; padding-left: 16px;">
                       <div>
-                        <strong style="color: #fff; font-size: 13px;">Detalhes do Custo Adicional Lançado:</strong>
-                        <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">Representa outros gastos gerais aplicados como despesas no fluxo financeiro do projeto (serviços terceiros, taxas administrativas, contingências, etc.).</span>
+                        <strong style="color: #fff; font-size: 15px;">Detalhes do Custo Adicional Lançado:</strong>
+                        <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">Representa outros gastos gerais aplicados como despesas no fluxo financeiro do projeto (serviços terceiros, taxas administrativas, contingências, etc.).</span>
                       </div>
                       <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 4px;">
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Descrição do Custo:</strong>
-                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ a.descricao }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Descrição do Custo:</strong>
+                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ a.descricao }}</span>
                         </div>
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Projeto Vinculado:</strong>
-                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ projetoNome(a.projetoId) }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Projeto Vinculado:</strong>
+                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ projetoNome(a.projetoId) }}</span>
                         </div>
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Valor Lançado:</strong>
-                          <span style="color: #10B981; margin-left: 8px; font-weight:700; font-size: 13px;">{{ a.valorAdicional | currency:'BRL':'symbol':'1.2-2' }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Valor Lançado:</strong>
+                          <span style="color: #10B981; margin-left: 8px; font-weight:700; font-size: 15px;">{{ a.valorAdicional | currency:'BRL':'symbol':'1.2-2' }}</span>
                         </div>
                       </div>
                     </div>
@@ -205,7 +206,14 @@ export class CustosAdicionaisComponent implements OnInit {
     this.svc.getAll().subscribe(a => this.adicionais.set(a));
   }
 
-  filtered() { return this.adicionais().filter(a => !this.filterProjeto || a.projetoId === Number(this.filterProjeto)); }
+  busca = '';
+  filtered() {
+    const q = this.busca.trim().toLowerCase();
+    return this.adicionais().filter(a =>
+      (!this.filterProjeto || a.projetoId === Number(this.filterProjeto)) &&
+      (!q || a.descricao.toLowerCase().includes(q) || this.projetoNome(a.projetoId).toLowerCase().includes(q))
+    );
+  }
 
   currentPage = signal(1);
   pageSize = 10;

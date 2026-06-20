@@ -71,7 +71,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                   @if (isEditingProfile) {
                     <div style="display: flex; flex-direction: column; gap: 8px;">
                       <input class="input input-premium" [(ngModel)]="editNome" placeholder="Nome" style="font-size: 16px; padding: 6px 12px; border-radius: 6px;" />
-                      <input class="input input-premium" [(ngModel)]="editEmail" placeholder="Email" style="font-size: 13px; padding: 6px 12px; border-radius: 6px;" />
+                      <input class="input input-premium" [(ngModel)]="editEmail" placeholder="Email" style="font-size: 15px; padding: 6px 12px; border-radius: 6px;" />
                       <div style="display: flex; gap: 8px; margin-top: 4px;">
                         <button class="btn btn-primary" style="padding: 4px 12px; font-size: 12px;" (click)="saveProfile()">Salvar</button>
                         <button class="btn btn-ghost" style="padding: 4px 12px; font-size: 12px;" (click)="isEditingProfile = false">Cancelar</button>
@@ -84,7 +84,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
                       </button>
                     </div>
-                    <p style="margin: 0; color: var(--text-muted); font-size: 13px;">{{ auth.currentUser()?.email }}</p>
+                    <p style="margin: 0; color: var(--text-muted); font-size: 15px;">{{ auth.currentUser()?.email }}</p>
                     <div style="margin-top: 8px;">
                       <span class="chip-premium">CONTA ATIVA</span>
                     </div>
@@ -94,20 +94,20 @@ import { extractErrorMessage } from '../../core/utils/error.util';
 
               <!-- Lista de Informações com Translucidez e Delimitações Claras -->
               <div style="display: flex; flex-direction: column; gap: 14px; border-top: 1px solid var(--border); padding-top: 20px;">
-                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between; font-size: 15px;">
                   <span style="color: var(--text-secondary);">Organização Corporativa</span>
                   <span style="font-weight: 600; color: #fff;">{{ auth.currentUser()?.empresa || 'DevFlow Solutions' }}</span>
                 </div>
-                <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                <div style="display: flex; justify-content: space-between; font-size: 15px;">
                   <span style="color: var(--text-secondary);">Nível de Permissão</span>
                   <span style="font-weight: 600; color: var(--color_accent_purple);">{{ auth.currentUser()?.role === 'ADMIN' ? 'Acesso Total' : (auth.currentUser()?.role === 'GESTOR' ? 'Gestor Portfólio' : 'Desenvolvedor') }}</span>
                 </div>
                 @if (auth.currentUser()?.role === 'DESENVOLVEDOR') {
-                  <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 15px;">
                     <span style="color: var(--text-secondary);">Senioridade Cadastrada</span>
                     <span style="font-weight: 600; color: #fff;">{{ devStats?.senioridade || 'Pleno' }}</span>
                   </div>
-                  <div style="display: flex; justify-content: space-between; font-size: 13px;">
+                  <div style="display: flex; justify-content: space-between; font-size: 15px;">
                     <span style="color: var(--text-secondary);">Faturamento Custo/Hora</span>
                     <span style="font-weight: 600; color: #10B981;">Definido pelo gestor</span>
                   </div>
@@ -140,7 +140,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
               </div>
             </div>
             
-            <button class="btn btn-primary w-full" style="margin-top: 24px; padding: 12px; font-weight: 700; border-radius: 8px; font-size: 13px;" (click)="alterarSenha()">
+            <button class="btn btn-primary w-full" style="margin-top: 24px; padding: 12px; font-weight: 700; border-radius: 8px; font-size: 15px;" (click)="alterarSenha()">
               Atualizar Credenciais
             </button>
           </div>
