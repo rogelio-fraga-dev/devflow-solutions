@@ -50,11 +50,12 @@ import { extractErrorMessage } from '../../core/utils/error.util';
       </div>
 
       <!-- Filter -->
-      <div class="card" style="margin-bottom:20px">
+      <div class="card" style="margin-bottom:20px;display:flex;gap:12px;align-items:center;flex-wrap:wrap">
         <select class="select" style="max-width:240px" [(ngModel)]="filterProjeto">
           <option value="">Todos os projetos</option>
           @for (p of projetos(); track p.id) { <option [value]="p.id">{{ p.nome }}</option> }
         </select>
+        <input class="input" type="text" placeholder="Buscar por ferramenta ou projeto..." style="max-width:280px" [(ngModel)]="busca" (ngModelChange)="currentPage.set(1)" />
       </div>
 
       <!-- Table -->
@@ -97,21 +98,21 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                   <td colspan="5" style="padding: 16px 24px; border-bottom: 1px solid rgba(139, 92, 246, 0.15);">
                     <div style="display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--purple); padding-left: 16px;">
                       <div>
-                        <strong style="color: #fff; font-size: 13px;">Detalhes da Ferramenta / Licença API:</strong>
-                        <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">Custo recorrente de licenças de software ou faturamento de chamadas de API (como OpenAI, Claude, Midjourney).</span>
+                        <strong style="color: #fff; font-size: 15px;">Detalhes da Ferramenta / Licença API:</strong>
+                        <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">Custo recorrente de licenças de software ou faturamento de chamadas de API (como OpenAI, Claude, Midjourney).</span>
                       </div>
                       <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 4px;">
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Nome do Recurso:</strong>
-                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ a.nomeFerramenta }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Nome do Recurso:</strong>
+                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ a.nomeFerramenta }}</span>
                         </div>
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Projeto Vinculado:</strong>
-                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ projetoNome(a.projetoId) }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Projeto Vinculado:</strong>
+                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ projetoNome(a.projetoId) }}</span>
                         </div>
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Valor da Licença:</strong>
-                          <span style="color: var(--purple-dark); margin-left: 8px; font-weight:700; font-size: 13px;">{{ a.valorLicenca | currency:'BRL':'symbol':'1.2-2' }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Valor da Licença:</strong>
+                          <span style="color: var(--purple-dark); margin-left: 8px; font-weight:700; font-size: 15px;">{{ a.valorLicenca | currency:'BRL':'symbol':'1.2-2' }}</span>
                         </div>
                       </div>
                     </div>
@@ -205,7 +206,14 @@ export class CustosApiComponent implements OnInit {
     this.svc.getAll().subscribe(a => this.apis.set(a));
   }
 
-  filtered() { return this.apis().filter(a => !this.filterProjeto || a.projetoId === Number(this.filterProjeto)); }
+  busca = '';
+  filtered() {
+    const q = this.busca.trim().toLowerCase();
+    return this.apis().filter(a =>
+      (!this.filterProjeto || a.projetoId === Number(this.filterProjeto)) &&
+      (!q || a.nomeFerramenta.toLowerCase().includes(q) || this.projetoNome(a.projetoId).toLowerCase().includes(q))
+    );
+  }
 
   currentPage = signal(1);
   pageSize = 10;

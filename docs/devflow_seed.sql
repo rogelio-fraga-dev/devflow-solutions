@@ -1,3 +1,22 @@
+-- ============================================================
+-- DevFlow Solutions — Seed portável (PostgreSQL 16)
+-- ============================================================
+-- Dump completo (schema + dados de teste) com massa de dados
+-- para apresentação. Inclui Empresa, Usuarios, Clientes,
+-- Desenvolvedores, Projetos (com cenarios ALERTA e ESTOURADO do
+-- Budget Guard), Sprints, Timesheets, Change Requests e Custos.
+--
+-- COMO IMPORTAR (o banco devflow_db precisa existir — o Docker ja cria):
+--   psql -U devflow_user -d devflow_db -f docs/devflow_seed.sql
+--   docker exec -i devflow_db psql -U devflow_user -d devflow_db < docs/devflow_seed.sql
+--
+-- CREDENCIAIS DE ACESSO (ja com hash BCrypt neste dump):
+--   admin_final@devflow.com   / Admin@2026   (ADMIN)
+--   gestor_final@devflow.com  / Dev@2026     (GESTOR)
+--   dev1_final@devflow.com    / Dev@2026     (DESENVOLVEDOR)
+--   dev2_final@devflow.com    / Dev@2026     (DESENVOLVEDOR)
+-- ============================================================
+
 --
 -- PostgreSQL database dump
 --

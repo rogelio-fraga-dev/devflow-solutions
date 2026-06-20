@@ -275,14 +275,29 @@ powershell -ExecutionPolicy Bypass -File .\docs\seed-completo.ps1
 
 ## 🎯 Funcionalidades Principais
 
-- **Dashboard Executivo:** Visualização rápida de KPIs financeiros e Burn Rate.
-- **Gestão de Projetos:** CRUD completo de projetos com sprints e alocação de desenvolvedores.
-- **Gestão de Timesheets:** Lançamento de horas e conversão em custos reais de alocação.
-- **Controle Financeiro:** Análise de custos, receitas e margens por projeto.
-- **Budget Guard:** Sistema inteligente de alertas visuais e travas financeiras (80% / 100%).
-- **Geração de Relatórios PDF:** Relatórios gerenciais automáticos com iTextPDF.
-- **Gestão de Perfil:** Upload de foto e edição de dados do usuário.
-- **Landing Page:** Página institucional com efeitos visuais e animações 3D.
+### 📊 Gestão e Operação
+- **Dashboard Executivo:** KPIs financeiros, Burn Rate e visão consolidada do portfólio.
+- **Gestão de Projetos:** CRUD completo com sprints, alocação de desenvolvedores e detalhe por projeto.
+- **Gestão de Sprints:** Fases, status e objetivos vinculados a cada projeto.
+- **Timesheets:** Lançamento de horas (normais e extras) com fluxo de aprovação e conversão em custo real.
+- **Change Requests:** Solicitações de mudança com impacto financeiro no budget do projeto.
+- **Gestão de Clientes e Desenvolvedores:** Cadastro completo com endereço e valores hora.
+
+### 💰 Motor Financeiro
+- **Controle de Custos:** Faturas de Nuvem (AWS/Azure/GCP), licenças de API e custos adicionais.
+- **Budget Guard:** Alertas visuais e travas automáticas de orçamento (80% / 100% → status ALERTA/ESTOURADO).
+- **Análise Financeira (DRE):** Margem bruta, burn rate e forecast de esgotamento de budget por projeto.
+- **Relatórios PDF:** Project Closeout gerado on-the-fly (OpenPDF/iText).
+
+### 🔎 Experiência de Uso
+- **Busca por nome + filtros** em todas as telas de listagem (projetos, sprints, timesheets, custos, clientes, etc.).
+- **Paginação** consistente em todas as tabelas.
+- **Gestão de Perfil:** Edição de dados, troca de senha e upload de foto (drag-and-drop).
+- **UI premium:** Design system próprio, modais padronizados, animações 3D na landing e responsividade mobile/desktop.
+
+### 🔐 Multi-tenant e Acesso
+- **Isolamento por empresa (multi-tenant):** cada empresa enxerga apenas os próprios dados.
+- **RBAC:** três perfis — `ADMIN`, `GESTOR` e `DESENVOLVEDOR` — com permissões distintas.
 
 ---
 

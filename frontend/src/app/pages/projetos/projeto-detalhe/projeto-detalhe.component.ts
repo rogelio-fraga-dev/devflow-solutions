@@ -110,7 +110,7 @@ interface MembroEquipe {
                 </div>
               </div>
             </div>
-            <button class="btn" style="background: #F59E0B; color: #000; font-weight: 700; border-radius: 8px; padding: 10px 20px; font-size: 13px; border: none; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); transition: all 0.2s;" (click)="router.navigate(['/app/change-requests'])">
+            <button class="btn" style="background: #F59E0B; color: #000; font-weight: 700; border-radius: 8px; padding: 10px 20px; font-size: 15px; border: none; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3); transition: all 0.2s;" (click)="router.navigate(['/app/change-requests'])">
               Solicitar Aditivo →
             </button>
           </div>
@@ -138,7 +138,7 @@ interface MembroEquipe {
                 </div>
               </div>
             </div>
-            <button class="btn" style="background: #EF4444; color: #fff; font-weight: 700; border-radius: 8px; padding: 10px 20px; font-size: 13px; border: none; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); transition: all 0.2s;" (click)="router.navigate(['/app/change-requests'])">
+            <button class="btn" style="background: #EF4444; color: #fff; font-weight: 700; border-radius: 8px; padding: 10px 20px; font-size: 15px; border: none; box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3); transition: all 0.2s;" (click)="router.navigate(['/app/change-requests'])">
               Solicitar Change Request →
             </button>
           </div>
@@ -173,26 +173,26 @@ interface MembroEquipe {
           <div class="card card-premium" style="margin: 0; display: flex; flex-direction: column; gap: 12px; justify-content: center; min-height: 160px;">
             <h3 style="font-size: 15px; margin-bottom: 4px; letter-spacing: -0.5px;">Gestão & Datas</h3>
             @if (projeto()!.gestorNome) {
-              <div style="display:flex; justify-content:space-between; font-size:13px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
+              <div style="display:flex; justify-content:space-between; font-size:15px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
                 <span style="color: var(--text-muted);">Gestor Responsável:</span>
                 <span style="font-weight:700; color: var(--purple-dark)">{{ projeto()!.gestorNome }}</span>
               </div>
             }
             @if (projeto()!.clienteNome) {
-              <div style="display:flex; justify-content:space-between; font-size:13px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
+              <div style="display:flex; justify-content:space-between; font-size:15px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
                 <span style="color: var(--text-muted);">Cliente:</span>
                 <span style="font-weight:600;">{{ projeto()!.clienteNome }}</span>
               </div>
             }
-            <div style="display:flex; justify-content:space-between; font-size:13px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
+            <div style="display:flex; justify-content:space-between; font-size:15px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
               <span style="color: var(--text-muted);">Data de Início:</span>
               <span style="font-weight:600;">{{ projeto()!.dataInicio | date:'dd/MM/yyyy' }}</span>
             </div>
-            <div style="display:flex; justify-content:space-between; font-size:13px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
+            <div style="display:flex; justify-content:space-between; font-size:15px; border-bottom: 1px solid var(--border); padding-bottom:6px;">
               <span style="color: var(--text-muted);">Previsão Entrega:</span>
               <span style="font-weight:600;">{{ projeto()!.dataPrevisaoEntrega | date:'dd/MM/yyyy' }}</span>
             </div>
-            <div style="display:flex; justify-content:space-between; font-size:13px; align-items: center;">
+            <div style="display:flex; justify-content:space-between; font-size:15px; align-items: center;">
               <span style="color: var(--text-muted);">Status Budget:</span>
               <span class="chip-premium {{ pct() >= 80 ? 'error' : 'success' }}" style="font-size:10px; padding: 2px 8px;">{{ pct() }}% consumido</span>
             </div>
@@ -260,7 +260,7 @@ interface MembroEquipe {
               <!-- Center Text overlay -->
               <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 2; pointer-events: none;">
                 <span style="font-size: 48px; font-weight: 800; color: var(--text-primary); line-height: 1; text-shadow: 0 4px 20px rgba(0,0,0,0.5);">{{ pct() }}%</span>
-                <span style="font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px;">Consumido</span>
+                <span style="font-size: 15px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-top: 4px;">Consumido</span>
               </div>
             </div>
           </div>
@@ -286,7 +286,7 @@ interface MembroEquipe {
                        {{ m.nome.slice(0, 2).toUpperCase() }}
                      </div>
                      <div>
-                       <div style="font-size:13px; font-weight:600; color:#fff;">{{ m.nome }}</div>
+                       <div style="font-size:15px; font-weight:600; color:#fff;">{{ m.nome }}</div>
                        <div style="font-size:11px; color:var(--text-muted)">{{ m.senioridade }}</div>
                      </div>
                    </div>
@@ -320,7 +320,7 @@ interface MembroEquipe {
               @for (s of sprints(); track s.id) {
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-page);border-radius:8px">
                   <div>
-                    <span style="font-weight:600;font-size:13px">{{ s.nomeFase }}</span>
+                    <span style="font-weight:600;font-size:15px">{{ s.nomeFase }}</span>
                     <span style="font-size:11px;color:var(--text-muted);margin-left:8px">{{ s.dataInicio | date:'dd/MM' }} – {{ s.dataFim | date:'dd/MM/yy' }}</span>
                     @if (s.objetivo) {
                       <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">{{ s.objetivo }}</div>
@@ -351,14 +351,14 @@ interface MembroEquipe {
               @for (cr of changeRequests(); track cr.id) {
                 <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 12px;background:var(--bg-page);border-radius:8px">
                   <div>
-                    <div style="font-weight:600;font-size:13px">{{ cr.descricaoMudanca }}</div>
+                    <div style="font-weight:600;font-size:15px">{{ cr.descricaoMudanca }}</div>
                     <div style="font-size:11px;color:var(--text-muted);margin-top:4px;display:flex;gap:8px;align-items:center;">
                       @if (cr.status) { <span class="chip" style="font-size:10px;padding:2px 6px;">{{ cr.status }}</span> }
                       @if (cr.solicitante) { <span>Por: {{ cr.solicitante }}</span> }
                       @if (cr.dataAprovacao) { <span>Apr: {{ cr.dataAprovacao | date:'dd/MM/yy' }}</span> }
                     </div>
                   </div>
-                  <span style="font-weight:700;color:var(--purple);font-size:13px">+ {{ cr.valorAdicional | currency:'BRL':'symbol':'1.0-0' }}</span>
+                  <span style="font-weight:700;color:var(--purple);font-size:15px">+ {{ cr.valorAdicional | currency:'BRL':'symbol':'1.0-0' }}</span>
                 </div>
               }
             </div>

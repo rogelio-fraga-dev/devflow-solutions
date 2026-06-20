@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevFlow Solutions - Apresentação Final PI 2026</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- DESIGN SYSTEM DE TOKENS --- */
+        :root {
+            --bg-base: #000000;          
+            --bg-surface: rgba(15, 11, 34, 0.4); 
+            --border-glass: rgba(210, 197, 255, 0.08); 
+            
+            --accent-purple: #D2C5FF;     
+            --accent-purple-deep: #4F46E5; 
+            --accent-cyan: #06b6d4;       
+            --accent-green: #10b981;      
+            --status-danger: #ef4444;     
+            --status-warning: #f59e0b;    
+            
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-base);
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* ================= ANIMATED AURORA BACKGROUND (FROM LANDING PAGE) ================= */
+        @keyframes aurora-1 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(60px, -40px) scale(1.15); }
+            66% { transform: translate(-40px, 30px) scale(0.95); }
+        }
+        @keyframes aurora-2 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            33% { transform: translate(-70px, 50px) scale(0.9); }
+            66% { transform: translate(50px, -30px) scale(1.1); }
+        }
+        @keyframes aurora-3 {
+            0%, 100% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(30px, 60px) scale(1.2); }
+        }
+        @keyframes aurora-rotate {
+            from { transform: rotate(0deg); }
+            to   { transform: rotate(360deg); }
+        }
+
+        .landing-bg {
+            position: absolute; inset: 0; z-index: -1; overflow: hidden;
+            background: #000;
+        }
+        /* Noise overlay */
+        .landing-bg::before {
+            content: '';
+            position: absolute; inset: 0; z-index: 10;
+            opacity: 0.035;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+            pointer-events: none;
+        }
+        /* Radial vignette */
+        .landing-bg::after {
+            content: '';
+            position: absolute; inset: 0; z-index: 5;
+            background: radial-gradient(ellipse at center, transparent 30%, #000 100%);
+            pointer-events: none;
+        }
+        .aurora-orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            mix-blend-mode: screen;
+            pointer-events: none;
+        }
+        .aurora-orb-1 {
+            width: 700px; height: 700px;
+            background: radial-gradient(circle, rgba(79,70,229,0.45) 0%, transparent 70%);
+            top: -200px; left: -150px;
+            animation: aurora-1 12s ease-in-out infinite;
+        }
+        .aurora-orb-2 {
+            width: 600px; height: 600px;
+            background: radial-gradient(circle, rgba(124,58,237,0.35) 0%, transparent 70%);
+            top: 20%; right: -100px;
+            animation: aurora-2 15s ease-in-out infinite;
+        }
+        .aurora-orb-3 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(49,46,129,0.4) 0%, transparent 70%);
+            bottom: -100px; left: 30%;
+            animation: aurora-3 18s ease-in-out infinite;
+        }
+        .aurora-orb-4 {
+            width: 300px; height: 300px;
+            background: radial-gradient(circle, rgba(210,197,255,0.08) 0%, transparent 70%);
+            top: 40%; left: 40%;
+            animation: aurora-2 20s ease-in-out infinite reverse;
+        }
+        /* Conic ring */
+        .aurora-ring {
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 900px; height: 900px;
+            margin: -450px 0 0 -450px;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 0deg, rgba(79,70,229,0.06) 60deg, transparent 120deg, rgba(124,58,237,0.04) 240deg, transparent 360deg);
+            animation: aurora-rotate 30s linear infinite;
+            pointer-events: none;
+            z-index: 2;
+        }
+        /* Grid lines */
+        .aurora-grid {
+            position: absolute; inset: 0; z-index: 3; pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 20%, transparent 80%);
+        }
+
+        /* --- CONTAINER SLIDESHOW TELA CHEIA INTEGRAL --- */
+        .presentation-container {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+            padding: 40px 80px 80px 80px;
+            z-index: 10;
+        }
+
+        .slide {
+            display: none;
+            width: 100%;
+            height: 100%;
+            flex-direction: column;
+            justify-content: flex-start;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            box-sizing: border-box;
+        }
+
+        .slide.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        
+        .landing-bg.static-bg .aurora-orb,
+        .landing-bg.static-bg .aurora-ring,
+        .landing-bg.static-bg #hero-wave-canvas {
+            display: none;
+        }
+
+        /* --- TIPOGRAFIA DA APRESENTAÇÃO --- */
+        .slide-header {
+            font-size: 32px;
+            font-weight: 800;
+            color: var(--accent-purple);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex-shrink: 0;
+            text-shadow: 0 4px 20px rgba(79, 70, 229, 0.3);
+        }
+
+        .slide-header span {
+            font-size: 16px;
+            color: var(--text-muted);
+            font-weight: 400;
+            font-family: 'Inter', sans-serif;
+            background: rgba(255, 255, 255, 0.05);
+            padding: 4px 12px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+            text-transform: none;
+            letter-spacing: 0;
+            text-shadow: none;
+        }
+
+        p {
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--text-muted);
+        }
+
+        /* --- LAYOUT GRID --- */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr;
+            gap: 50px;
+            height: calc(100% - 60px);
+            align-items: center;
+            flex-grow: 1;
+        }
+
+        .grid-left {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 15px;
+            height: auto;
+        }
+
+        /* --- PAINÉIS GLASSMORPHISM --- */
+        .glass-panel {
+            background: var(--bg-surface);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-glass);
+            border-radius: 16px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+        }
+
+        .glass-panel:hover {
+            border-color: rgba(79, 70, 229, 0.4);
+            box-shadow: 0 15px 40px -10px rgba(79, 70, 229, 0.25);
+            transform: translateY(-2px);
+        }
+
+        /* --- TELA MOCKUP DO SISTEMA --- */
+        .system-window {
+            background: #0b0f19;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px rgba(79, 70, 229, 0.15);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            position: relative;
+            flex-grow: 1;
+            height: 100%;
+            max-height: 480px;
+            align-self: center;
+            width: 100%;
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        
+        .system-window:hover {
+            transform: scale(1.02);
+            border-color: rgba(79, 70, 229, 0.3);
+        }
+
+        .window-header {
+            background: #111827;
+            padding: 12px 18px;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+            border-bottom: 1px solid var(--border-glass);
+            flex-shrink: 0;
+        }
+
+        .mac-dot { width: 10px; height: 10px; border-radius: 50%; }
+        .dot-red { background: #ff5f56; }
+        .dot-yel { background: #ffbd2e; }
+        .dot-gre { background: #27c93f; }
+
+        .window-title {
+            flex-grow: 1;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            font-family: monospace;
+            letter-spacing: 0.5px;
+        }
+
+        .window-body {
+            flex-grow: 1;
+            position: relative;
+            background: #070a13;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: calc(100% - 37px);
+        }
+
+        .screenshot-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #070a13;
+        }
+
+        /* --- LISTAS DE REALCE E BADGES --- */
+        .highlight-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .highlight-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .highlight-icon {
+            background: rgba(79, 70, 229, 0.15);
+            color: var(--accent-purple);
+            border: 1px solid rgba(79, 70, 229, 0.3);
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+            font-size: 15px;
+            box-shadow: inset 0 0 10px rgba(79, 70, 229, 0.2);
+        }
+
+        .highlight-title {
+            color: #fff;
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .highlight-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+        
+        .tech-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .tech-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* --- CONTROLES DE NAVEGAÇÃO --- */
+        .controls-overlay {
+            position: absolute;
+            bottom: 25px;
+            left: 80px;
+            right: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            pointer-events: none;
+            flex-shrink: 0;
+            z-index: 100;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            background: rgba(10, 8, 25, 0.8);
+            padding: 10px 24px;
+            border-radius: 30px;
+            border: 1px solid var(--border-glass);
+            pointer-events: auto;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.2s ease;
+            width: 30px;
+            height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+        }
+
+        .nav-btn:hover:not(:disabled) {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.1);
+            transform: scale(1.1);
+        }
+
+        .nav-btn:disabled {
+            color: rgba(255, 255, 255, 0.15);
+            cursor: not-allowed;
+        }
+
+        .progress-dots {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 400px;
+        }
+
+        .dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin: 2px;
+        }
+
+        .dot:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.2);
+        }
+
+        .dot.active {
+            background: var(--accent-purple);
+            box-shadow: 0 0 10px var(--accent-purple), 0 0 5px #fff;
+            transform: scale(1.3);
+        }
+
+        .page-num {
+            font-family: monospace;
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-main);
+            background: rgba(10, 8, 25, 0.8);
+            padding: 8px 16px;
+            border-radius: 20px;
+            border: 1px solid var(--border-glass);
+            pointer-events: auto;
+            backdrop-filter: blur(15px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .keyboard-tip {
+            position: absolute;
+            top: 25px;
+            right: 80px;
+            font-size: 14px;
+            color: var(--text-muted);
+            background: rgba(15, 11, 34, 0.6);
+            backdrop-filter: blur(8px);
+            padding: 5px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--border-glass);
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .keyboard-tip kbd {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            padding: 1px 5px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-weight: bold;
+            color: #fff;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background: var(--status-danger);
+            border-radius: 50%;
+            box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7);
+            animation: pulsing 1.6s infinite;
+        }
+
+        @keyframes pulsing {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+
+        @media print {
+            @page { size: landscape; margin: 0; }
+            body, html { overflow: visible !important; height: auto !important; width: auto !important; background-color: #06040f !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            .landing-bg { display: none !important; } /* Tira a animação para imprimir limpo */
+            .presentation-container { width: 100vw !important; height: auto !important; padding: 0 !important; display: block !important; }
+            .slide { display: flex !important; opacity: 1 !important; visibility: visible !important; page-break-after: always !important; break-after: page !important; height: 100vh !important; width: 100vw !important; padding: 40px 80px 80px 80px !important; box-sizing: border-box !important; justify-content: flex-start !important; align-items: stretch !important; }
+            #slide-1, #slide-20 { justify-content: center !important; align-items: center !important; }
+            .controls-overlay, .keyboard-tip, .nav-btn, .progress-indicator, .page-num { display: none !important; }
+            .system-window { max-height: 420px !important; box-shadow: none !important; }
+            .glass-panel { page-break-inside: avoid !important; }
+        }
+    </style>
+</head>
+
+<body>
+    
+        <!-- BACKGROUND ANIMADO TIPO LANDING PAGE -->
+    <div class="landing-bg" id="global-bg">
+        <div class="aurora-orb aurora-orb-1"></div>
+        <div class="aurora-orb aurora-orb-2"></div>
+        <div class="aurora-orb aurora-orb-3"></div>
+        <div class="aurora-orb aurora-orb-4"></div>
+        <div class="aurora-ring"></div>
+        <div class="aurora-grid"></div>
+        <canvas id="hero-wave-canvas" style="position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 4;"></canvas>
+    </div>
+
+    <div class="presentation-container">
+
+        <div class="keyboard-tip">
+            Use as setas <kbd>←</kbd> <kbd>→</kbd> para navegar
+        </div>
+
+        <!-- 1. CAPA -->
+        <div class="slide active" id="slide-1" style="justify-content: center; height: 100%; position: relative; overflow: hidden;">
+
+            <div style="text-align: center; margin-bottom: 40px; flex-shrink: 0; z-index: 10; position: relative;">
+                <p style="color: var(--accent-purple); font-weight: 600; letter-spacing: 4px; font-size: 15px; text-transform: uppercase; margin-bottom: 12px; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+                    Projeto Integrador: Projeto e Implementação — Profa. Ms. Cristiane Divina Lemes Hamawaki
+                </p>
+                <h1 style="font-size: 72px; font-weight: 800; letter-spacing: -2px; margin-bottom: 15px; font-family: 'Outfit', sans-serif; text-shadow: 0 4px 30px rgba(79,70,229,0.5);">
+                    DevFlow <span style="color: var(--accent-purple);">Solutions</span>
+                </h1>
+                <p style="font-size: 18px; max-width: 750px; margin: 0 auto; color: var(--text-main); font-weight: 300;">
+                    A solução definitiva em Governança de Projetos B2B, Controladoria de Escopo e Gestão de Burn Rate Corporativo em tempo real.
+                </p>
+                
+                <div style="margin-top: 35px; margin-bottom: 25px;">
+                    <p style="color: var(--text-muted); font-size: 15px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 15px;">Equipe de Engenharia (GRUPO 01 - ADS)</p>
+                    <div style="display: flex; justify-content: center; gap: 40px; flex-wrap: wrap;">
+                        <div style="text-align: center;">
+                            <p style="color: #fff; font-weight: 700; font-size: 16px;">Rogélio Claro Fraga</p>
+                            <p style="color: var(--text-muted); font-size: 14px;">Backend & Engenheiro da Aplicação</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="color: #fff; font-weight: 700; font-size: 16px;">João Gabriel B. A. Campos</p>
+                            <p style="color: var(--text-muted); font-size: 14px;">Desenvolvedor Backend</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="color: #fff; font-weight: 700; font-size: 16px;">Alexandre Farias Vieira</p>
+                            <p style="color: var(--text-muted); font-size: 14px;">Frontend & Design de UX</p>
+                        </div>
+                        <div style="text-align: center;">
+                            <p style="color: #fff; font-weight: 700; font-size: 16px;">Elias Coelho G. Fernandes</p>
+                            <p style="color: var(--text-muted); font-size: 14px;">Desenvolvedor Frontend</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="tech-grid" style="justify-content: center; margin-top: 30px;">
+                    <span class="tech-badge" style="color: #DD0031;"><i class="fa-brands fa-angular"></i> Angular 21</span>
+                    <span class="tech-badge" style="color: #ED8B00;"><i class="fa-brands fa-java"></i> Java 21 LTS</span>
+                    <span class="tech-badge" style="color: #6DB33F;"><i class="fa-solid fa-leaf"></i> Spring Boot 4</span>
+                    <span class="tech-badge" style="color: #4169E1;"><i class="fa-solid fa-database"></i> PostgreSQL 16</span>
+                    <span class="tech-badge" style="color: #2CA5E0;"><i class="fa-brands fa-docker"></i> Docker Compose</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 2. PROBLEMA -->
+        <div class="slide" id="slide-2">
+            <h2 class="slide-header">01. O Desafio de Negócio <span>Por que criamos o DevFlow?</span></h2>
+            <div class="grid-2">
+                <div class="grid-left" style="gap: 20px;">
+                    <div class="glass-panel" style="border-left: 5px solid var(--status-danger); background: rgba(239, 68, 68, 0.05);">
+                        <h3 style="color: var(--status-danger); font-size: 18px; margin-bottom: 8px; text-transform: uppercase; font-weight: 800;">
+                            <i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i>O Ponto Cego Financeiro
+                        </h3>
+                        <p style="font-size: 16px; color: var(--text-main); line-height: 1.6;">
+                            Fábricas de software frequentemente não sabem o momento exato em que um projeto B2B passa a dar <strong>prejuízo</strong>. As horas dos times ágeis (Scrum) são desconectadas do setor de faturamento, gerando o invisível "estouro de orçamento".
+                        </p>
+                    </div>
+                    <div class="glass-panel" style="border-left: 5px solid var(--accent-green); background: rgba(16, 185, 129, 0.05);">
+                        <h3 style="color: var(--accent-green); font-size: 18px; margin-bottom: 8px; text-transform: uppercase; font-weight: 800;">
+                            <i class="fa-solid fa-lightbulb" style="margin-right: 8px;"></i>A Solução
+                        </h3>
+                        <p style="font-size: 16px; color: var(--text-main); line-height: 1.6;">
+                            Uma plataforma onde o <strong>Timesheet diário</strong> do desenvolvedor e as faturas de <strong>Cloud (AWS)</strong> debitam orçamento do projeto na hora. O DRE (Demonstrativo de Resultado) é calculado atomicamente em tempo real.
+                        </p>
+                    </div>
+                </div>
+                
+                <!-- Ilustração do Problema -->
+                <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: center; padding: 40px;">
+                    <div style="display: flex; align-items: center; gap: 20px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 25px; margin-bottom: 25px;">
+                        <div style="background: rgba(210,197,255,0.1); width: 80px; height: 80px; border-radius: 50%; display: flex; justify-content: center; align-items: center; border: 1px solid var(--accent-purple); box-shadow: 0 0 20px rgba(210,197,255,0.2);">
+                            <i class="fa-solid fa-magnifying-glass-chart" style="font-size: 35px; color: var(--accent-purple);"></i>
+                        </div>
+                        <div>
+                            <h3 style="font-size: 26px; color: #fff; font-weight: 800; margin-bottom: 5px;">Visibilidade Absoluta</h3>
+                            <p style="color: var(--text-muted); font-size: 16px;">
+                                A gestão financeira não pode ser um processo à parte.
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <p style="color: var(--text-main); font-size: 16px; line-height: 1.6; margin-bottom: 25px;">
+                        Deixamos de lado as planilhas Excel reativas e trazemos a gestão de custos para dentro do <strong>ciclo de engenharia contínuo</strong>.
+                    </p>
+
+                    <ul class="highlight-list" style="gap: 20px;">
+                        <li class="highlight-item">
+                            <div class="highlight-icon" style="width: 40px; height: 40px;"><i class="fa-solid fa-fire"></i></div>
+                            <div>
+                                <h4 style="color: #fff; font-size: 16px; margin-bottom: 4px;">Burn Rate Diário</h4>
+                                <p style="color: var(--text-muted); font-size: 15px;">Acompanhamento de custos de forma granular e atômica, hora a hora.</p>
+                            </div>
+                        </li>
+                        <li class="highlight-item">
+                            <div class="highlight-icon" style="width: 40px; height: 40px;"><i class="fa-solid fa-link"></i></div>
+                            <div>
+                                <h4 style="color: #fff; font-size: 16px; margin-bottom: 4px;">Integração de Escopo</h4>
+                                <p style="color: var(--text-muted); font-size: 15px;">Relacionamento direto entre Sprints entregues e o faturamento B2B.</p>
+                            </div>
+                        </li>
+                        <li class="highlight-item">
+                            <div class="highlight-icon" style="width: 40px; height: 40px;"><i class="fa-solid fa-shield-cat"></i></div>
+                            <div>
+                                <h4 style="color: #fff; font-size: 16px; margin-bottom: 4px;">Alertas Proativos</h4>
+                                <p style="color: var(--text-muted); font-size: 15px;">Sistemas de prevenção que atuam <i>antes</i> do estouro orçamentário acontecer.</p>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <!-- 3. BUDGET GUARD -->
+        <div class="slide" id="slide-3">
+            <h2 class="slide-header">02. Inovação Técnica <span>O Motor Budget Guard Sentinel</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel" style="height: 100%; display: flex; flex-direction: column; justify-content: center;">
+                        <h3 style="color: var(--accent-purple); font-size: 22px; font-weight: 800; display: flex; align-items: center; gap: 10px; margin-bottom: 15px;">
+                            <i class="fa-solid fa-shield-halved"></i> Budget Guard Sentinel
+                        </h3>
+                        <p style="font-size: 16px; color: var(--text-main); margin-bottom: 20px; line-height: 1.6;">
+                            Nosso maior diferencial: O controle financeiro não é apenas visual, ele é <strong>físico no banco de dados</strong>.
+                        </p>
+                        <p style="font-size: 15px; color: var(--text-muted); margin-bottom: 15px;">
+                            Utilizando Interceptors do Spring Data JPA (`@PrePersist` / `@PreUpdate`), o motor fiscaliza cada lançamento financeiro (Timesheet ou Custo).
+                        </p>
+                        <ul class="highlight-list">
+                            <li class="highlight-item">
+                                <div class="highlight-icon"><i class="fa-solid fa-bell"></i></div>
+                                <div><h4 style="color:#f59e0b;">Gatilho 80%</h4><p class="highlight-desc">Alerta C-Level preventivo para renegociação de escopo.</p></div>
+                            </li>
+                            <li class="highlight-item">
+                                <div class="highlight-icon"><i class="fa-solid fa-lock"></i></div>
+                                <div><h4 style="color:#ef4444;">Gatilho 100%</h4><p class="highlight-desc">Rollback Transacional (Trava o banco de dados e impede qualquer novo lançamento de horas).</p></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="background: rgba(13, 10, 28, 0.7); border-color: rgba(79, 70, 229, 0.2); display: flex; align-items: center; justify-content: center;">
+                    <div style="width: 100%; background: rgba(0, 0, 0, 0.5); padding: 30px; border-radius: 10px; border: 1px solid rgba(255,255,255,0.05); box-shadow: inset 0 4px 20px rgba(0,0,0,0.8);">
+                        <div style="display: flex; justify-content: space-between; font-size: 15px; color: var(--text-muted); margin-bottom: 15px; font-family: monospace;">
+                            <span>ORÇAMENTO CONSUMIDO</span>
+                            <span style="color: var(--status-danger); font-weight: bold; display: flex; align-items: center; gap: 6px;">
+                                <span class="pulse-dot"></span> JPA TRANSACTION LOCKED
+                            </span>
+                        </div>
+                        <div style="position: relative; height: 16px; background: #110e29; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); margin-bottom: 25px;">
+                            <div style="width: 100%; height: 100%; background: linear-gradient(90deg, var(--accent-purple-deep) 0%, #8b5cf6 60%, #f59e0b 80%, #ef4444 100%); border-radius: 12px; box-shadow: 0 0 15px rgba(239, 68, 68, 0.5);"></div>
+                            <div style="position: absolute; left: 80%; top: -10px; bottom: -10px; width: 3px; background: #f59e0b; box-shadow: 0 0 10px #f59e0b;">
+                                <div style="position: absolute; top: 25px; left: 50%; transform: translateX(-50%); color: #f59e0b; font-size: 14px; font-weight: 800; font-family: monospace;">80%</div>
+                            </div>
+                            <div style="position: absolute; left: 100%; top: -10px; bottom: -10px; width: 3px; background: #ef4444; box-shadow: 0 0 10px #ef4444;">
+                                <div style="position: absolute; top: 25px; left: 50%; transform: translateX(-80%); color: #ef4444; font-size: 14px; font-weight: 800; font-family: monospace;">100%</div>
+                            </div>
+                        </div>
+                        <div style="background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.3); padding: 10px; border-radius: 8px; color: #fca5a5; font-size: 14px; font-family: monospace;">
+                            <i class="fa-solid fa-code" style="margin-right: 5px;"></i> throw new BudgetExceededException("Projeto estourou orçamento!");
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. STACK E ARQUITETURA -->
+        <div class="slide" id="slide-4">
+            <h2 class="slide-header">03. Arquitetura e Stack <span>Padrões de Mercado</span></h2>
+            <div class="grid-2">
+                <div class="grid-left" style="gap: 12px;">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 16px; margin-bottom: 10px;"><i class="fa-solid fa-layer-group"></i> Arquitetura Monolítica SPA</h3>
+                        <p style="font-size: 15px; margin-bottom: 5px;">Backend e Frontend em repositórios e serviços separados, conversando exclusivamente via APIs RESTFul JSON.</p>
+                    </div>
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-cyan); font-size: 16px; margin-bottom: 10px;"><i class="fa-brands fa-angular"></i> Frontend (Angular 21)</h3>
+                        <p style="font-size: 15px;">Totalmente componentizado, modelo Standalone (sem NgModules). UX reativa com RxJS e Chart.js.</p>
+                    </div>
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-green); font-size: 16px; margin-bottom: 10px;"><i class="fa-brands fa-java"></i> Backend (Java 21 LTS + Spring 4)</h3>
+                        <p style="font-size: 15px;">Utilizando as features mais recentes do Java 21 (Virtual Threads). Spring Boot 4.0.3 para API robusta.</p>
+                    </div>
+                </div>
+
+                <div class="glass-panel" style="display: flex; flex-direction: column; justify-content: center; font-family: monospace; font-size: 15px; color: var(--accent-purple);">
+                    <div style="background: rgba(0,0,0,0.4); padding: 20px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.1);">
+                        <div style="color: #fff; font-weight: bold; margin-bottom: 15px; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px;">
+                            devflow.adsimepac.com.br
+                        </div>
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div style="background: rgba(6, 182, 212, 0.1); border: 1px solid var(--accent-cyan); padding: 15px; border-radius: 6px; text-align: center; width: 45%;">
+                                <i class="fa-brands fa-angular" style="font-size: 24px; color: #DD0031; margin-bottom: 8px;"></i><br>
+                                Frontend SPA<br>
+                                Nginx (:80)
+                            </div>
+                            <i class="fa-solid fa-arrow-right-arrow-left" style="color: var(--text-muted);"></i>
+                            <div style="background: rgba(16, 185, 129, 0.1); border: 1px solid var(--accent-green); padding: 15px; border-radius: 6px; text-align: center; width: 45%;">
+                                <i class="fa-brands fa-java" style="font-size: 24px; color: #ED8B00; margin-bottom: 8px;"></i><br>
+                                API REST<br>
+                                Tomcat (:8080)
+                            </div>
+                        </div>
+                        <div style="text-align: center; margin-top: 15px;">
+                            <i class="fa-solid fa-arrow-down" style="color: var(--text-muted); margin-bottom: 10px;"></i>
+                            <div style="background: rgba(79, 70, 229, 0.2); border: 1px solid var(--accent-purple-deep); padding: 15px; border-radius: 6px;">
+                                <i class="fa-solid fa-database" style="font-size: 24px; color: #4169E1; margin-bottom: 8px;"></i><br>
+                                PostgreSQL 16 (:5432)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. SEGURANÇA E DEPLOY -->
+        <div class="slide" id="slide-5">
+            <h2 class="slide-header">04. Segurança e Deploy <span>Docker e JWT</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel" style="margin-bottom: 15px;">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-brands fa-docker" style="margin-right: 8px; color: #2CA5E0;"></i>Orquestração com Docker
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 10px;">A aplicação possui deploy em produção num clique rodando `docker-compose up`.</p>
+                        <div class="tech-grid">
+                            <span class="tech-badge">Container 1: PostgreSQL 16</span>
+                            <span class="tech-badge">Container 2: Backend JRE</span>
+                            <span class="tech-badge">Container 3: Frontend Nginx</span>
+                        </div>
+                    </div>
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-key" style="margin-right: 8px; color: #f59e0b;"></i>JWT e RBAC
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 10px;">Autenticação 100% Stateless. O Token viaja no cabeçalho <code>Authorization: Bearer</code> interceptado pelo Angular.</p>
+                        <div class="tech-grid">
+                            <span class="tech-badge" style="border-color: #ef4444; color: #ef4444;">ROLE_ADMIN</span>
+                            <span class="tech-badge" style="border-color: #f59e0b; color: #f59e0b;">ROLE_GESTOR</span>
+                            <span class="tech-badge" style="border-color: #10b981; color: #10b981;">ROLE_DESENVOLVEDOR</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="system-window" style="background: #1e1e1e; font-family: monospace; font-size: 14px; color: #c5c8c6; padding: 20px;">
+                    <div style="color: #81a2be; font-weight: bold; margin-bottom: 10px;"># docker-compose.yml snippet</div>
+                    <div style="margin-bottom: 15px;">
+                        <span style="color: #b5bd68;">services:</span><br>
+                        &nbsp;&nbsp;<span style="color: #b5bd68;">backend:</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #81a2be;">build:</span> ./backend<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #81a2be;">ports:</span> ["8080:8080"]<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #81a2be;">depends_on:</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- db_postgres
+                    </div>
+                    <div>
+                        <span style="color: #b5bd68;">frontend:</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #81a2be;">build:</span> ./frontend<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #81a2be;">ports:</span> ["80:80"]<br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #81a2be;">depends_on:</span><br>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;- backend
+                    </div>
+                    <div style="margin-top: 20px; color: #b294bb; font-weight: bold;">// JWT Claim Decoded</div>
+                    <div style="color: #c5c8c6;">
+                        {<br>
+                        &nbsp;&nbsp;"sub": "admin_final&#64;devflow.com",<br>
+                        &nbsp;&nbsp;"roles": ["ROLE_ADMIN"],<br>
+                        &nbsp;&nbsp;"exp": 1718812800<br>
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. LANDING PAGE -->
+        <div class="slide" id="slide-6">
+            <h2 class="slide-header">05. Experiência de Entrada <span>Landing Page B2B</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-rocket" style="margin-right: 8px;"></i>Vitrine Comercial Corporativa
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            O primeiro contato com o C-Level. Landing Page desenvolvida do zero para maximizar a conversão de leads corporativos.
+                        </p>
+                        <p style="font-size: 15px;">
+                            Possui exatamente o mesmo design com elementos 3D responsivos e efeitos de paralaxe criados em CSS nativo e Angular Standalone para performance imbatível (Lighthouse 100).
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/landing</div></div>
+                    <div class="window-body"><img src="./imagens/Landing_Page.png" alt="Landing Page" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 7. LOGIN -->
+        <div class="slide" id="slide-7">
+            <h2 class="slide-header">06. Acesso e Autenticação <span>Plataforma Segura</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-fingerprint" style="margin-right: 8px;"></i>Ponto de Verificação
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Credenciais enviadas e encriptadas via <strong>BCrypt</strong> no banco de dados.
+                        </p>
+                        <p style="font-size: 15px;">
+                            A interface gerencia os tokens e redireciona os usuários (Admin/Dev) de acordo com suas permissões na API, usando <code>Route Guards</code> (CanActivate) no Angular.
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/login</div></div>
+                    <div class="window-body"><img src="./imagens/Login.png" alt="Login" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. DASHBOARD -->
+        <div class="slide" id="slide-8">
+            <h2 class="slide-header">07. Painel Executivo <span>Dashboard C-Level</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-chart-pie" style="margin-right: 8px;"></i>Visão Panorâmica
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Visão unificada que consolida dados de todos os projetos na base de dados (Queries N+1 otimizadas).
+                        </p>
+                        <ul class="highlight-list">
+                            <li class="highlight-item">
+                                <div class="highlight-icon"><i class="fa-solid fa-sack-dollar"></i></div>
+                                <div><h4 class="highlight-title" style="font-size: 15px;">Rentabilidade Global</h4><p class="highlight-desc">Mostra exatamente quantos R$ o portfólio da empresa já consumiu do faturamento total previsto.</p></div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/dashboard</div></div>
+                    <div class="window-body"><img src="./imagens/Dashboard_Top.png" alt="Dashboard" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 9. LISTA DE PROJETOS -->
+        <div class="slide" id="slide-9">
+            <h2 class="slide-header">08. Gestão de Portfólio <span>Contratos e Status Rápido</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-folder-tree" style="margin-right: 8px;"></i>Central de Workspaces
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Onde os projetos nascem, são orçados e ganham vida.
+                        </p>
+                        <p style="font-size: 15px;">
+                            Tabelas com paginação server-side garantem performance ao listar dezenas de contratos. Cores nas badges avisam na hora se o projeto está Saudável, em Alerta, ou Bloqueado.
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/projetos</div></div>
+                    <div class="window-body"><img src="./imagens/Lista_Projetos.png" alt="Lista de Projetos" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 10. DRE PROJETO SAUDAVEL -->
+        <div class="slide" id="slide-10">
+            <h2 class="slide-header">09. DRE do Projeto <span>Análise Financeira Atômica</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-magnifying-glass-chart" style="margin-right: 8px;"></i>Projeto IoT (Saudável)
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Ao clicar em um contrato, entramos em seu Workspace financeiro detalhado.
+                        </p>
+                        <p style="font-size: 15px;">
+                            Aqui o gerente avalia os KPIs exatos de consumo do budget. Neste caso de teste, o "Alerta" está ativado pois o consumo já atingiu um patamar considerável, prevenindo surpresas no final do mês.
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/projetos/detalhes</div></div>
+                    <div class="window-body"><img src="./imagens/Detalhe_Projeto_IoT_Alerta_Top.png" alt="Detalhe Saudavel" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 11. BUDGET GUARD REAL -->
+        <div class="slide" id="slide-11">
+            <h2 class="slide-header">10. A Trava em Ação <span>Budget Guard Bloqueando</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel" style="border-color: rgba(239, 68, 68, 0.4); background: rgba(239, 68, 68, 0.05);">
+                        <h3 style="color: var(--status-danger); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-ban" style="margin-right: 8px;"></i>Projeto Bloqueado!
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Este cenário (App Banking) estourou os R$100.000,00 de orçamento total.
+                        </p>
+                        <p style="font-size: 15px; font-weight: 600;">O que acontece agora no sistema?</p>
+                        <ul style="font-size: 15px; color: var(--text-muted); margin-left: 20px; margin-top: 5px;">
+                            <li>O botão de apontar horas desaparece.</li>
+                            <li>Lançamentos de API via postman geram <code>HTTP 403 / 400</code>.</li>
+                            <li>Exige aprovação formal (Change Request) para voltar.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/projetos/detalhes</div></div>
+                    <div class="window-body"><img src="./imagens/Detalhe_Projeto_App_Banking_Estourado_Top.png" alt="Detalhe Bloqueado" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12. SPRINTS -->
+        <div class="slide" id="slide-12">
+            <h2 class="slide-header">11. Ciclos Ágeis (Scrum) <span>Gestão de Sprints</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-rotate" style="margin-right: 8px;"></i>Cronograma Fásico
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Cadastro do modelo de entregas (Sprints de 2 semanas, por exemplo).
+                        </p>
+                        <p style="font-size: 15px;">
+                            É isso que permite saber se gastamos muito orçamento na Fase de "Refatoração" em vez da Fase de "Novas Funcionalidades".
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/sprints</div></div>
+                    <div class="window-body"><img src="./imagens/Sprints.png" alt="Sprints" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 13. DESENVOLVEDORES -->
+        <div class="slide" id="slide-13">
+            <h2 class="slide-header">12. Custo x Senioridade <span>Alocação de Engenheiros</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-user-tie" style="margin-right: 8px;"></i>Cálculo de Rateio Humano
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            O cerne da inteligência da folha de pagamento. Um Sênior custa (por exemplo) R$120/hora, enquanto um Júnior custa R$40/hora.
+                        </p>
+                        <p style="font-size: 15px;">
+                            Ao alocar os profissionais certos ao projeto, o gestor já sabe de antemão qual será a velocidade de queima (Burn Rate) diária de seu caixa.
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/desenvolvedores</div></div>
+                    <div class="window-body"><img src="./imagens/Desenvolvedores.png" alt="Desenvolvedores" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 14. TIMESHEET -->
+        <div class="slide" id="slide-14">
+            <h2 class="slide-header">13. Apontamento Diário <span>A Base de Tudo: Timesheets</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-clock-rotate-left" style="margin-right: 8px;"></i>A Rotina do Desenvolvedor
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Tela exclusiva para quem tem a `ROLE_DESENVOLVEDOR`. A usabilidade foi simplificada para que o dev perca apenas 1 minuto lançando o que fez no dia.
+                        </p>
+                        <p style="font-size: 15px;">
+                            Aceita horas extras, validando automaticamente se o projeto ainda possui caixa (Budget Guard), traduzindo o "esforço de código" em "custo financeiro executivo".
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/timesheets</div></div>
+                    <div class="window-body"><img src="./imagens/Timesheet.png" alt="Timesheets" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 15. CUSTOS INFRA E API -->
+        <div class="slide" id="slide-15">
+            <h2 class="slide-header">14. Insumos Extras <span>Custos de Nuvem e Licenças</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-brands fa-aws" style="margin-right: 8px;"></i>Não apenas horas...
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Desenvolver um sistema moderno exige rodar servidores na AWS e consumir IA (OpenAI API).
+                        </p>
+                        <p style="font-size: 15px;">
+                            Estes módulos permitem imputar boletos e licenças para que no final do mês, a rentabilidade seja real e completa, cobrindo TUDO que o projeto consome.
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/custos-cloud</div></div>
+                    <div class="window-body"><img src="./imagens/Custos_Cloud.png" alt="Cloud" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 16. CHANGE REQUESTS -->
+        <div class="slide" id="slide-16">
+            <h2 class="slide-header">15. Expansão de Contrato <span>Change Requests (CR)</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-file-contract" style="margin-right: 8px;"></i>Aprovação Comercial
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            É a única forma de reativar um projeto bloqueado pelo Budget Guard.
+                        </p>
+                        <p style="font-size: 15px;">
+                            O gestor documenta o pedido adicional do cliente. Se a CR de R$15.000 for aprovada, o Orçamento Geral do Projeto sobe, as travas JPA são liberadas, e o time volta a codar com saúde financeira.
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/change-requests</div></div>
+                    <div class="window-body"><img src="./imagens/Change_Requests.png" alt="Change Requests" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 17. GERAÇÃO DE RELATÓRIO PDF -->
+        <div class="slide" id="slide-17">
+            <h2 class="slide-header">16. Relatórios Corporativos <span>Exportação Oficial</span></h2>
+            <div style="display: flex; align-items: center; justify-content: center; width: 100%; height: calc(100% - 60px);">
+                <div class="glass-panel" style="padding: 40px; width: 100%; max-width: 900px; display: flex; flex-direction: column;">
+                    <h3 style="color: var(--accent-purple); font-size: 22px; font-weight: 700; margin-bottom: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px; display: flex; align-items: center;">
+                        <i class="fa-solid fa-file-pdf" style="margin-right: 12px; font-size: 26px;"></i>Project Closeout Report
+                    </h3>
+                    <p style="font-size: 16px; margin-bottom: 25px; color: var(--text-main); line-height: 1.6;">
+                        A plataforma não é apenas um painel digital. Ela gera o <strong>documento oficial de auditoria</strong> no encerramento do projeto, compilando automaticamente:
+                    </p>
+                    
+                    <ul class="highlight-list" style="gap: 15px; margin-bottom: 35px;">
+                        <li class="highlight-item" style="align-items: center;">
+                            <div class="highlight-icon" style="width: 35px; height: 35px; font-size: 15px;"><i class="fa-solid fa-scale-balanced"></i></div>
+                            <div><h4 style="color: #fff; font-size: 16px;">Balanço Financeiro e Rentabilidade</h4><p style="font-size: 15px; color: var(--text-muted);">Orçamento total, Custo Acumulado, Burn Rate e Veredito (Margem).</p></div>
+                        </li>
+                        <li class="highlight-item" style="align-items: center;">
+                            <div class="highlight-icon" style="width: 35px; height: 35px; font-size: 15px;"><i class="fa-solid fa-stopwatch"></i></div>
+                            <div><h4 style="color: #fff; font-size: 16px;">Auditoria de Esforço da Equipe</h4><p style="font-size: 15px; color: var(--text-muted);">Demonstrativo de Horas Regulares, Extras e % de Horas Faturáveis vs Retrabalho.</p></div>
+                        </li>
+                        <li class="highlight-item" style="align-items: center;">
+                            <div class="highlight-icon" style="width: 35px; height: 35px; font-size: 15px;"><i class="fa-solid fa-cloud"></i></div>
+                            <div><h4 style="color: #fff; font-size: 16px;">Custos Não-Operacionais</h4><p style="font-size: 15px; color: var(--text-muted);">Detalhamento de infraestrutura (AWS) e licenciamento de IA (Anthropic/OpenAI).</p></div>
+                        </li>
+                        <li class="highlight-item" style="align-items: center;">
+                            <div class="highlight-icon" style="width: 35px; height: 35px; font-size: 15px;"><i class="fa-solid fa-pen-nib"></i></div>
+                            <div><h4 style="color: #fff; font-size: 16px;">Termo de Aceite Técnico (Sign-off)</h4><p style="font-size: 15px; color: var(--text-muted);">Espaço para assinatura legal do cliente (ex: Banco Bradesco).</p></div>
+                        </li>
+                    </ul>
+
+                    <a href="./closeout-4.pdf" target="_blank" style="display: flex; align-items: center; justify-content: center; background: rgba(239, 68, 68, 0.15); border: 1px solid var(--status-danger); color: #fca5a5; padding: 16px; border-radius: 8px; text-decoration: none; font-weight: bold; transition: all 0.3s; cursor: pointer; text-transform: uppercase; font-size: 15px; letter-spacing: 1px;">
+                        <i class="fa-solid fa-download" style="margin-right: 12px; font-size: 18px;"></i> Visualizar Documento PDF
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- 18. SUPORTE -->
+        <div class="slide" id="slide-18">
+            <h2 class="slide-header">17. Documentação Integrada <span>Portal de Ajuda</span></h2>
+            <div class="grid-2">
+                <div class="grid-left">
+                    <div class="glass-panel">
+                        <h3 style="color: var(--accent-purple); font-size: 18px; margin-bottom: 10px;">
+                            <i class="fa-solid fa-life-ring" style="margin-right: 8px;"></i>Onboarding B2B
+                        </h3>
+                        <p style="font-size: 15px; margin-bottom: 15px;">
+                            Soluções corporativas escalam com boa documentação.
+                        </p>
+                        <p style="font-size: 15px;">
+                            O portal interno ajuda usuários leigos a entenderem conceitos do sistema (Como destravamentos e fluxos) minimizando os chamados de suporte N1 para o time de desenvolvimento.
+                        </p>
+                    </div>
+                </div>
+                <div class="system-window">
+                    <div class="window-header"><div class="mac-dot dot-red"></div><div class="mac-dot dot-yel"></div><div class="mac-dot dot-gre"></div><div class="window-title">/ajuda</div></div>
+                    <div class="window-body"><img src="./imagens/Ajuda_Suporte.png" alt="Ajuda" class="screenshot-img"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 18. NÚMEROS DO PROJETO -->
+        <div class="slide" id="slide-19">
+            <h2 class="slide-header">18. Visão Quantitativa <span>O Projeto em Números</span></h2>
+            <div style="flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 28px;">
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px;">
+                <div class="glass-panel" style="text-align:center; padding: 38px;">
+                    <div style="font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--accent-purple); line-height: 1;">68</div>
+                    <p style="color: var(--text-muted); font-size: 15px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;">Endpoints REST</p>
+                </div>
+                <div class="glass-panel" style="text-align:center; padding: 38px;">
+                    <div style="font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--accent-cyan); line-height: 1;">13</div>
+                    <p style="color: var(--text-muted); font-size: 15px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;">Controllers</p>
+                </div>
+                <div class="glass-panel" style="text-align:center; padding: 38px;">
+                    <div style="font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--accent-green); line-height: 1;">11</div>
+                    <p style="color: var(--text-muted); font-size: 15px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;">Entidades JPA</p>
+                </div>
+                <div class="glass-panel" style="text-align:center; padding: 38px;">
+                    <div style="font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; color: #8b5cf6; line-height: 1;">24</div>
+                    <p style="color: var(--text-muted); font-size: 15px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;">Services de Negócio</p>
+                </div>
+                <div class="glass-panel" style="text-align:center; padding: 38px;">
+                    <div style="font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; color: #DD0031; line-height: 1;">18</div>
+                    <p style="color: var(--text-muted); font-size: 15px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;">Telas (Angular 21)</p>
+                </div>
+                <div class="glass-panel" style="text-align:center; padding: 38px;">
+                    <div style="font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; color: var(--status-warning); line-height: 1;">14</div>
+                    <p style="color: var(--text-muted); font-size: 15px; margin-top: 8px; text-transform: uppercase; letter-spacing: 1px;">Testes Automatizados</p>
+                </div>
+            </div>
+            <div class="glass-panel" style="display:flex; justify-content: space-around; align-items:center; flex-wrap:wrap; gap: 14px; padding: 18px 24px;">
+                <span style="color: var(--accent-green); font-weight: 700; font-size: 15px;"><i class="fa-solid fa-shield-halved" style="margin-right:8px;"></i>Multi-tenant + JWT + RBAC</span>
+                <span style="color: var(--accent-cyan); font-weight: 700; font-size: 15px;"><i class="fa-brands fa-docker" style="margin-right:8px;"></i>Docker testado de ponta a ponta</span>
+                <span style="color: var(--accent-purple); font-weight: 700; font-size: 15px;"><i class="fa-solid fa-bolt" style="margin-right:8px;"></i>Budget Guard no nível do banco</span>
+            </div>
+            </div>
+        </div>
+
+        <!-- 19. OBRIGADO -->
+        <div class="slide" id="slide-20" style="justify-content: center; align-items: center; height: 100%; text-align: center;">
+            <div class="glass-panel" style="max-width: 800px; padding: 60px; display: flex; flex-direction: column; align-items: center; gap: 20px; border-color: rgba(79, 70, 229, 0.4); box-shadow: 0 20px 50px -10px rgba(79, 70, 229, 0.3); margin: auto; position: relative; overflow: hidden;">
+                <div style="position: absolute; top: -50px; left: -50px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(79,70,229,0.2) 0%, transparent 70%); pointer-events: none;"></div>
+                
+                <div style="width: 100px; height: 100px; border-radius: 50%; background: rgba(210, 197, 255, 0.1); display: flex; justify-content: center; align-items: center; border: 1px solid var(--accent-purple); margin-bottom: 10px; box-shadow: 0 0 30px rgba(210, 197, 255, 0.3); z-index: 10;">
+                    <i class="fa-solid fa-code-commit" style="font-size: 45px; color: var(--accent-purple);"></i>
+                </div>
+                <h1 style="font-size: 64px; font-weight: 800; font-family: 'Outfit', sans-serif; letter-spacing: -1px; margin: 0; background: linear-gradient(135deg, #fff 30%, var(--accent-purple) 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; z-index: 10;">
+                    Muito Obrigado!
+                </h1>
+                <p style="font-size: 18px; color: var(--text-muted); line-height: 1.6; max-width: 600px; z-index: 10;">
+                    O <strong>DevFlow Solutions</strong> é a prova de que código bem estruturado aliado à inteligência de negócios pode resolver as maiores feridas da engenharia de software corporativa.
+                </p>
+                
+                <div style="margin-top: 30px; display: flex; gap: 20px; z-index: 10;">
+                    <span style="font-family: monospace; color: var(--accent-cyan); font-size: 16px; background: rgba(6, 182, 212, 0.1); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--accent-cyan);">Deploy na Nuvem 100% Funcional</span>
+                    <span style="font-family: monospace; color: var(--accent-green); font-size: 16px; background: rgba(16, 185, 129, 0.1); padding: 10px 20px; border-radius: 30px; border: 1px solid var(--accent-green);">v1.0.0-FINAL LTS</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- CONTROLES -->
+        <div class="controls-overlay">
+            <div class="progress-indicator">
+                <button class="nav-btn" id="prev-btn" onclick="navigateSlide(-1)" disabled>
+                    <i class="fa-solid fa-chevron-left"></i>
+                </button>
+                <div class="progress-dots" id="dots-container">
+                    <div class="dot active" onclick="goToSlide(1)"></div>
+                    <div class="dot" onclick="goToSlide(2)"></div>
+                    <div class="dot" onclick="goToSlide(3)"></div>
+                    <div class="dot" onclick="goToSlide(4)"></div>
+                    <div class="dot" onclick="goToSlide(5)"></div>
+                    <div class="dot" onclick="goToSlide(6)"></div>
+                    <div class="dot" onclick="goToSlide(7)"></div>
+                    <div class="dot" onclick="goToSlide(8)"></div>
+                    <div class="dot" onclick="goToSlide(9)"></div>
+                    <div class="dot" onclick="goToSlide(10)"></div>
+                    <div class="dot" onclick="goToSlide(11)"></div>
+                    <div class="dot" onclick="goToSlide(12)"></div>
+                    <div class="dot" onclick="goToSlide(13)"></div>
+                    <div class="dot" onclick="goToSlide(14)"></div>
+                    <div class="dot" onclick="goToSlide(15)"></div>
+                    <div class="dot" onclick="goToSlide(16)"></div>
+                    <div class="dot" onclick="goToSlide(17)"></div>
+                    <div class="dot" onclick="goToSlide(18)"></div>
+                    <div class="dot" onclick="goToSlide(19)"></div>
+                    <div class="dot" onclick="goToSlide(20)"></div>
+                </div>
+                <button class="nav-btn" id="next-btn" onclick="navigateSlide(1)">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+            <div class="page-num" id="page-number">01 / 20</div>
+        </div>
+
+    </div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 20;
+
+        function updateSlideUI() {
+            for (let i = 1; i <= totalSlides; i++) {
+                const slide = document.getElementById(`slide-${i}`);
+                if (slide) {
+                    if (i === currentSlide) {
+                        slide.classList.add('active');
+                    } else {
+                        slide.classList.remove('active');
+                    }
+                }
+            }
+
+            document.getElementById('prev-btn').disabled = (currentSlide === 1);
+            document.getElementById('next-btn').disabled = (currentSlide === totalSlides);
+
+            const dots = document.getElementById('dots-container').children;
+            for (let i = 0; i < dots.length; i++) {
+                if (i === currentSlide - 1) {
+                    dots[i].classList.add('active');
+                } else {
+                    dots[i].classList.remove('active');
+                }
+            }
+
+            let numStr = currentSlide < 10 ? `0${currentSlide}` : currentSlide;
+            document.getElementById('page-number').innerText = `${numStr} / ${totalSlides}`;
+
+            // Toggle animation
+            const globalBg = document.getElementById('global-bg');
+            if (globalBg) {
+                if (currentSlide === 1) {
+                    globalBg.classList.remove('static-bg');
+                    if (window.heroWaveApp) window.heroWaveApp.start();
+                } else {
+                    globalBg.classList.add('static-bg');
+                    if (window.heroWaveApp) window.heroWaveApp.stop();
+                }
+            }
+        }
+
+        function navigateSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 1) currentSlide = 1;
+            if (currentSlide > totalSlides) currentSlide = totalSlides;
+            updateSlideUI();
+        }
+
+        function goToSlide(slideNum) {
+            currentSlide = slideNum;
+            updateSlideUI();
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ' || e.key === 'Enter') {
+                e.preventDefault();
+                if (currentSlide < totalSlides) navigateSlide(1);
+            } else if (e.key === 'ArrowLeft' || e.key === 'Backspace') {
+                e.preventDefault();
+                if (currentSlide > 1) navigateSlide(-1);
+            }
+        });
+
+        // --- ANIMATED 3D WAVE MESH (FROM LANDING PAGE) ---
+        class HeroWave {
+            constructor(canvasId) {
+                this.canvas = document.getElementById(canvasId);
+                if (!this.canvas) return;
+                this.ctx = this.canvas.getContext('2d');
+                
+                this.running = false;
+                this.raf = 0;
+                this.W = 0; this.H = 0;
+                this.cols = 90; this.rows = 42;
+                this.t = 0; this.last = performance.now();
+                
+                this.px = -9999; this.py = -9999;
+                this.smx = 0; this.smy = 0;
+                this.ripples = [];
+                
+                window.addEventListener('resize', () => this.resize(), { passive: true });
+                window.addEventListener('pointermove', (e) => this.onPointerMove(e), { passive: true });
+                window.addEventListener('pointerdown', (e) => this.onPointerDown(e), { passive: true });
+                
+                this.resize();
+            }
+            
+            start() {
+                if (this.running) return;
+                this.running = true;
+                this.last = performance.now();
+                this.raf = requestAnimationFrame((now) => this.frame(now));
+            }
+            
+            stop() {
+                this.running = false;
+                cancelAnimationFrame(this.raf);
+            }
+            
+            onPointerMove(e) {
+                this.px = e.clientX;
+                this.py = e.clientY;
+            }
+            
+            onPointerDown(e) {
+                if (this.ripples.length >= 5) this.ripples.shift();
+                this.ripples.push({ x: e.clientX, y: e.clientY, t0: this.t });
+            }
+            
+            resize() {
+                const dpr = Math.min(window.devicePixelRatio || 1, 2);
+                this.W = this.canvas.parentElement.clientWidth;
+                this.H = this.canvas.parentElement.clientHeight;
+                this.canvas.width = Math.round(this.W * dpr);
+                this.canvas.height = Math.round(this.H * dpr);
+                this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+                this.cols = Math.round(Math.min(104, Math.max(46, this.W / 15)));
+                this.rows = Math.round(Math.min(46, Math.max(26, this.H / 22)));
+            }
+            
+            frame(now) {
+                if (!this.running) return;
+                const dt = Math.min((now - this.last) / 1000, 0.05);
+                this.last = now;
+                this.t += dt;
+                this.render(dt);
+                this.raf = requestAnimationFrame((n) => this.frame(n));
+            }
+            
+            render(dt) {
+                const ctx = this.ctx;
+                if (!ctx) return;
+                const W = this.W, H = this.H, t = this.t;
+                
+                const tx = this.px > -999 ? this.px / W - 0.5 : 0;
+                const ty = this.py > -999 ? this.py / H - 0.5 : 0;
+                const k = dt > 0 ? 1 - Math.pow(0.0025, dt) : 1;
+                this.smx += (tx - this.smx) * k;
+                this.smy += (ty - this.smy) * k;
+                
+                ctx.clearRect(0, 0, W, H);
+                
+                const f = H * 0.86;
+                const cx = W / 2 - this.smx * 70;
+                const horizon = H * 0.34 - this.smy * 46;
+                const camH = 150;
+                
+                const spacing = 26;
+                const zoff = (t * 42) % spacing;
+                const spreadX = Math.max(W * 1.9, 1500);
+                
+                this.ripples = this.ripples.filter(r => t - r.t0 < 1.6);
+                const px = this.px, py = this.py;
+                const boosted = [];
+                
+                for (let i = 0; i < this.rows; i++) {
+                    const z = 90 + i * spacing - zoff;
+                    if (z < 40) continue;
+                    
+                    const dn = Math.min(1, Math.max(0, (z - 90) / (this.rows * spacing)));
+                    const near = 1 - dn;
+                    
+                    const r = Math.round(79 + (210 - 79) * near);
+                    const g = Math.round(70 + (197 - 70) * near);
+                    const b = Math.round(229 + (255 - 229) * near);
+                    const alpha = 0.05 + 0.4 * near * near;
+                    
+                    ctx.strokeStyle = `rgba(${r},${g},${b},${alpha})`;
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    
+                    const dotEvery = 3;
+                    const dotSize = 0.8 + near * 2.0;
+                    
+                    for (let j = 0; j < this.cols; j++) {
+                        const xw = (j / (this.cols - 1) - 0.5) * spreadX;
+                        const wave = 26 * Math.sin(xw * 0.011 + t * 1.1) +
+                                     20 * Math.cos(z * 0.016 - t * 0.7) +
+                                     10 * Math.sin((xw + z) * 0.006 + t * 0.5);
+                                     
+                        let sx = cx + (xw * f) / z;
+                        let sy = horizon + ((camH + wave) * f) / z;
+                        
+                        let lift = 0;
+                        if (px > -999) {
+                            const dx = sx - px, dy = sy - py;
+                            lift = 46 * Math.exp(-(dx * dx + dy * dy) / 33800);
+                        }
+                        
+                        for (const rp of this.ripples) {
+                            const age = t - rp.t0;
+                            const ring = age * 520;
+                            const dx = sx - rp.x, dy = sy - rp.y;
+                            const d = Math.sqrt(dx * dx + dy * dy);
+                            const band = (d - ring) / 46;
+                            lift += 34 * Math.exp(-band * band) * (1 - age / 1.6);
+                        }
+                        
+                        sy -= lift * near;
+                        
+                        if (j === 0) ctx.moveTo(sx, sy);
+                        else ctx.lineTo(sx, sy);
+                        
+                        if (j % dotEvery === 0) {
+                            if (lift > 7) boosted.push(sx, sy, dotSize + 0.8);
+                            else {
+                                ctx.moveTo(sx + dotSize, sy);
+                                ctx.arc(sx, sy, dotSize, 0, 6.2832);
+                                ctx.moveTo(sx, sy);
+                            }
+                        }
+                    }
+                    ctx.stroke();
+                }
+                
+                if (boosted.length) {
+                    ctx.fillStyle = 'rgba(210,197,255,0.9)';
+                    ctx.beginPath();
+                    for (let i = 0; i < boosted.length; i += 3) {
+                        ctx.moveTo(boosted[i] + boosted[i + 2], boosted[i + 1]);
+                        ctx.arc(boosted[i], boosted[i + 1], boosted[i + 2], 0, 6.2832);
+                    }
+                    ctx.fill();
+                }
+            }
+        }
+
+        window.heroWaveApp = new HeroWave('hero-wave-canvas');
+        if (currentSlide === 1) window.heroWaveApp.start();
+
+    </script>
+
+</body>
+
+</html>

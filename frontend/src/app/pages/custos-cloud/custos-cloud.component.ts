@@ -62,6 +62,7 @@ import { extractErrorMessage } from '../../core/utils/error.util';
             <option value="">Todos os provedores</option>
             @for (p of provedores; track p) { <option [value]="p">{{ p }}</option> }
           </select>
+          <input class="input" type="text" placeholder="Buscar por provedor, mês ou projeto..." style="max-width:280px" [(ngModel)]="busca" (ngModelChange)="currentPage.set(1)" />
         </div>
       </div>
 
@@ -109,21 +110,21 @@ import { extractErrorMessage } from '../../core/utils/error.util';
                   <td colspan="6" style="padding: 16px 24px; border-bottom: 1px solid rgba(139, 92, 246, 0.15);">
                     <div style="display: flex; flex-direction: column; gap: 10px; border-left: 3px solid var(--purple); padding-left: 16px;">
                       <div>
-                        <strong style="color: #fff; font-size: 13px;">Detalhes do Custo de Nuvem:</strong>
-                        <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">Fatura referente ao serviço de infraestrutura e hospedagem em nuvem.</span>
+                        <strong style="color: #fff; font-size: 15px;">Detalhes do Custo de Nuvem:</strong>
+                        <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">Fatura referente ao serviço de infraestrutura e hospedagem em nuvem.</span>
                       </div>
                       <div style="display: flex; gap: 40px; flex-wrap: wrap; margin-top: 4px;">
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Provedor de Nuvem:</strong>
+                          <strong style="color: #fff; font-size: 15px;">Provedor de Nuvem:</strong>
                           <span class="chip" style="margin-left: 8px; font-weight:700; background:{{ provColor(c.provedor) }}20; color:{{ provColor(c.provedor) }}">{{ c.provedor }}</span>
                         </div>
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Mês Competência:</strong>
-                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 13px;">{{ c.mesReferencia }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Mês Competência:</strong>
+                          <span style="color: var(--text-secondary); margin-left: 8px; font-size: 15px;">{{ c.mesReferencia }}</span>
                         </div>
                         <div>
-                          <strong style="color: #fff; font-size: 13px;">Valor da Fatura:</strong>
-                          <span style="color: #0EA5E9; margin-left: 8px; font-weight:700; font-size: 13px;">{{ c.valorFatura | currency:'BRL':'symbol':'1.2-2' }}</span>
+                          <strong style="color: #fff; font-size: 15px;">Valor da Fatura:</strong>
+                          <span style="color: #0EA5E9; margin-left: 8px; font-weight:700; font-size: 15px;">{{ c.valorFatura | currency:'BRL':'symbol':'1.2-2' }}</span>
                         </div>
                       </div>
                     </div>
@@ -226,10 +227,13 @@ export class CustosCloudComponent implements OnInit {
     this.svc.getAll().subscribe(c => this.clouds.set(c));
   }
 
+  busca = '';
   filtered() {
+    const q = this.busca.trim().toLowerCase();
     return this.clouds().filter(c =>
       (!this.filterProjeto || c.projetoId === Number(this.filterProjeto)) &&
-      (!this.filterProvedor || c.provedor === this.filterProvedor)
+      (!this.filterProvedor || c.provedor === this.filterProvedor) &&
+      (!q || c.provedor.toLowerCase().includes(q) || c.mesReferencia.toLowerCase().includes(q) || this.projetoNome(c.projetoId).toLowerCase().includes(q))
     );
   }
 
